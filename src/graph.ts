@@ -1,3 +1,6 @@
+import store, { GraphData, RowData } from "./store";
+import { isNumeric } from "./tools";
+
 export type GraphType = 'pairs-plot'
   | 'dot-plot'
   | 'bar-graph'
@@ -9,9 +12,9 @@ export type GraphType = 'pairs-plot'
   | 'residuals-plot'
   | 'time-series';
 
-export type PlottingFunction = (ctx: CanvasRenderingContext2D, values: number[], settings: Setting[]) => void;
+export type PlottingFunction = (ctx: CanvasRenderingContext2D) => void;
 
-export type Setting = { name: string; value: boolean }
+export type Setting = { name: string; value: boolean | number | string }
 
 export type GraphTypeData = {
   name: string;
@@ -41,6 +44,9 @@ export const graphs: GraphTypeData[] = [
       { name: 'Invert Colours', value: false },
       { name: 'Thick Lines', value: false },
       { name: 'Show ID of removed points', value: false },
+      { name: 'Min', value: -1 },
+      { name: 'Max', value: -1 },
+      { name: 'Text Size', value: 13 },
     ]
   },
   {
@@ -86,6 +92,96 @@ function getGraphType(type: GraphType): GraphTypeData | null {
   return null;
 }
 
-function dotPlot(ctx: CanvasRenderingContext2D): void {
-  console.log(ctx)
+export function dotPlot(ctx: CanvasRenderingContext2D): void {
+  const width: number = ctx.canvas.width;
+  const height: number = ctx.canvas.height;
+
+  const graphData: GraphData = store.state.graph;
+  const scaleFactor: number = graphData.scaleFactor;
+  const xAxis: number = graphData.xAxis;
+  const yAxis: number = graphData.yAxis;
+
+  const rows: RowData[][] = store.state.rows;
+
+  const points: number[] = []
+  const allPoints: number[] = [];
+  const pointsRemoved: number[] = [];
+
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index];
+    const value = row[xAxis];
+    if (isNumeric(value)) {
+      points.push(index);
+      allPoints.push(index);
+    } else {
+      pointsRemoved.push(index);
+    }
+  }
+
+  if (points.length == 0) {
+    alert("NO NUMERIC POINTS ON X-AXIS");
+    return;
+    // TODO: Implement fail
+  }
+
+  if (pointsRemoved.length != 0) {
+    // TODO: Removed points logic
+  }
+
+  const oYPixel: number = height - 60 * scaleFactor;
+  const maxHeight = height - 120 * scaleFactor;
+  const left = 90 * scaleFactor;
+  const right = width - 60 * scaleFactor;
+
+  const xMin = Math.min.apply(null, points);
+  const xMax = Math.max.apply(null, points);
+
+  // TODO: Use min max settings
+  const [min, max, step] = axisMinMaxStep(xMin, xMax);
+  const alpha = 255;
+
+  // TODO : OTHER AXIES
+
+  // Graph Title
+
+
+}
+
+function axisMinMaxStep(min: number, max: number): [number, number, number] {
+  if (min == max) {
+    min += 1;
+    max += 1;
+  }
+  const range = max - min;
+  const rangeRound: number = parseInt(range.toPrecision(1));
+  let steps: number = firstSF(rangeRound);
+  if (steps < 2) steps *= 10;
+  if (steps < 3) steps *= 5;
+  if (steps < 5) steps *= 2;
+  let step = parseFloat((rangeRound / steps).toPrecision(15));
+  if (step == 0) step = 1;
+  let minTick = parseFloat((min / step).toFixed(0)) * step;
+  if (minTick > min) minTick -= step;
+  let maxTick = parseFloat((max / step).toFixed(0)) * step;
+  if (minTick < min) maxTick += step;
+  if (maxTick == minTick) {
+    maxTick++;
+    minTick--;
+  }
+  return [minTick, maxTick, step];
+}
+
+function firstSF /* First Significant Figure */(number: number): number {
+  let multiplier = 1;
+  if (number == 0) return 0;
+  while (number < 0.1) {
+    number *= 10;
+    multiplier /= 10;
+  }
+  while (number >= 1) {
+    number /= 10;
+    multiplier *= 10;
+  }
+  number = number * 10;
+  return parseInt(number.toFixed(0))
 }

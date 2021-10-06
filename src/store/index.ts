@@ -5,8 +5,10 @@ export type RowData = string | number | boolean;
 
 export type GraphData = {
   type: GraphType | 'none';
-  xAxis: number,
-  yAxis: number,
+  xAxis: number;
+  yAxis: number;
+  size: number;
+  scaleFactor: number;
 }
 
 export type State = {
@@ -22,7 +24,9 @@ export default createStore<State>({
     graph: {
       type: 'none',
       xAxis: 0,
-      yAxis: -1
+      yAxis: -1,
+      size: 0,
+      scaleFactor: 1
     }
   },
   mutations: {},
