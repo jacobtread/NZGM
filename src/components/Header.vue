@@ -128,6 +128,8 @@ export default class Header extends Vue {
 .header {
   display: flex;
   border-bottom: 1px solid rgb(216, 216, 216);
+  height: 90px;
+  z-index: 99;
 
   img {
     height: 90px;

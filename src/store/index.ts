@@ -1,11 +1,16 @@
 import { createStore } from "vuex";
 
-type RowData = string|number|boolean;
+export type RowData = string|number|boolean;
 
-export default createStore({
+export type State = {
+  rows: RowData[][];
+  cols: string[];
+}
+
+export default createStore<State>({
   state: {
-    cols: [''] as string[],
-    rows: [] as RowData[][]
+    cols: ['Example', 'Example'],
+    rows: [['', '']]
   },
   mutations: {},
   actions: {},
