@@ -5,6 +5,7 @@ export function importFromCSV(file: string): void {
     const lines: string[] = file.split("\n");
     let header = true;
     if (lines.length < 1) return;
+    store.state.rows = []; // Clear rows;
     for (const line of lines) {
         const parts: string[] = line.split(',');
         if (header) {
