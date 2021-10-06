@@ -132,7 +132,7 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   // X-Axis Title
   ctx.font = `bold ${15 * scaleFactor}px Arial`;
-  ctx.fillText(cols[xAxis], width / 2, height * 0.5 - 10 * scaleFactor);
+  ctx.fillText(cols[xAxis], width / 2, height - (10 * scaleFactor));
 
   let yGroups: GroupsData | null = null;
   let zGroups: GroupsData | null = null;
@@ -209,8 +209,10 @@ function plotYSplit(
   axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, minXTick, maxXTick, xStep);
   if (yPoints.length > 0) {
     const groups = Object.keys(yGroups);
+    groups.sort(sortOrder).reverse();
+    
     const gMaxHeight = maxHeight / groups.length;
-    for (const group in groups) {
+    for (const group of groups) {
       const points = yGroups[group];
       if (points) {
         // TODO: DOT PLOT
@@ -269,7 +271,7 @@ type GroupsData = {
 }
 
 function splitData(points: number[], values: RowData[], max: number, variable: string): GroupsData | null {
-  const differentGroups: GroupsData = {};
+  let differentGroups: GroupsData = {};
   for (const index in points) {
     const group: RowData = values[index];
     if (!differentGroups[group]) differentGroups[group] = [];
@@ -303,7 +305,7 @@ function splitData(points: number[], values: RowData[], max: number, variable: s
     const c1Max: number = parseFloat((split0 + d).toPrecision(2));
     const c2Max: number = parseFloat((split0 + d * 2).toPrecision(2));
     const c3Max: number = parseFloat((split0 + d * 3).toPrecision(2));
-
+    differentGroups = {}
     for (const index of points) {
       let group: RowData = values[index];
       if (!isNumeric(group)) {
@@ -321,6 +323,30 @@ function splitData(points: number[], values: RowData[], max: number, variable: s
     groups = Object.keys(differentGroups);
   }
   return differentGroups;
+}
+
+export function sortOrder(as: string, bs: string) {
+  if (as == bs) return 0;
+  const regex = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g;
+  const aMatch = as.toLowerCase().match(regex);
+  const bMatch = bs.toLowerCase().match(regex);
+  let i = 0;
+  if (aMatch == null) return -1;
+  const length = aMatch == null ? 0 : aMatch.length;
+  if (bMatch == null) return 1;
+  while (i < length) {
+    if (!bMatch[i]) return 1;
+    const aValue: number = parseFloat(aMatch[i]);
+    const bValue: number = parseFloat(bMatch[i]);
+    if (aValue == bValue || isNaN(aValue) || isNaN(bValue)) {
+      i++;
+      continue;
+    }
+    const diff = aValue - bValue;
+    if (!isNaN(diff)) return diff;
+    return aValue > bValue ? 1 : -1;
+  }
+  return bMatch[i] ? -1 : 0;
 }
 
 function line(
@@ -379,14 +405,12 @@ function watermark(ctx: CanvasRenderingContext2D, width: number, height: number)
 
 function axisMinMaxStep(min: number, max: number): [number, number, number] {
   if (min == max) {
-    console.log(min)
     min += 1;
     max += 1;
   }
   const range = max - min;
   const rangeRound: number = parseFloat(range.toPrecision(1));
   let steps: number = firstSF(rangeRound);
-  console.log(min, max, range, rangeRound, steps)
   if (steps < 2) steps *= 10;
   if (steps < 3) steps *= 5;
   if (steps < 5) steps *= 2;
@@ -404,7 +428,6 @@ function axisMinMaxStep(min: number, max: number): [number, number, number] {
 }
 
 function firstSF(number: number): number {
-  console.log(number)
   if (number == 0) return 0;
   while (number < 0.1) {
     number *= 10;
@@ -413,6 +436,5 @@ function firstSF(number: number): number {
     number /= 10;
   }
   number *= 10;
-  console.log(number)
   return parseFloat(number.toFixed(0))
 }
