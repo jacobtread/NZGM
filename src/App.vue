@@ -3,7 +3,7 @@
     <Header />
     <main>
       <Resizable>
-        <ContentTable v-model:cols="cols" v-model:rows="rows" />
+        <ContentTable />
       </Resizable>
       <div class="graph-wrapper">
         <Graph />

@@ -1,5 +1,8 @@
 <template>
-  <div class="resizable" style="width: 50%">
+  <div
+    class="resizable"
+    style="width: 50%"
+  >
     <slot />
     <span class="resizable__handle" @mousedown="dragging = true"></span>
   </div>
@@ -15,6 +18,7 @@ export default class App extends Vue {
     const el: HTMLElement = this.$el;
     document.onmousemove = (event: MouseEvent): void => {
       if (!this.dragging) return;
+      document.getElementById("app")?.classList.add("dragging");
       event = event || window.event;
       let x: number;
       if (event.pageX == null && event.clientX != null) {
@@ -32,7 +36,10 @@ export default class App extends Vue {
       const width: number = x - el.offsetLeft;
       el.style.width = width + "px";
     };
-    document.onmouseup = () => (this.dragging = false);
+    document.onmouseup = () => {
+      document.getElementById("app")?.classList.remove("dragging");
+      this.dragging = false;
+    };
   }
 }
 </script>
@@ -44,12 +51,13 @@ export default class App extends Vue {
   min-width: 300px;
 
   &__handle {
-    cursor: e-resize;
+    cursor: col-resize;
     position: absolute;
     right: 0;
     top: 0;
     width: 4px;
     height: 100%;
   }
+
 }
 </style>

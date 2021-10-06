@@ -20,19 +20,47 @@
 </template>
 
 <script lang="ts">
-import { RowData, State } from "@/store";
-import { Options, Vue } from "vue-class-component";
-import { mapState } from "vuex";
+import store, { RowData } from "@/store";
+import { Vue } from "vue-class-component";
 
-@Options({
-  computed: mapState<State>({
-    rows: (state: State) => state.rows,
-    cols: (state: State) => state.cols,
-  }),
-})
 export default class ContentTable extends Vue {
+  displayedRows = 50;
+  lastScrollPoint = 0;
+
+  get rows(): RowData[][] {
+    const rows = store.state.rows;
+    if (rows.length > this.displayedRows) {
+      return rows.slice(0, this.displayedRows);
+    } else {
+      return rows;
+    }
+  }
+
+  set rows(value: RowData[][]) {
+    store.state.rows = value;
+  }
+
+  get cols(): string[] {
+    return store.state.cols;
+  }
+
+  set cols(value: string[]) {
+    store.state.cols = value;
+  }
+
   select(row: RowData[]): void {
     console.log(row);
+  }
+
+  mounted(): void {
+    this.$el.onscroll = () => {      
+      var sh = this.$el.scrollHeight;
+      var st = this.$el.scrollTop;
+      var ht = this.$el.offsetHeight;
+      if (ht == 0 || st == sh - ht) {
+        this.displayedRows += 10;
+      }
+    };
   }
 }
 </script>
@@ -52,6 +80,7 @@ export default class ContentTable extends Vue {
 
     tr th,
     tr td {
+      position: relative;
       input {
         border: none;
         padding: 0.5em;
