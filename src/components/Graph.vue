@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts">
-import { dotPlot, graphs } from "@/graph";
+import { dotPlot } from "@/graph";
 import store, { State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
@@ -100,7 +100,7 @@ export default class Graph extends Vue {
     this.resizeGraph();
   }
 
-  resizeGraph() {
+  resizeGraph(): void {
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
@@ -128,7 +128,8 @@ export default class Graph extends Vue {
     this.renderGraph();
   }
 
-  renderGraph() {
+  renderGraph(): void {
+    const wrapper: HTMLElement = document.getElementById('canvasWrapper') as HTMLElement;
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
@@ -140,6 +141,8 @@ export default class Graph extends Vue {
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     dotPlot(ctx);
+    const data = canvas.toDataURL();
+    wrapper.style.backgroundImage = 'url("'+data+'")';
   }
 }
 </script>
@@ -158,6 +161,9 @@ export default class Graph extends Vue {
   flex: auto;
   overflow: hidden;
   position: relative;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .controls {
@@ -174,5 +180,7 @@ export default class Graph extends Vue {
   transform: translate(-50%, -50%);
   background-color: black;
   aspect-ratio: auto 944 / 777;
+  display: hidden;
+  visibility: hidden;
 }
 </style>

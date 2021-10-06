@@ -83,15 +83,6 @@ export const graphs: GraphTypeData[] = [
   },
 ];
 
-function getGraphType(type: GraphType): GraphTypeData | null {
-  for (const graph of graphs) {
-    if (graph.type == type) {
-      return graph;
-    }
-  }
-  return null;
-}
-
 export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
@@ -99,7 +90,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const graphData: GraphData = store.state.graph;
   const scaleFactor: number = graphData.scaleFactor;
   const xAxis: number = graphData.xAxis;
-  const yAxis: number = graphData.yAxis;
 
   const rows: RowData[][] = store.state.rows;
   const cols: string[] = store.state.cols;
@@ -129,7 +119,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   }
 
   const oYPixel: number = height - 60 * scaleFactor;
-  const maxHeight = height - 120 * scaleFactor;
   const left = 90 * scaleFactor;
   const right = width - 60 * scaleFactor;
 
@@ -138,7 +127,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   // TODO: Use min max settings
   const [min, max, step] = axisMinMaxStep(xMin, xMax);
-  const alpha = 255;
 
   // TODO : OTHER AXIES
 
@@ -150,7 +138,71 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   // X-Axis Title
   ctx.font = `bold ${15 * scaleFactor}px Arial`;
-  ctx.fillText(cols[xAxis], width / 2,  height * 0.5 - 10 * scaleFactor);
+  ctx.fillText(cols[xAxis], width / 2, height * 0.5 - 10 * scaleFactor);
+
+  // TODO: Y-Axis Title
+  ctx.strokeStyle = '#000000';
+  axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, min, max, step);
+
+
+  watermark(ctx, width, height)
+}
+
+function line(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+}
+function convertValToPixel(point: number, min: number, max: number, minPix: number, maxPix: number): number {
+  return (point - min) / (max - min) * (maxPix - minPix) + minPix;
+}
+function axisHorizontal(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  x2: number,
+  y: number,
+  min: number,
+  max: number,
+  step: number,
+  gridLineTop = 50
+): void {
+  const scaleFactor: number = store.state.graph.scaleFactor;
+  ctx.strokeStyle = '#000000';
+  ctx.fillStyle = '#000000';
+  ctx.lineWidth = scaleFactor;
+  line(ctx, x1 - 10 * scaleFactor, y, x2 + 10 * scaleFactor, y);
+  ctx.font = `bold ${13 * scaleFactor}px Arial`;
+  let curX: number = parseFloat(min.toPrecision(8));
+  const gridLines = true;
+  while (curX <= max) {
+    const xPixel = convertValToPixel(curX, min, max, x1, x2);
+    line(ctx, xPixel, y, xPixel, y + 6 * scaleFactor);
+    ctx.fillText('' + curX, xPixel, y + 18 * scaleFactor);
+    if (gridLines) {
+      ctx.strokeStyle = "#ddd";
+      line(ctx, xPixel, gridLineTop, xPixel, y);
+      ctx.strokeStyle = "#000";
+    }
+    curX = parseFloat((curX + step).toPrecision(8));
+  }
+}
+
+function watermark(ctx: CanvasRenderingContext2D, width: number, height: number): void {
+  const scaleFactor: number = store.state.graph.scaleFactor;
+  ctx.fillStyle = "#000000";
+  ctx.font = `bold ${13 * scaleFactor}px Arial`;
+  ctx.textAlign = "left";
+  ctx.fillText("Made with NZGM", 10 * scaleFactor, height - 10 * scaleFactor);
+  ctx.textAlign = "right";
+  ctx.fillText("jacobtread.github.io/NZGM", width - 10 * scaleFactor, height - 10 * scaleFactor);
+
 
 }
 
@@ -167,9 +219,9 @@ function axisMinMaxStep(min: number, max: number): [number, number, number] {
   if (steps < 5) steps *= 2;
   let step = parseFloat((rangeRound / steps).toPrecision(15));
   if (step == 0) step = 1;
-  let minTick = parseFloat((min / step).toFixed(0)) * step;
+  let minTick = parseInt((min / step).toFixed(0)) * step;
   if (minTick > min) minTick -= step;
-  let maxTick = parseFloat((max / step).toFixed(0)) * step;
+  let maxTick = parseInt((max / step).toFixed(0)) * step;
   if (minTick < min) maxTick += step;
   if (maxTick == minTick) {
     maxTick++;
@@ -179,15 +231,12 @@ function axisMinMaxStep(min: number, max: number): [number, number, number] {
 }
 
 function firstSF /* First Significant Figure */(number: number): number {
-  let multiplier = 1;
   if (number == 0) return 0;
   while (number < 0.1) {
     number *= 10;
-    multiplier /= 10;
   }
   while (number >= 1) {
     number /= 10;
-    multiplier *= 10;
   }
   number = number * 10;
   return parseInt(number.toFixed(0))
