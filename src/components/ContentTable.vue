@@ -53,7 +53,7 @@ export default class ContentTable extends Vue {
   }
 
   mounted(): void {
-    this.$el.onscroll = () => {      
+    this.$el.onscroll = () => {
       var sh = this.$el.scrollHeight;
       var st = this.$el.scrollTop;
       var ht = this.$el.offsetHeight;
