@@ -5,9 +5,7 @@
       <Resizable>
         <ContentTable />
       </Resizable>
-      <div class="graph-wrapper">
-        <Graph />
-      </div>
+      <Graph />
     </main>
   </div>
 </template>
@@ -40,9 +38,5 @@ main {
   display: flex;
   flex-flow: row;
   height: calc(100% - 90px);
-}
-
-.graph-wrapper {
-  flex: auto;
 }
 </style>

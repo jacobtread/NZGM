@@ -42,12 +42,27 @@
         </div>
       </div>
     </div>
+    <div class="header__controls">
+      <div class="select">
+        <label class="select__label">Graph Type</label>
+        <select class="select__input" name="">
+          <option
+            :value="graph.type"
+            v-for="(graph, index) in graphs"
+            :key="index"
+          >
+            {{ graph.name }}
+          </option>
+        </select>
+      </div>
+    </div>
   </header>
 </template>
 
 <script lang="ts">
 import store from "@/store";
 import { Vue } from "vue-class-component";
+import { graphs as graphList } from "../graph";
 
 interface ToolbarItem {
   icon?: string;
@@ -60,6 +75,8 @@ interface ToolbarItem {
 
 export default class Header extends Vue {
   expanded = false;
+
+  graphs = graphList;
 
   toolbar: ToolbarItem[] = [
     {
@@ -95,9 +112,12 @@ export default class Header extends Vue {
             store.state.rows.push(new Array(store.state.cols.length));
           },
         },
-        { name: "Insert Column", action(): void {
-          store.state.cols.push("");
-        } },
+        {
+          name: "Insert Column",
+          action(): void {
+            store.state.cols.push("");
+          },
+        },
       ],
     },
   ];
@@ -141,6 +161,14 @@ export default class Header extends Vue {
   &__content {
     display: flex;
     flex-flow: column;
+    padding: 0.5em;
+  }
+
+  &__controls {
+    flex: auto;
+    justify-content: flex-end;
+    display: flex;
+    flex-flow: row;
     padding: 0.5em;
   }
 }

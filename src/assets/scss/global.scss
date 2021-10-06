@@ -16,3 +16,23 @@
   cursor: col-resize;
   user-select: none;
 }
+
+select {
+  appearance: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 0.5em;
+  position: relative;
+  border: 2px solid $light-gray;
+}
+
+.select {
+  text-align: left;
+
+  &__label {
+    text-align: left;
+    margin: 0.5em 0.5em;
+    display: block;
+  }
+
+}
