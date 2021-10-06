@@ -4,7 +4,7 @@ type RowData = string|number|boolean;
 
 export default createStore({
   state: {
-    cols: [] as string[],
+    cols: [''] as string[],
     rows: [] as RowData[][]
   },
   mutations: {},
