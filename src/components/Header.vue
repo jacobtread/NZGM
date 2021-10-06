@@ -91,11 +91,11 @@ export default class Header extends Vue {
       children: [
         {
           name: "Insert Row",
-          action() {
+          action(): void {
             store.state.rows.push(new Array(store.state.cols.length));
           },
         },
-        { name: "Insert Column", action() {
+        { name: "Insert Column", action(): void {
           store.state.cols.push("");
         } },
       ],

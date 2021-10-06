@@ -13,7 +13,6 @@
 import { Options, Vue } from "vue-class-component";
 import Header from "./components/Header.vue";
 import ContentTable from "./components/ContentTable.vue";
-import store from "./store";
 
 @Options({
   components: {
