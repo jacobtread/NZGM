@@ -1,16 +1,29 @@
+import { GraphType } from "@/graph";
 import { createStore } from "vuex";
 
-export type RowData = string|number|boolean;
+export type RowData = string | number | boolean;
+
+export type GraphData = {
+  type: GraphType | 'none';
+  xAxis: number,
+  yAxis: number,
+}
 
 export type State = {
   rows: RowData[][];
   cols: string[];
+  graph: GraphData;
 }
 
 export default createStore<State>({
   state: {
-    cols: ['Example', 'Example'],
-    rows: [['', '']]
+    cols: ['', ''],
+    rows: [['', '']],
+    graph: {
+      type: 'none',
+      xAxis: 0,
+      yAxis: -1
+    }
   },
   mutations: {},
   actions: {},
