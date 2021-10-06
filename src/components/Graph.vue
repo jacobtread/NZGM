@@ -54,9 +54,22 @@ import { mapState } from "vuex";
   computed: mapState<State>({
     rows: (state: State) => state.rows,
     cols: (state: State) => state.cols,
-    xAxis: (state: State) => state.graph.xAxis,
-    yAxis: (state: State) => state.graph.yAxis,
+    title: (state: State) => state.graph.title,
   }),
+  watch: {
+    title() {
+      this.renderGraph();
+    },
+    xAxis() {
+      this.renderGraph();
+    },
+    yAxis() {
+      this.renderGraph();
+    },
+    size() {
+      this.renderGraph();
+    },
+  },
 })
 export default class Graph extends Vue {
   get size(): number {
@@ -67,24 +80,30 @@ export default class Graph extends Vue {
     store.state.graph.size = value;
   }
 
+  get xAxis(): number {
+    return store.state.graph.xAxis;
+  }
+
+  set xAxis(value: number) {
+    store.state.graph.xAxis = value;
+  }
+
+  get yAxis(): number {
+    return store.state.graph.yAxis;
+  }
+
+  set yAxis(value: number) {
+    store.state.graph.yAxis = value;
+  }
+
   mounted(): void {
     this.resizeGraph();
   }
 
-  getContext(): CanvasRenderingContext2D {
+  resizeGraph() {
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
-    const context: CanvasRenderingContext2D = graphCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    return context;
-  }
-
-  resizeGraph() {
-    const graphCanvas: HTMLElement = document.getElementById(
-      "graphCanvas"
-    ) as HTMLElement;
     store.state.graph.scaleFactor = 1;
     if (this.size == 0) {
       graphCanvas.style.width = "100%";
@@ -103,13 +122,22 @@ export default class Graph extends Vue {
       graphCanvas.style.width = "800px";
       graphCanvas.style.height = "300px";
     }
-    const context = this.getContext();
-    this.renderGraph(context);
+    graphCanvas.width = graphCanvas.offsetWidth;
+    graphCanvas.height = graphCanvas.offsetHeight;
+
+    this.renderGraph();
   }
 
-  renderGraph(ctx: CanvasRenderingContext2D) {
+  renderGraph() {
+    const graphCanvas: HTMLCanvasElement = document.getElementById(
+      "graphCanvas"
+    ) as HTMLCanvasElement;
+    const ctx: CanvasRenderingContext2D = graphCanvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
     const canvas = ctx.canvas;
-    ctx.fillStyle = '#ff0000';
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     dotPlot(ctx);
   }
@@ -145,5 +173,6 @@ export default class Graph extends Vue {
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: black;
+  aspect-ratio: auto 944 / 777;
 }
 </style>

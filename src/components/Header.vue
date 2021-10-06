@@ -7,7 +7,7 @@
     />
     <div class="header__content">
       <div class="graph-name">
-        <input class="graph-name__input" type="text" placeholder="Graph Name" />
+        <input class="graph-name__input" type="text" placeholder="Graph Name" v-model="title" />
       </div>
       <div class="toolbar">
         <div
@@ -77,6 +77,14 @@ export default class Header extends Vue {
   expanded = false;
 
   graphs = graphList;
+
+  set title(value: string) {
+    store.state.graph.title = value;
+  }
+
+  get title(): string {
+    return store.state.graph.title;
+  }
 
   toolbar: ToolbarItem[] = [
     {

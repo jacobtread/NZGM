@@ -119,7 +119,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   }
 
   if (points.length == 0) {
-    alert("NO NUMERIC POINTS ON X-AXIS");
     return;
     // TODO: Implement fail
   }
@@ -143,7 +142,10 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   // TODO : OTHER AXIES
 
   // Graph Title
-
+  ctx.fillStyle = "#000000";
+  ctx.font = `bold ${20 * scaleFactor}px Arial`;
+  ctx.textAlign = "center";
+  ctx.fillText(graphData.title, width / 2, 30 * scaleFactor);
 
 }
 

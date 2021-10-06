@@ -4,6 +4,7 @@ import { createStore } from "vuex";
 export type RowData = string | number | boolean;
 
 export type GraphData = {
+  title: string;
   type: GraphType | 'none';
   xAxis: number;
   yAxis: number;
@@ -22,6 +23,7 @@ export default createStore<State>({
     cols: ['', ''],
     rows: [['', '']],
     graph: {
+      title: '',
       type: 'none',
       xAxis: 0,
       yAxis: -1,
