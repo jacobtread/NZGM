@@ -83,31 +83,24 @@ export const graphs: GraphTypeData[] = [
   },
 ];
 
+let scaleFactor: number;
+
 export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
 
   const graphData: GraphData = store.state.graph;
-  const scaleFactor: number = graphData.scaleFactor;
-  const xAxis: number = graphData.xAxis;
+  scaleFactor = graphData.scaleFactor;
 
-  const rows: RowData[][] = store.state.rows;
+  const xAxis: number = graphData.xAxis;
+  const yAxis: number = graphData.yAxis;
+  const zAxis: number = graphData.zAxis;
+
   const cols: string[] = store.state.cols;
 
-  const points: number[] = []
-  const allPoints: number[] = [];
-  const pointsRemoved: number[] = [];
+  const [points, pointsRemoved] = getNumericPoints(xAxis)
 
-  for (let index = 0; index < rows.length; index++) {
-    const row = rows[index];
-    const value = row[xAxis];
-    if (isNumeric(value)) {
-      points.push(index);
-      allPoints.push(index);
-    } else {
-      pointsRemoved.push(index);
-    }
-  }
+  const allPoints: number[] = [...points];
 
   if (points.length == 0) {
     return;
@@ -119,6 +112,7 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   }
 
   const oYPixel: number = height - 60 * scaleFactor;
+  const maxHeight = height - 120 * scaleFactor;
   const left = 90 * scaleFactor;
   const right = width - 60 * scaleFactor;
 
@@ -140,12 +134,193 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   ctx.font = `bold ${15 * scaleFactor}px Arial`;
   ctx.fillText(cols[xAxis], width / 2, height * 0.5 - 10 * scaleFactor);
 
-  // TODO: Y-Axis Title
+  let yGroups: GroupsData | null = null;
+  let zGroups: GroupsData | null = null;
+
+  const xPoints: RowData[] = getDataForCol(xAxis);
+  const yPoints: RowData[] = getDataForCol(yAxis);
+  const zPoints: RowData[] = getDataForCol(zAxis);
+
+  if (yAxis != -1) {
+    const differentGroups: GroupsData | null = splitData(allPoints, yPoints, 10, "Category 1");
+    if (differentGroups == null) return;
+    yGroups = differentGroups;
+
+    const x = 20 * scaleFactor;
+    const y = height / 2;
+    ctx.save();
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${15 * scaleFactor}px Arial`;
+    ctx.translate(x, y);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = "center";
+    ctx.fillText(cols[yAxis], 0, 0);
+    ctx.restore();
+
+  }
+
+  if (yGroups != null) {
+    if (zAxis != -1) {
+      const differentGroups: GroupsData | null = splitData(allPoints, zPoints, 10, "Category 2");
+      if (differentGroups == null) return;
+      zGroups = differentGroups;
+      const groups = Object.keys(zGroups);
+      let left = 60 * scaleFactor;
+      const eachWidth = (width - 40 * scaleFactor) / groups.length;
+      for (let i = 0; i < groups.length; i++) {
+        const group: string = groups[i];
+        const points: RowData[] = zGroups[group];
+        const right = left + eachWidth;
+        ctx.fillStyle = '#000000';
+        ctx.font = `bold ${15 * scaleFactor}px Arial`;
+        ctx.textAlign = "center";
+        ctx.fillText(group, (left + (right - 50 * scaleFactor)) / 2, oYPixel - maxHeight);
+        plotYSplit(ctx, (left + 30 * scaleFactor), right - 50 * scaleFactor, oYPixel, min, max, step, maxHeight, points as number[], xPoints, yPoints, yGroups);
+        left += eachWidth;
+      }
+    } else {
+      plotYSplit(ctx, left, right, oYPixel, min, max, step, maxHeight, points, xPoints, yPoints, yGroups);
+    }
+
+  }
+
   ctx.strokeStyle = '#000000';
-  axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, min, max, step);
+  // axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, min, max, step);
 
 
   watermark(ctx, width, height)
+}
+
+function plotYSplit(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  right: number,
+  oYPixel: number,
+  minXTick: number,
+  maxXTick: number,
+  xStep: number,
+  maxHeight: number,
+  points: number[],
+  xPoints: RowData[],
+  yPoints: RowData[],
+  yGroups: GroupsData
+) {
+  ctx.strokeStyle = '#000000';
+  axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, minXTick, maxXTick, xStep);
+  if (yPoints.length > 0) {
+    const groups = Object.keys(yGroups);
+    const gMaxHeight = maxHeight / groups.length;
+    for (const group in groups) {
+      const points = yGroups[group];
+      if (points) {
+        // TODO: DOT PLOT
+      }
+      ctx.fillStyle = '#000000';
+      ctx.font = `bold ${15 * scaleFactor}px Arial`;
+      ctx.textAlign = "right";
+      ctx.fillText(group, right + 10 * scaleFactor, oYPixel - gMaxHeight / 2);
+      oYPixel -= gMaxHeight;
+    }
+  }
+}
+
+function getPoints(axis: number): number[] {
+  const rows: RowData[][] = store.state.rows;
+  const points: number[] = []
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index];
+    const value = row[axis];
+    points.push(index);
+  }
+  return points
+}
+
+function getDataForCol(col: number, asNumber = false): RowData[] {
+  const rows: RowData[][] = store.state.rows;
+  const points: RowData[] = []
+  for (let index = 0; index < rows.length; index++) {
+    const row: RowData[] = rows[index];
+    const value: RowData = row[col];
+    if (asNumber && typeof value == 'string') points.push(parseFloat(value))
+    else points.push(value);
+  }
+  return points
+}
+
+
+function getNumericPoints(axis: number): [number[], number[]] {
+  const rows: RowData[][] = store.state.rows;
+  const points: number[] = []
+  const removed: number[] = []
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index];
+    const value = row[axis];
+    if (isNumeric(value)) {
+      points.push(index);
+    } else {
+      removed.push(index);
+    }
+  }
+  return [points, removed]
+}
+
+type GroupsData = {
+  [key: string]: RowData[]
+}
+
+function splitData(points: number[], values: RowData[], max: number, variable: string): GroupsData | null {
+  const differentGroups: GroupsData = {};
+  for (const index in points) {
+    const group: RowData = values[index];
+    if (!differentGroups[group]) differentGroups[group] = [];
+    differentGroups[group].push(index);
+  }
+  let groups: string[] = Object.keys(differentGroups);
+  if (groups.length > max && !isNumeric(groups[0])) {
+    return null; // TODO: ERR SELECT CATEGORICAL VAR WITH MAX OR FEWER GROUPS OR NUMERICAL VAR
+  }
+  if (groups.length > max && max < 4) {
+    return null; // TODO: ERR SELECT CATEGORICAL OR NUMERICAL FOR VAR WITH MAX OR FEWER GROUPS
+  }
+  if (groups.length > max && isNumeric(groups[0])) {
+    const pointsForMinMax: number[] = [];
+    for (const index of points) {
+      let value: RowData = values[index];
+      if (isNumeric(value)) {
+        if (typeof value == 'number') pointsForMinMax.push(value);
+        else if (typeof value == 'string') {
+          value = parseFloat(value);
+          pointsForMinMax.push(value);
+        }
+      }
+    }
+
+    const split0: number = Math.min.apply(null, pointsForMinMax);
+    const split4: number = Math.max.apply(null, pointsForMinMax);
+
+    const d = (split4 - split0) / 4;
+
+    const c1Max: number = parseFloat((split0 + d).toPrecision(2));
+    const c2Max: number = parseFloat((split0 + d * 2).toPrecision(2));
+    const c3Max: number = parseFloat((split0 + d * 3).toPrecision(2));
+
+    for (const index of points) {
+      let group: RowData = values[index];
+      if (!isNumeric(group)) {
+        group = 'invalid';
+      } else {
+        if (typeof group == 'string') group = parseFloat(group);
+        if (group < c1Max) group = 'a: < ' + c1Max;
+        else if (group < c2Max) group = 'b: ' + c1Max + ' - ' + c2Max;
+        else if (group < c3Max) group = 'c: ' + c2Max + ' - ' + c3Max;
+        else group = 'd: > ' + c3Max;
+        if (!differentGroups[group]) differentGroups[group] = [];
+        differentGroups[group].push(index);
+      }
+    }
+    groups = Object.keys(differentGroups);
+  }
+  return differentGroups;
 }
 
 function line(
@@ -173,11 +348,10 @@ function axisHorizontal(
   step: number,
   gridLineTop = 50
 ): void {
-  const scaleFactor: number = store.state.graph.scaleFactor;
   ctx.strokeStyle = '#000000';
   ctx.fillStyle = '#000000';
   ctx.lineWidth = scaleFactor;
-  line(ctx, x1 - 10 * scaleFactor, y, x2 + 10 * scaleFactor, y);
+  line(ctx, x1 + (- 10 * scaleFactor), y, x2 + (10 * scaleFactor), y);
   ctx.font = `bold ${13 * scaleFactor}px Arial`;
   let curX: number = parseFloat(min.toPrecision(8));
   const gridLines = true;
@@ -190,30 +364,29 @@ function axisHorizontal(
       line(ctx, xPixel, gridLineTop, xPixel, y);
       ctx.strokeStyle = "#000";
     }
-    curX = parseFloat((curX + step).toPrecision(8));
+    curX += step;
   }
 }
 
 function watermark(ctx: CanvasRenderingContext2D, width: number, height: number): void {
-  const scaleFactor: number = store.state.graph.scaleFactor;
   ctx.fillStyle = "#000000";
   ctx.font = `bold ${13 * scaleFactor}px Arial`;
   ctx.textAlign = "left";
   ctx.fillText("Made with NZGM", 10 * scaleFactor, height - 10 * scaleFactor);
   ctx.textAlign = "right";
   ctx.fillText("jacobtread.github.io/NZGM", width - 10 * scaleFactor, height - 10 * scaleFactor);
-
-
 }
 
 function axisMinMaxStep(min: number, max: number): [number, number, number] {
   if (min == max) {
+    console.log(min)
     min += 1;
     max += 1;
   }
   const range = max - min;
-  const rangeRound: number = parseInt(range.toPrecision(1));
+  const rangeRound: number = parseFloat(range.toPrecision(1));
   let steps: number = firstSF(rangeRound);
+  console.log(min, max, range, rangeRound, steps)
   if (steps < 2) steps *= 10;
   if (steps < 3) steps *= 5;
   if (steps < 5) steps *= 2;
@@ -230,7 +403,8 @@ function axisMinMaxStep(min: number, max: number): [number, number, number] {
   return [minTick, maxTick, step];
 }
 
-function firstSF /* First Significant Figure */(number: number): number {
+function firstSF(number: number): number {
+  console.log(number)
   if (number == 0) return 0;
   while (number < 0.1) {
     number *= 10;
@@ -238,6 +412,7 @@ function firstSF /* First Significant Figure */(number: number): number {
   while (number >= 1) {
     number /= 10;
   }
-  number = number * 10;
-  return parseInt(number.toFixed(0))
+  number *= 10;
+  console.log(number)
+  return parseFloat(number.toFixed(0))
 }

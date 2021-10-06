@@ -23,6 +23,15 @@
             </option>
           </select>
         </div>
+        <div class="select">
+          <label class="select__label">Z Axis</label>
+          <select class="select__input" name="" v-model="zAxis">
+            <option value="-1">None</option>
+            <option :value="index" v-for="(col, index) in cols" :key="index">
+              {{ col }}
+            </option>
+          </select>
+        </div>
       </div>
       <div class="controls__size">
         <div class="select">
@@ -94,6 +103,13 @@ export default class Graph extends Vue {
 
   set yAxis(value: number) {
     store.state.graph.yAxis = value;
+  }
+  get zAxis(): number {
+    return store.state.graph.zAxis;
+  }
+
+  set zAxis(value: number) {
+    store.state.graph.zAxis = value;
   }
 
   mounted(): void {
