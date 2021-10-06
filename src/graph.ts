@@ -102,6 +102,7 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const yAxis: number = graphData.yAxis;
 
   const rows: RowData[][] = store.state.rows;
+  const cols: string[] = store.state.cols;
 
   const points: number[] = []
   const allPoints: number[] = [];
@@ -146,6 +147,10 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   ctx.font = `bold ${20 * scaleFactor}px Arial`;
   ctx.textAlign = "center";
   ctx.fillText(graphData.title, width / 2, 30 * scaleFactor);
+
+  // X-Axis Title
+  ctx.font = `bold ${15 * scaleFactor}px Arial`;
+  ctx.fillText(cols[xAxis], width / 2,  height * 0.5 - 10 * scaleFactor);
 
 }
 
