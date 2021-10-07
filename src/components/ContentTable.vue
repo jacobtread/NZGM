@@ -77,6 +77,7 @@ export default class ContentTable extends Vue {
     width: 100%;
     min-width: 700px;
     border-collapse: collapse;
+    margin-top: 35px;
 
     tr th,
     tr td {
@@ -90,7 +91,11 @@ export default class ContentTable extends Vue {
       }
     }
     thead {
+      position: absolute;
       background-color: darken($primary, 5);
+      height: 35px;
+      z-index: 1;
+      top: 0;
       th {
         input {
           color: white;
