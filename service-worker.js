@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/NZGM/precache-manifest.5083016d67666b7ab4bbcdcee38a861e.js"
+  "/NZGM/precache-manifest.c7de5f1d23c99dc55cf672e3030efe6f.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "nzgm"});
