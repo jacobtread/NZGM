@@ -10,10 +10,10 @@ function importExample(): void {
   store.state.graph = {
     title: 'Babies Graph',
     type: 'dot-plot',
-    xAxis: 5,
-    yAxis: 4,
+    xAxis: 1,
+    yAxis: -1,
     zAxis: -1,
-    size: 0,
+    size: 2,
     scaleFactor: 1
   }
 
