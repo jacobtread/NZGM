@@ -87,7 +87,7 @@
 <script lang="ts">
 import store from "@/store";
 import { Options, Vue } from "vue-class-component";
-import { graphs as graphList } from "../graph";
+import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
 import {
   hideLoader,

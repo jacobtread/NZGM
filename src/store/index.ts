@@ -1,7 +1,9 @@
-import { GraphType, Settings } from "@/graph";
+import { Settings } from "@/graph/types";
 import { createStore } from "vuex";
 
 export type RowData = string | number;
+export type Column = RowData[];
+export type RowGroup = RowData[]
 
 export type GraphData = {
   title: string;

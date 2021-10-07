@@ -13,11 +13,6 @@
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
 @Options({
-  watch: {
-    open() {
-      console.log("opened");
-    },
-  },
   props: ["open"],
 })
 export default class Dialog extends Vue {

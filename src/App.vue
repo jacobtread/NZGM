@@ -87,7 +87,6 @@ main {
     margin: 0 auto;
   }
 
-
   &__ellipsis {
     display: block;
     margin: 0 auto;

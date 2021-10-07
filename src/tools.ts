@@ -49,17 +49,17 @@ export function axisMinMaxStep(min: number, max: number): [number, number, numbe
     min += 1;
     max += 1;
   }
-  const range = max - min;
+  const range: number = max - min;
   const rangeRound: number = parseFloat(range.toPrecision(1));
   let steps: number = firstSF(rangeRound);
   if (steps < 2) steps *= 10;
   if (steps < 3) steps *= 5;
   if (steps < 5) steps *= 2;
-  let step = parseFloat((rangeRound / steps).toPrecision(15));
+  let step: number = parseFloat((rangeRound / steps).toPrecision(15));
   if (step == 0) step = 1;
-  let minTick = parseInt((min / step).toFixed(0)) * step;
+  let minTick: number = parseInt((min / step).toFixed(0)) * step;
   if (minTick > min) minTick -= step;
-  let maxTick = parseInt((max / step).toFixed(0)) * step;
+  let maxTick: number = parseInt((max / step).toFixed(0)) * step;
   if (minTick < min) maxTick += step;
   if (maxTick == minTick) {
     maxTick++;

@@ -72,7 +72,12 @@
               <span class="checkbox__text">{{ setting.name }}</span>
             </label>
             <label class="slider" for="" v-if="setting.type == 'slider'">
-              <span class="slider__name">{{ setting.name }} <span class="slider__value">{{graphValue.settings.values[setting.key]}}</span></span>
+              <span class="slider__name"
+                >{{ setting.name }}
+                <span class="slider__value">{{
+                  graphValue.settings.values[setting.key]
+                }}</span></span
+              >
               <span class="slider__wrapper">
                 <span class="slider__clamp">{{ setting.min }}</span>
                 <input
@@ -104,10 +109,13 @@
 </template>
 
 <script lang="ts">
-import { addDefaultSettings, graphs, GraphTypeData } from "@/graph";
+import { addDefaultSettings } from "@/graph";
+import { GraphTypeData } from "@/graph/types";
+import graphs from "@/graph/list";
 import store, { GraphData, State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
+import { watermark } from "@/graph";
 @Options({
   computed: mapState<State>({
     rows: (state: State) => state.rows,
@@ -225,6 +233,9 @@ export default class Graph extends Vue {
     const graph = graphs[graphType];
 
     graph.func(ctx);
+
+    watermark(ctx, ctx.canvas.width, ctx.canvas.height);
+
     const data = canvas.toDataURL();
     wrapper.style.backgroundImage = 'url("' + data + '")';
   }
