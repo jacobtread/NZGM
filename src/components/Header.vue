@@ -226,7 +226,7 @@ export default class Header extends Vue {
       min-width: 300px;
       padding: 0.5em;
       background: white;
-      z-index: 1;
+      z-index: 100;
       border: 1px solid $light-gray;
 
       &__separator {
