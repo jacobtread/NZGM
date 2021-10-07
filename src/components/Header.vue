@@ -58,13 +58,38 @@
       </div>
     </div>
   </header>
+  <Dialog v-bind:open="pickURLDialog" @close="pickURLDialog = false">
+    <h1>Enter URL</h1>
+    <p>
+      The provided URL must be a direct/raw link to a <span>.csv</span> file
+    </p>
+    <label class="input">
+      <span class="input__name">URL</span>
+      <input
+        class="input__value"
+        type="url"
+        placeholder="https://example.com/example.csv"
+        v-model="importURL"
+      />
+    </label>
+    <button class="button" @click="importFromURL">Import</button>
+  </Dialog>
+  <input
+    style="display: none;"
+    type="file"
+    placeholder="example.csv"
+    id="fileUpload"
+    accept="csv"
+    @change="importFromFile"
+  />
 </template>
 
 <script lang="ts">
 import store from "@/store";
-import { Vue } from "vue-class-component";
+import { Options, Vue } from "vue-class-component";
 import { graphs as graphList } from "../graph";
-
+import Dialog from "@/components/Dialog.vue";
+import { importCSVFromURL, importFromCSV } from "@/tools";
 interface ToolbarItem {
   icon?: string;
   name?: string;
@@ -74,7 +99,45 @@ interface ToolbarItem {
   expanded?: boolean;
 }
 
+@Options({
+  components: { Dialog },
+})
 export default class Header extends Vue {
+  pickURLDialog = false;
+  importURL = "";
+
+  importFromFile(): void {
+    const fileUpload: HTMLInputElement = document.getElementById(
+      "fileUpload"
+    ) as HTMLInputElement;
+    const files = fileUpload.files;
+    if (!files || files.length < 1) return alert("No files selected");
+    const file = files[0];
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      if (!event.target) return alert("Failed to load file!");
+      var content = event.target.result as string;
+      importFromCSV(content);
+      const rows = store.state.rows;
+      alert(`Imported ${rows.length}row(s)`);
+    };
+  }
+
+  importFromURL(): void {
+    var regex = /^(ftp|http|https):\/\/[^ "]+$/;
+    if (this.importURL.length < 1) return alert("No URL provided!");
+    if (!regex.test(this.importURL)) return alert("Invalid url provided");
+    this.pickURLDialog = false;
+    importCSVFromURL(this.importURL)
+      .then(() => {
+        this.importURL = "";
+        const rows = store.state.rows;
+        alert(`Imported ${rows.length}row(s)`);
+      })
+      .catch(() => alert("Failed to import csv"));
+  }
+
   expanded = false;
 
   graphs = graphList;
@@ -98,10 +161,23 @@ export default class Header extends Vue {
     {
       name: "Data",
       children: [
-        { icon: "file_upload", name: "Open File" },
+        {
+          icon: "file_upload",
+          name: "Open File",
+          action: () => {
+            const fileUpload: HTMLInputElement = document.getElementById(
+              "fileUpload"
+            ) as HTMLInputElement;
+            fileUpload.click();
+          },
+        },
         { icon: "content_paste", name: "Import from clipboard" },
         { icon: "table_chart", name: "Paste Table (Legacy)" },
-        { icon: "link", name: "Paste Link" },
+        {
+          icon: "link",
+          name: "Import from URL",
+          action: () => (this.pickURLDialog = true),
+        },
         { icon: "highlight_alt", name: "Select & Copy Data Table" },
         { icon: "file_download", name: "Download Data" },
         { icon: "save_alt", name: "Save Session" },
@@ -153,8 +229,8 @@ export default class Header extends Vue {
   action(item: ToolbarItem): void {
     if (item.action) {
       item.action();
+      this.closeAll();
     }
-    this.closeAll();
   }
 }
 </script>
@@ -215,6 +291,7 @@ export default class Header extends Vue {
 
   &__menu {
     position: relative;
+    margin-right: 1em;
 
     &__button {
       padding: 0.35em 0.5em;
@@ -276,10 +353,9 @@ export default class Header extends Vue {
   transform: translateY(0);
 }
 
-.menu-enter-from,.menu-leave-to  {
+.menu-enter-from,
+.menu-leave-to {
   opacity: 0;
   transform: translateY(-15px);
 }
-
-
 </style>
