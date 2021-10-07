@@ -13,7 +13,7 @@ export type GraphType = 'pairs-plot'
   | 'residuals-plot'
   | 'time-series';
 
-export type PlottingFunction = (ctx: CanvasRenderingContext2D, settings: Settings) => void;
+export type PlottingFunction = (ctx: CanvasRenderingContext2D) => void;
 
 export type GraphTypeData = {
   name: string;
@@ -57,6 +57,7 @@ export const graphs: { [key: string]: GraphTypeData } = {
     name: 'Dot Plot (& Box & Whisker)',
     func: createDotPlot,
     settings: [
+      { key: 'point-size', name: 'Point Size', type: 'slider', min: 3, max: 19, step: 1, default: 7 },
       { key: 'sum', name: 'Summaries', type: 'toggle' },
       { key: 'box-plot', name: 'Box Plots', type: 'toggle' },
       { key: 'strip-graph', name: 'Strip Graph', type: 'toggle' },
@@ -67,14 +68,11 @@ export const graphs: { [key: string]: GraphTypeData } = {
       { key: 'ci-limits', name: 'C-I Limits', type: 'toggle' },
       { key: 'point-labels', name: 'Point Labels', type: 'toggle' },
       { key: 'mean-dot', name: 'Mean Dot', type: 'toggle' },
-      { key: 'stack-dots', name: 'Stack Dots', type: 'toggle' },
-      { key: 'gridlines', name: 'Gridlines', type: 'toggle' },
+      { key: 'stack-dots', name: 'Stack Dots', type: 'toggle', default: true },
+      { key: 'grid-lines', name: 'Grid Lines', type: 'toggle', default: true },
       { key: 'invert-colours', name: 'Invert Colours', type: 'toggle' },
       { key: 'thick-lines', name: 'Thick Lines', type: 'toggle' },
       { key: 'show-removed', name: 'Show ID of removed points', type: 'toggle' },
-      { key: 'min', name: 'Min', type: 'slider' },
-      { key: 'max', name: 'Max', type: 'slider' },
-      { key: 'text-size', name: 'Text Size', type: 'slider' },
     ]
   },
   'pairs-plot': {
@@ -109,7 +107,7 @@ export const graphs: { [key: string]: GraphTypeData } = {
 let scaleFactor: number;
 let settings: Settings;
 
-export function createDotPlot(ctx: CanvasRenderingContext2D, settings: Settings): void {
+export function createDotPlot(ctx: CanvasRenderingContext2D): void {
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
 
@@ -284,11 +282,11 @@ function plotDotPlot(
 ) {
   ctx.lineWidth = 2 * scaleFactor;
 
-  const stripGraph = false; // TODO: REPLACE WITH SETTINGS
-  const stackedDots = true; // TODO: REPLACE WITH SETTINGS
-  const labels = false; // TODO: REPLACE WITH SETTINGS
+  const stripGraph = settings.bool('strip-graph');
+  const stackedDots = settings.bool('stack-dots');
+  const labels = settings.bool('point-labels');
 
-  const size = 7;
+  const size = settings.num('point-size');
   const radius = size / 2 * scaleFactor
 
   const xValues = [];
@@ -542,7 +540,7 @@ function axisHorizontal(
   line(ctx, x1 + (- 10 * scaleFactor), y, x2 + (10 * scaleFactor), y);
   ctx.font = `bold ${13 * scaleFactor}px Arial`;
   let curX: number = parseFloat(min.toPrecision(8));
-  const gridLines = true; // TODO: REPLACE WITH SETTINGS
+  const gridLines = settings.bool('grid-lines');
   while (curX <= max) {
     const xPixel = convertValToPixel(curX, min, max, x1, x2);
     line(ctx, xPixel, y, xPixel, y + 6 * scaleFactor);

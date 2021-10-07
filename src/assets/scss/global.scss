@@ -53,3 +53,26 @@ select {
   }
 
 }
+
+.slider {
+  text-align: left;
+  display: block;
+  &__name {
+    display: block;
+    margin-bottom: 0.5em;
+  }
+
+  &__wrapper {
+    display: flex;
+  }
+
+  &__clamp {
+    flex: 0 0 auto;
+    margin: 0 0.5em;
+  }
+
+  &__input {
+    flex: auto;
+  }
+
+}

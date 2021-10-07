@@ -71,6 +71,31 @@
               />
               <span class="checkbox__text">{{ setting.name }}</span>
             </label>
+            <label class="slider" for="" v-if="setting.type == 'slider'">
+              <span class="slider__name">{{ setting.name }} <span class="slider__value">{{graphValue.settings.values[setting.key]}}</span></span>
+              <span class="slider__wrapper">
+                <span class="slider__clamp">{{ setting.min }}</span>
+                <input
+                  class="slider__input"
+                  type="range"
+                  name=""
+                  id=""
+                  :min="setting.min"
+                  :max="setting.max"
+                  v-model="graphValue.settings.values[setting.key]"
+                />
+                <span class="slider__clamp">{{ setting.max }}</span>
+              </span>
+            </label>
+            <label class="input" for="" v-if="setting.type == 'number'">
+              <span class="input__name">{{ setting.name }} </span>
+              <input
+                type="number"
+                name=""
+                id=""
+                v-model="graphValue.settings.values[setting.key]"
+              />
+            </label>
           </template>
         </div>
       </div>
@@ -79,11 +104,7 @@
 </template>
 
 <script lang="ts">
-import {
-  addDefaultSettings,
-  graphs,
-  GraphTypeData,
-} from "@/graph";
+import { addDefaultSettings, graphs, GraphTypeData } from "@/graph";
 import store, { GraphData, State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
@@ -124,6 +145,12 @@ import { mapState } from "vuex";
     graph: {
       handler() {
         this.setupSettings();
+      },
+      deep: true,
+    },
+    graphValue: {
+      handler() {
+        this.renderGraph();
       },
       deep: true,
     },
@@ -197,7 +224,7 @@ export default class Graph extends Vue {
     const graphType = this.graphType;
     const graph = graphs[graphType];
 
-    graph.func(ctx, store.state.graph.settings);
+    graph.func(ctx);
     const data = canvas.toDataURL();
     wrapper.style.backgroundImage = 'url("' + data + '")';
   }
@@ -286,7 +313,6 @@ export default class Graph extends Vue {
   position: relative;
   align-items: center;
   justify-content: space-between;
-
 }
 
 .controls__box {
