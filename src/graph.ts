@@ -1,5 +1,6 @@
+import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "./math";
 import store, { GraphData, RowData } from "./store";
-import { isNumeric } from "./tools";
+import { axisMinMaxStep, isNumeric } from "./tools";
 
 export type GraphType = 'pairs-plot'
   | 'dot-plot'
@@ -27,7 +28,7 @@ export const graphs: GraphTypeData[] = [
   {
     name: 'Dot Plot (& Box & Whisker)',
     type: 'dot-plot',
-    func: dotPlot,
+    func: createDotPlot,
     settings: [
       { name: 'Summaries', value: false },
       { name: 'Box Plots', value: false },
@@ -52,40 +53,40 @@ export const graphs: GraphTypeData[] = [
   {
     name: 'Pairs Plot',
     type: 'pairs-plot',
-    func: dotPlot,
+    func: createDotPlot,
     settings: []
   },
   {
     name: 'Bar Graph',
     type: 'bar-graph',
-    func: dotPlot,
+    func: createDotPlot,
     settings: []
   },
   {
     name: 'Histogram',
     type: 'histogram',
-    func: dotPlot,
+    func: createDotPlot,
     settings: []
 
   },
   {
     name: 'Pie Chart',
     type: 'pie-chart',
-    func: dotPlot,
+    func: createDotPlot,
     settings: []
 
   },
   {
     name: 'Scatter Graph',
     type: 'scatter-graph',
-    func: dotPlot,
+    func: createDotPlot,
     settings: []
   },
 ];
 
 let scaleFactor: number;
 
-export function dotPlot(ctx: CanvasRenderingContext2D): void {
+export function createDotPlot(ctx: CanvasRenderingContext2D): void {
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
 
@@ -98,7 +99,7 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   const cols: string[] = store.state.cols;
 
-  const xPoints: RowData[] = getDataForCol(xAxis);
+  const xPoints: number[] = getDataForCol(xAxis) as number[];
   const yPoints: RowData[] = getDataForCol(yAxis);
   const zPoints: RowData[] = getDataForCol(zAxis);
 
@@ -119,9 +120,8 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const left = 90 * scaleFactor;
   const right = width - 60 * scaleFactor;
 
-  const xNumeric = getDataForCol(xAxis, true) as number[];
-  const xMin = Math.min(...xNumeric);
-  const xMax = Math.max(...xNumeric);
+  const xMin = Math.min(...xPoints);
+  const xMax = Math.max(...xPoints);
 
 
   // TODO: Use min max settings
@@ -160,30 +160,29 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   }
 
-  if (yGroups != null) {
-    if (zAxis != -1) {
-      const differentGroups: GroupsData | null = splitData(allPoints, zPoints, 10, "Category 2");
-      if (differentGroups == null) return;
-      zGroups = differentGroups;
-      const groups = Object.keys(zGroups);
-      let left = 60 * scaleFactor;
-      const eachWidth = (width - 40 * scaleFactor) / groups.length;
-      for (let i = 0; i < groups.length; i++) {
-        const group: string = groups[i];
-        const points: RowData[] = zGroups[group];
-        const right = left + eachWidth;
-        ctx.fillStyle = '#000000';
-        ctx.font = `bold ${15 * scaleFactor}px Arial`;
-        ctx.textAlign = "center";
-        ctx.fillText(group, (left + (right - 50 * scaleFactor)) / 2, oYPixel - maxHeight);
-        plotYSplit(ctx, (left + 30 * scaleFactor), right - 50 * scaleFactor, oYPixel, min, max, step, maxHeight, points as number[], xPoints, yPoints, yGroups);
-        left += eachWidth;
-      }
-    } else {
-      plotYSplit(ctx, left, right, oYPixel, min, max, step, maxHeight, points, xPoints, yPoints, yGroups);
+  if (zAxis != -1) {
+    const differentGroups: GroupsData | null = splitData(allPoints, zPoints, 10, "Category 2");
+    if (differentGroups == null) return;
+    zGroups = differentGroups;
+    const groups = Object.keys(zGroups);
+    let left = 60 * scaleFactor;
+    const eachWidth = (width - 40 * scaleFactor) / groups.length;
+    for (let i = 0; i < groups.length; i++) {
+      const group: string = groups[i];
+      const points: RowData[] = zGroups[group];
+      const right = left + eachWidth;
+      ctx.fillStyle = '#000000';
+      ctx.font = `bold ${15 * scaleFactor}px Arial`;
+      ctx.textAlign = "center";
+      ctx.fillText(group, (left + (right - 50 * scaleFactor)) / 2, oYPixel - maxHeight);
+      plotYSplit(ctx, (left + 30 * scaleFactor), right - 50 * scaleFactor, oYPixel, min, max, step, maxHeight, points as number[], xPoints, yPoints, yGroups);
+      left += eachWidth;
     }
-
+  } else {
+    plotYSplit(ctx, left, right, oYPixel, min, max, step, maxHeight, points, xPoints, yPoints, yGroups);
   }
+
+
 
   ctx.strokeStyle = '#000000';
 
@@ -201,13 +200,14 @@ function plotYSplit(
   xStep: number,
   maxHeight: number,
   points: number[],
-  xPoints: RowData[],
+  xPoints: number[],
   yPoints: RowData[],
-  yGroups: GroupsData
+  yGroups: GroupsData | null
 ) {
   ctx.strokeStyle = '#000000';
   axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, minXTick, maxXTick, xStep);
   if (yPoints.length > 0) {
+    if (yGroups == null) return;
     const groups = Object.keys(yGroups);
     groups.sort(sortOrder).reverse();
 
@@ -215,7 +215,7 @@ function plotYSplit(
     for (const group of groups) {
       const points = yGroups[group];
       if (points) {
-        // TODO: DOT PLOT
+        plotDotPlot(ctx, points as number[], xPoints, minXTick, maxXTick, oYPixel, left, right, maxHeight)
       }
       ctx.fillStyle = '#000000';
       ctx.font = `bold ${15 * scaleFactor}px Arial`;
@@ -223,6 +223,131 @@ function plotYSplit(
       ctx.fillText(group, right + 10 * scaleFactor, oYPixel - gMaxHeight / 2);
       oYPixel -= gMaxHeight;
     }
+  } else {
+    plotDotPlot(ctx, points, xPoints, minXTick, maxXTick, oYPixel, left, right, maxHeight)
+  }
+}
+
+function plotDotPlot(
+  ctx: CanvasRenderingContext2D,
+  indexes: number[],
+  values: number[],
+  minXTick: number,
+  maxXTick: number,
+  oYPixel: number,
+  left: number,
+  right: number,
+  maxHeight: number,
+  sort = 2,
+  map = 1,
+) {
+  ctx.lineWidth = 2 * scaleFactor;
+
+  const stripGraph = false; // TODO: REPLACE WITH SETTINGS
+  const stackedDots = true; // TODO: REPLACE WITH SETTINGS
+  const labels = false; // TODO: REPLACE WITH SETTINGS
+
+  const size = 12;
+  const radius = size / 2 * scaleFactor
+
+  const xValues = [];
+  const xPixels = [];
+
+  for (const index of indexes) {
+    xValues.push(index);
+    const value = values[index];
+    const rawPixel = convertValToPixel(value, minXTick, maxXTick, left, right);
+    let xPixel;
+    if (stackedDots) {
+      xPixel = Math.floor(rawPixel / (radius * 2)) * radius * 2;
+    } else {
+      xPixel = Math.floor(rawPixel / (radius * 3)) * radius * 3;
+    }
+    xPixels.push([index, xPixel, rawPixel, value])
+  }
+
+  const lq = lowerQuartile(values);
+  const uq = upperQuartile(values);
+  const med = median(values);
+  const _mean = mean(values);
+
+  const minValue = parseFloat(Math.min(...values).toPrecision(10))
+  const maxValue = parseFloat(Math.max(...values).toPrecision(10))
+
+  const minNO = minNoOutliers(values, lq, uq);
+  const maxNO = maxNoOutliers(values, lq, uq);
+
+  const sd = standardDeviation(values);
+
+  const num = values.length;
+
+  const counts: { [key: number]: number } = {};
+  for (const [xPixel] of xPixels) {
+    if (counts[xPixel]) {
+      counts[xPixel] += 1;
+    } else {
+      counts[xPixel] = 1;
+    }
+  }
+
+  const maxPoints = Math.max(...Object.values(counts));
+  let yPixel = oYPixel;
+  let lastXPixel = 0;
+  let lastYPixel = 0;
+  let yHeight = radius * 2;
+  if ((maxHeight - (10 * scaleFactor)) / maxPoints < yHeight) {
+    yHeight = (maxHeight - (10 * scaleFactor)) / maxPoints;
+  }
+  xPixels.sort((a, b) => a[sort] - b[sort]);
+  let highestkey = -1;
+
+  for (const [index, xPixel, rawPixel, value] of xPixels) {
+    ctx.beginPath();
+    if (lastXPixel == xPixel) {
+      yPixel = yPixel - yHeight;
+    } else {
+      yPixel = oYPixel - (10 * scaleFactor);
+    }
+
+    if (stripGraph) {
+      yPixel = random(
+        oYPixel - (10 * scaleFactor),
+        oYPixel - maxHeight + (10 * screenLeft) + maxHeight * 0.5
+      );
+    }
+
+    lastXPixel = xPixel;
+
+    if (index > highestkey) {
+      lastYPixel = yPixel;
+      highestkey = index;
+    }
+
+    ctx.strokeStyle = '#000000';
+    ctx.arc(rawPixel, yPixel, radius, 0, 2 * Math.PI);
+    ctx.stroke();
+
+
+    if (map) {
+      const map: HTMLMapElement = document.getElementById(
+        "canvasMap"
+      ) as HTMLMapElement;
+      const area: HTMLAreaElement = document.createElement('area');
+      area.shape = 'circle';
+      area.coords = `${(rawPixel / scaleFactor)},${yPixel / scaleFactor},${radius / scaleFactor}`
+      area.alt = `${index}`;
+      map.appendChild(area);
+    }
+
+    if (labels) {
+      ctx.fillStyle = "#0000FF";
+      ctx.font = `bold ${10 * scaleFactor}px Arial`;
+      ctx.textAlign = "left";
+      ctx.fillText(`${value + 1}`, rawPixel + radius + (2 * scaleFactor), yPixel + (4 * scaleFactor))
+    }
+
+
+
   }
 }
 
@@ -375,7 +500,7 @@ function axisHorizontal(
   line(ctx, x1 + (- 10 * scaleFactor), y, x2 + (10 * scaleFactor), y);
   ctx.font = `bold ${13 * scaleFactor}px Arial`;
   let curX: number = parseFloat(min.toPrecision(8));
-  const gridLines = true;
+  const gridLines = true; // TODO: REPLACE WITH SETTINGS
   while (curX <= max) {
     const xPixel = convertValToPixel(curX, min, max, x1, x2);
     line(ctx, xPixel, y, xPixel, y + 6 * scaleFactor);
@@ -398,38 +523,3 @@ function watermark(ctx: CanvasRenderingContext2D, width: number, height: number)
   ctx.fillText("jacobtread.github.io/NZGM", width - 10 * scaleFactor, height - 10 * scaleFactor);
 }
 
-function axisMinMaxStep(min: number, max: number): [number, number, number] {
-  if (min == max) {
-    min += 1;
-    max += 1;
-  }
-  const range = max - min;
-  const rangeRound: number = parseFloat(range.toPrecision(1));
-  let steps: number = firstSF(rangeRound);
-  if (steps < 2) steps *= 10;
-  if (steps < 3) steps *= 5;
-  if (steps < 5) steps *= 2;
-  let step = parseFloat((rangeRound / steps).toPrecision(15));
-  if (step == 0) step = 1;
-  let minTick = parseInt((min / step).toFixed(0)) * step;
-  if (minTick > min) minTick -= step;
-  let maxTick = parseInt((max / step).toFixed(0)) * step;
-  if (minTick < min) maxTick += step;
-  if (maxTick == minTick) {
-    maxTick++;
-    minTick--;
-  }
-  return [minTick, maxTick, step];
-}
-
-function firstSF(number: number): number {
-  if (number == 0) return 0;
-  while (number < 0.1) {
-    number *= 10;
-  }
-  while (number >= 1) {
-    number /= 10;
-  }
-  number *= 10;
-  return parseFloat(number.toFixed(0))
-}

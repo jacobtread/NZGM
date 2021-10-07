@@ -4,7 +4,8 @@
       <i class="material-icons">refresh</i>
     </button>
     <div class="canvas-wrapper" id="canvasWrapper">
-      <canvas id="graphCanvas" />
+      <canvas id="graphCanvas" usesmap="canvas-map" />
+      <map name="canvas-map" id="canvasMap"></map>
     </div>
     <div class="controls">
       <div class="controls__axis">
@@ -58,7 +59,7 @@
 </template>
 
 <script lang="ts">
-import { dotPlot } from "@/graph";
+import { createDotPlot } from "@/graph";
 import store, { State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
@@ -68,7 +69,7 @@ import { mapState } from "vuex";
     cols: (state: State) => state.cols,
     title: (state: State) => state.graph.title,
   }),
-  watch: {    
+  watch: {
     title() {
       this.renderGraph();
     },
@@ -88,15 +89,14 @@ import { mapState } from "vuex";
       handler() {
         this.renderGraph();
       },
-      deep: true
+      deep: true,
     },
     cols: {
       handler() {
         this.renderGraph();
       },
-      deep: true
+      deep: true,
     },
-  
   },
 })
 export default class Graph extends Vue {
@@ -162,8 +162,15 @@ export default class Graph extends Vue {
 
     this.renderGraph();
   }
+  resetMap(): void {
+    const map: HTMLMapElement = document.getElementById(
+      "canvasMap"
+    ) as HTMLMapElement;
+    map.innerHTML = "";
+  }
 
   renderGraph(): void {
+    this.resetMap();
     const wrapper: HTMLElement = document.getElementById(
       "canvasWrapper"
     ) as HTMLElement;
@@ -177,7 +184,7 @@ export default class Graph extends Vue {
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = "#ffffff";
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    dotPlot(ctx);
+    createDotPlot(ctx);
     const data = canvas.toDataURL();
     wrapper.style.backgroundImage = 'url("' + data + '")';
   }
@@ -227,6 +234,15 @@ export default class Graph extends Vue {
 
 .controls__axis {
   margin-right: 1em;
+}
+
+#canvasMap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 99;
 }
 
 #graphCanvas {
