@@ -213,7 +213,7 @@ export default class Graph extends Vue {
   background-color: $light-gray;
   border: none;
   cursor: pointer;
-  z-index: 1;
+  z-index: 2;
 }
 
 .canvas-wrapper {
@@ -242,7 +242,7 @@ export default class Graph extends Vue {
   height: 100%;
   left: 0;
   top: 0;
-  z-index: 99;
+  z-index: 1;
 }
 
 #graphCanvas {
