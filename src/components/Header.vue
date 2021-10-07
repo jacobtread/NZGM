@@ -7,7 +7,12 @@
     />
     <div class="header__content">
       <div class="graph-name">
-        <input class="graph-name__input" type="text" placeholder="Graph Name" v-model="title" />
+        <input
+          class="graph-name__input"
+          type="text"
+          placeholder="Graph Name"
+          v-model="title"
+        />
       </div>
       <div class="toolbar">
         <div
@@ -45,12 +50,8 @@
     <div class="header__controls">
       <div class="select">
         <label class="select__label">Graph Type</label>
-        <select class="select__input" name="">
-          <option
-            :value="graph.type"
-            v-for="(graph, index) in graphs"
-            :key="index"
-          >
+        <select class="select__input" name="" v-model="graphType">
+          <option :value="index" :key="index" v-for="(graph, index) in graphs">
             {{ graph.name }}
           </option>
         </select>
@@ -77,6 +78,13 @@ export default class Header extends Vue {
   expanded = false;
 
   graphs = graphList;
+
+  set graphType(value: string) {
+    store.state.graph.type = value;
+  }
+  get graphType(): string {
+    return store.state.graph.type;
+  }
 
   set title(value: string) {
     store.state.graph.title = value;
@@ -260,4 +268,18 @@ export default class Header extends Vue {
     }
   }
 }
+
+.menu-leave-active,
+.menu-enter-active {
+  transition: all 0.25s;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.menu-enter-from,.menu-leave-to  {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+
 </style>

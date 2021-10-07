@@ -7,16 +7,14 @@ import { importCSVFromURL } from "./tools";
 
 function importExample(): void {
   importCSVFromURL('https://raw.githubusercontent.com/mathsnz/NZGrapher/master/grapher/datasets/Babies.csv').then().catch();
-  store.state.graph = {
-    title: 'Babies Graph',
-    type: 'dot-plot',
-    xAxis: 1,
-    yAxis: -1,
-    zAxis: -1,
-    size: 2,
-    scaleFactor: 1
-  }
-
+  const graph = store.state.graph;
+  graph.title =  'Babies Graph';
+  graph.type = 'dot-plot'
+  graph.xAxis = 1;
+  graph.yAxis = -1;
+  graph.zAxis = -1;
+  graph.size = 2;
+  graph.scaleFactor = 1;
 }
 
 importExample();

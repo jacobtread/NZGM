@@ -27,7 +27,6 @@
             </option>
           </select>
         </div>
-  
       </div>
       <div class="controls__box">
         <div class="select">
@@ -55,13 +54,37 @@
           </select>
         </div>
       </div>
+      <div class="controls__box--long">
+        <label class="controls__box--long__title">Settings</label>
+        <div class="controls__box--long__content">
+          <template
+            v-for="(setting, index) in graphTypeData.settings"
+            :key="index"
+          >
+            <label class="checkbox" v-if="setting.type == 'toggle'">
+              <span class="checkbox__mark"></span>
+              <input
+                class="checkbox__input"
+                type="checkbox"
+                name=""
+                v-model="graphValue.settings.values[setting.key]"
+              />
+              <span class="checkbox__text">{{ setting.name }}</span>
+            </label>
+          </template>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { createDotPlot } from "@/graph";
-import store, { State } from "@/store";
+import {
+  addDefaultSettings,
+  graphs,
+  GraphTypeData,
+} from "@/graph";
+import store, { GraphData, State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
 @Options({
@@ -98,9 +121,87 @@ import { mapState } from "vuex";
       },
       deep: true,
     },
+    graph: {
+      handler() {
+        this.setupSettings();
+      },
+      deep: true,
+    },
   },
 })
 export default class Graph extends Vue {
+  mounted(): void {
+    this.resizeGraph();
+    this.setupSettings();
+  }
+
+  setupSettings() {
+    const graphType = this.graphType;
+    const graph = graphs[graphType];
+    addDefaultSettings(graph.settings);
+  }
+
+  resizeGraph(): void {
+    const graphCanvas: HTMLCanvasElement = document.getElementById(
+      "graphCanvas"
+    ) as HTMLCanvasElement;
+    store.state.graph.scaleFactor = 1;
+    if (this.size == 0) {
+      graphCanvas.style.width = "100%";
+      graphCanvas.style.height = "100%";
+    } else if (this.size == 1) {
+      graphCanvas.style.width = "500%";
+      graphCanvas.style.height = "500%";
+      store.state.graph.scaleFactor = 5;
+    } else if (this.size == 2) {
+      graphCanvas.style.width = "800px";
+      graphCanvas.style.height = "600px";
+    } else if (this.size == 3) {
+      graphCanvas.style.width = "500px";
+      graphCanvas.style.height = "400px";
+    } else if (this.size == 4) {
+      graphCanvas.style.width = "800px";
+      graphCanvas.style.height = "300px";
+    }
+    graphCanvas.width = graphCanvas.offsetWidth;
+    graphCanvas.height = graphCanvas.offsetHeight;
+    this.renderGraph();
+  }
+  resetMap(): void {
+    const map: HTMLMapElement = document.getElementById(
+      "canvasMap"
+    ) as HTMLMapElement;
+    map.innerHTML = "";
+  }
+
+  get graphTypeData(): GraphTypeData {
+    return graphs[this.graphType];
+  }
+
+  renderGraph(): void {
+    this.resetMap();
+    const wrapper: HTMLElement = document.getElementById(
+      "canvasWrapper"
+    ) as HTMLElement;
+    const graphCanvas: HTMLCanvasElement = document.getElementById(
+      "graphCanvas"
+    ) as HTMLCanvasElement;
+    const ctx: CanvasRenderingContext2D = graphCanvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+    const canvas = ctx.canvas;
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = "#ffffff";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const graphType = this.graphType;
+    const graph = graphs[graphType];
+
+    graph.func(ctx, store.state.graph.settings);
+    const data = canvas.toDataURL();
+    wrapper.style.backgroundImage = 'url("' + data + '")';
+  }
+
   get size(): number {
     return store.state.graph.size;
   }
@@ -132,62 +233,12 @@ export default class Graph extends Vue {
     store.state.graph.zAxis = value;
   }
 
-  mounted(): void {
-    this.resizeGraph();
+  get graphType(): string {
+    return store.state.graph.type;
   }
 
-  resizeGraph(): void {
-    const graphCanvas: HTMLCanvasElement = document.getElementById(
-      "graphCanvas"
-    ) as HTMLCanvasElement;
-    store.state.graph.scaleFactor = 1;
-    if (this.size == 0) {
-      graphCanvas.style.width = "100%";
-      graphCanvas.style.height = "100%";
-    } else if (this.size == 1) {
-      graphCanvas.style.width = "500%";
-      graphCanvas.style.height = "500%";
-      store.state.graph.scaleFactor = 5;
-    } else if (this.size == 2) {
-      graphCanvas.style.width = "800px";
-      graphCanvas.style.height = "600px";
-    } else if (this.size == 3) {
-      graphCanvas.style.width = "500px";
-      graphCanvas.style.height = "400px";
-    } else if (this.size == 4) {
-      graphCanvas.style.width = "800px";
-      graphCanvas.style.height = "300px";
-    }
-    graphCanvas.width = graphCanvas.offsetWidth;
-    graphCanvas.height = graphCanvas.offsetHeight;
-
-    this.renderGraph();
-  }
-  resetMap(): void {
-    const map: HTMLMapElement = document.getElementById(
-      "canvasMap"
-    ) as HTMLMapElement;
-    map.innerHTML = "";
-  }
-
-  renderGraph(): void {
-    this.resetMap();
-    const wrapper: HTMLElement = document.getElementById(
-      "canvasWrapper"
-    ) as HTMLElement;
-    const graphCanvas: HTMLCanvasElement = document.getElementById(
-      "graphCanvas"
-    ) as HTMLCanvasElement;
-    const ctx: CanvasRenderingContext2D = graphCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    const canvas = ctx.canvas;
-    ctx.imageSmoothingEnabled = true;
-    ctx.fillStyle = "#ffffff";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    createDotPlot(ctx);
-    const data = canvas.toDataURL();
-    wrapper.style.backgroundImage = 'url("' + data + '")';
+  get graphValue(): GraphData {
+    return store.state.graph;
   }
 }
 </script>
@@ -227,14 +278,41 @@ export default class Graph extends Vue {
 }
 
 .controls {
+  flex: 0 0 auto;
   display: flex;
   flex-flow: row;
   padding: 1em;
   background-color: white;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+
 }
 
 .controls__box {
   margin-right: 1em;
+
+  &--long {
+    flex: auto;
+    display: flex;
+    flex-flow: column;
+
+    &__title {
+      display: block;
+      padding: 0.5em 0;
+      text-align: left;
+      margin-left: 0.25em;
+    }
+
+    &__content {
+      overflow-y: auto;
+      border: 2px solid $light-gray;
+      padding: 0.5em;
+      display: flex;
+      flex-flow: column;
+      max-height: 7em;
+    }
+  }
 }
 
 #canvasMap {

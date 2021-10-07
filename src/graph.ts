@@ -13,85 +13,109 @@ export type GraphType = 'pairs-plot'
   | 'residuals-plot'
   | 'time-series';
 
-export type PlottingFunction = (ctx: CanvasRenderingContext2D) => void;
-
-export type Setting = { name: string; value: boolean | number | string }
+export type PlottingFunction = (ctx: CanvasRenderingContext2D, settings: Settings) => void;
 
 export type GraphTypeData = {
   name: string;
-  type: GraphType;
   func: PlottingFunction;
-  settings: Setting[];
+  settings: SettingDefinition[];
 }
 
-export const graphs: GraphTypeData[] = [
-  {
+export type SettingDefinition = {
+  key: string;
+  name: string;
+  type: 'toggle' | 'slider';
+  min?: number;
+  max?: number;
+  step?: number;
+  default?: string | boolean | number;
+}
+
+export type Settings = {
+  values: {
+    [key: string]: string | boolean | number;
+  };
+  bool(name: string): boolean;
+  str(name: string): string;
+  num(name: string): number;
+}
+
+export function addDefaultSettings(definitions: SettingDefinition[]) {
+  const output = store.state.graph.settings;
+  for (const def of definitions) {
+    if (output.values[def.key] !== undefined) continue;
+    if (def.type == 'toggle') {
+      output.values[def.key] = def.default ?? false;
+    } else if (def.type == 'slider') {
+      output.values[def.key] = def.default ?? def.min ?? 0;
+    }
+  }
+}
+
+export const graphs: { [key: string]: GraphTypeData } = {
+  'dot-plot': {
     name: 'Dot Plot (& Box & Whisker)',
-    type: 'dot-plot',
     func: createDotPlot,
     settings: [
-      { name: 'Summaries', value: false },
-      { name: 'Box Plots', value: false },
-      { name: 'Strip Graph', value: false },
-      { name: 'High Box Plot', value: false },
-      { name: 'Box (No Whisker)', value: false },
-      { name: 'Box (No Outlier)', value: false },
-      { name: 'Informal C-I', value: false },
-      { name: 'C-I Limits', value: false },
-      { name: 'Point Labels', value: false },
-      { name: 'Mean Dot', value: false },
-      { name: 'Stack Dots', value: false },
-      { name: 'Gridlines', value: false },
-      { name: 'Invert Colours', value: false },
-      { name: 'Thick Lines', value: false },
-      { name: 'Show ID of removed points', value: false },
-      { name: 'Min', value: -1 },
-      { name: 'Max', value: -1 },
-      { name: 'Text Size', value: 13 },
+      { key: 'sum', name: 'Summaries', type: 'toggle' },
+      { key: 'box-plot', name: 'Box Plots', type: 'toggle' },
+      { key: 'strip-graph', name: 'Strip Graph', type: 'toggle' },
+      { key: 'high-box-plot', name: 'High Box Plot', type: 'toggle' },
+      { key: 'box-no-whisker', name: 'Box (No Whisker)', type: 'toggle' },
+      { key: 'box-no-outlier', name: 'Box (No Outlier)', type: 'toggle' },
+      { key: 'informal-ci', name: 'Informal C-I', type: 'toggle' },
+      { key: 'ci-limits', name: 'C-I Limits', type: 'toggle' },
+      { key: 'point-labels', name: 'Point Labels', type: 'toggle' },
+      { key: 'mean-dot', name: 'Mean Dot', type: 'toggle' },
+      { key: 'stack-dots', name: 'Stack Dots', type: 'toggle' },
+      { key: 'gridlines', name: 'Gridlines', type: 'toggle' },
+      { key: 'invert-colours', name: 'Invert Colours', type: 'toggle' },
+      { key: 'thick-lines', name: 'Thick Lines', type: 'toggle' },
+      { key: 'show-removed', name: 'Show ID of removed points', type: 'toggle' },
+      { key: 'min', name: 'Min', type: 'slider' },
+      { key: 'max', name: 'Max', type: 'slider' },
+      { key: 'text-size', name: 'Text Size', type: 'slider' },
     ]
   },
-  {
+  'pairs-plot': {
     name: 'Pairs Plot',
-    type: 'pairs-plot',
     func: createDotPlot,
     settings: []
   },
-  {
+  'bar-graph': {
     name: 'Bar Graph',
-    type: 'bar-graph',
     func: createDotPlot,
     settings: []
   },
-  {
+  'histogram': {
     name: 'Histogram',
-    type: 'histogram',
     func: createDotPlot,
     settings: []
 
   },
-  {
+  'pie-chart': {
     name: 'Pie Chart',
-    type: 'pie-chart',
     func: createDotPlot,
     settings: []
 
   },
-  {
+  'scatter-graph': {
     name: 'Scatter Graph',
-    type: 'scatter-graph',
     func: createDotPlot,
     settings: []
   },
-];
+};
 
 let scaleFactor: number;
+let settings: Settings;
 
-export function createDotPlot(ctx: CanvasRenderingContext2D): void {
+export function createDotPlot(ctx: CanvasRenderingContext2D, settings: Settings): void {
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
 
   const graphData: GraphData = store.state.graph;
   scaleFactor = graphData.scaleFactor;
+  settings = graphData.settings;
 
   const xAxis: number = graphData.xAxis;
   const yAxis: number = graphData.yAxis;
@@ -105,21 +129,38 @@ export function createDotPlot(ctx: CanvasRenderingContext2D): void {
 
   const [points, pointsRemoved] = getNumericPoints(xAxis)
   const allPoints: number[] = [...points];
+  const left = 90 * scaleFactor;
+  const right = width - 60 * scaleFactor;
 
   if (points.length == 0) {
+    ctx.fillStyle = "#FF0000";
+    ctx.font = `bold ${20 * scaleFactor}px Arial`;
+    ctx.textAlign = "center";
+    ctx.fillText("No Numeric Data Selected", width / 2, height / 2 - 45 * scaleFactor);
+    ctx.fillStyle = "#666666";
+    ctx.font = `bold ${15 * scaleFactor}px Arial`;
+    ctx.fillText("the 𝑥 axis requires numeric data", width / 2, height / 2 - 15 * scaleFactor);
+    ctx.fillText("to render a graph", width / 2, height / 2 + 15 * scaleFactor);
     return;
-    // TODO: Implement fail
   }
 
   if (pointsRemoved.length != 0) {
+    ctx.fillStyle = "#FF0000";
+    ctx.font = `bold ${10 * scaleFactor}px Arial`;
+    ctx.textAlign = "left";
+    ctx.fillText("Some non numeric data was present", left, 30 * scaleFactor);
+    ctx.fillText("at the following rows:", left, 45 * scaleFactor);
+    ctx.fillStyle = "#666666";
+    let y = 60 * scaleFactor;
+    for (const point of pointsRemoved) {
+      ctx.fillText(point + " = " + xPoints[point], left, y);
+      y += 15 * scaleFactor;
+    }
     // TODO: Removed points logic
   }
 
   const oYPixel: number = height - 60 * scaleFactor;
   const maxHeight = height - 120 * scaleFactor;
-  const left = 90 * scaleFactor;
-  const right = width - 60 * scaleFactor;
-
   const xMin = Math.min(...xPoints);
   const xMax = Math.max(...xPoints);
 
@@ -377,6 +418,7 @@ function getNumericPoints(axis: number): [number[], number[]] {
   for (let index = 0; index < rows.length; index++) {
     const row = rows[index];
     const value = row[axis];
+    if (value === undefined && index == rows.length - 1) continue;
     if (isNumeric(value)) {
       points.push(index);
     } else {
