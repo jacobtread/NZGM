@@ -36,3 +36,20 @@ select {
   }
 
 }
+
+.checkbox {
+  margin: 0.25em 0.5em;
+  display: inline-block;
+  text-align: left;
+  
+  &__input {
+
+  }
+
+  &__text {
+    margin-left: 0.75em;
+    display: inline-block;
+    user-select: none;
+  }
+
+}
