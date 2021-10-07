@@ -82,7 +82,7 @@
                   id=""
                   :min="setting.min"
                   :max="setting.max"
-                  v-model="graphValue.settings.values[setting.key]"
+                  v-model.lazy="graphValue.settings.values[setting.key]"
                 />
                 <span class="slider__clamp">{{ setting.max }}</span>
               </span>

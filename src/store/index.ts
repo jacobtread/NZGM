@@ -18,12 +18,20 @@ export type State = {
   rows: RowData[][];
   cols: string[];
   graph: GraphData;
+  loading: {
+    show: boolean;
+    message: string;
+  }
 }
 
 export default createStore<State>({
   state: {
     cols: ['', ''],
     rows: [['', '']],
+    loading: {
+      show: false,
+      message: ''
+    },
     graph: {
       title: '',
       type: 'dot-plot',

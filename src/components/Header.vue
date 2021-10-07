@@ -11,7 +11,7 @@
           class="graph-name__input"
           type="text"
           placeholder="Graph Name"
-          v-model="title"
+          v-model.lazy="title"
         />
       </div>
       <div class="toolbar">
@@ -75,7 +75,7 @@
     <button class="button" @click="importFromURL">Import</button>
   </Dialog>
   <input
-    style="display: none;"
+    style="display: none"
     type="file"
     placeholder="example.csv"
     id="fileUpload"
@@ -89,7 +89,7 @@ import store from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { graphs as graphList } from "../graph";
 import Dialog from "@/components/Dialog.vue";
-import { importCSVFromURL, importFromCSV } from "@/tools";
+import { hideLoader, importCSVFromURL, importFromCSV, showLoader } from "@/tools";
 interface ToolbarItem {
   icon?: string;
   name?: string;
@@ -114,6 +114,7 @@ export default class Header extends Vue {
     if (!files || files.length < 1) return alert("No files selected");
     const file = files[0];
     const reader = new FileReader();
+    showLoader("Loading File");
     reader.readAsText(file);
     reader.onload = (event: ProgressEvent<FileReader>) => {
       if (!event.target) return alert("Failed to load file!");
@@ -121,6 +122,7 @@ export default class Header extends Vue {
       importFromCSV(content);
       const rows = store.state.rows;
       alert(`Imported ${rows.length}row(s)`);
+      hideLoader();
     };
   }
 
