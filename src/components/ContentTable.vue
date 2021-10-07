@@ -9,9 +9,9 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, index) in rows" :key="index" @click="select(row)">
+        <tr v-for="(_, rindex) in rows" :key="rindex" @click="select(row)">
           <td v-for="(_, index) in cols" :key="index">
-            <input type="text" v-model="row[index]" />
+            <input type="text" v-model="rows[rindex][index]" />
           </td>
         </tr>
       </tbody>

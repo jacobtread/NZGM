@@ -1,6 +1,8 @@
 <template>
   <div class="graph-wrapper">
-    <button class="refresh-button" @click="resizeGraph"><i class="material-icons">refresh</i></button>
+    <button class="refresh-button" @click="resizeGraph">
+      <i class="material-icons">refresh</i>
+    </button>
     <div class="canvas-wrapper" id="canvasWrapper">
       <canvas id="graphCanvas" />
     </div>
@@ -66,7 +68,7 @@ import { mapState } from "vuex";
     cols: (state: State) => state.cols,
     title: (state: State) => state.graph.title,
   }),
-  watch: {
+  watch: {    
     title() {
       this.renderGraph();
     },
@@ -76,9 +78,25 @@ import { mapState } from "vuex";
     yAxis() {
       this.renderGraph();
     },
+    zAxis() {
+      this.renderGraph();
+    },
     size() {
       this.renderGraph();
     },
+    rows: {
+      handler() {
+        this.renderGraph();
+      },
+      deep: true
+    },
+    cols: {
+      handler() {
+        this.renderGraph();
+      },
+      deep: true
+    },
+  
   },
 })
 export default class Graph extends Vue {
@@ -146,7 +164,9 @@ export default class Graph extends Vue {
   }
 
   renderGraph(): void {
-    const wrapper: HTMLElement = document.getElementById('canvasWrapper') as HTMLElement;
+    const wrapper: HTMLElement = document.getElementById(
+      "canvasWrapper"
+    ) as HTMLElement;
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
@@ -159,7 +179,7 @@ export default class Graph extends Vue {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     dotPlot(ctx);
     const data = canvas.toDataURL();
-    wrapper.style.backgroundImage = 'url("'+data+'")';
+    wrapper.style.backgroundImage = 'url("' + data + '")';
   }
 }
 </script>
@@ -180,7 +200,7 @@ export default class Graph extends Vue {
 .refresh-button {
   position: absolute;
   right: 0;
-  top:0 ;
+  top: 0;
   padding: 0.45em 0.55em;
   color: gray;
   background-color: $light-gray;
