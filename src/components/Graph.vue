@@ -1,5 +1,6 @@
 <template>
   <div class="graph-wrapper">
+    <button class="refresh-button" @click="resizeGraph"><i class="material-icons">refresh</i></button>
     <div class="canvas-wrapper" id="canvasWrapper">
       <canvas id="graphCanvas" />
     </div>
@@ -164,6 +165,8 @@ export default class Graph extends Vue {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/variables.scss";
+
 .graph-wrapper {
   flex: auto;
   display: flex;
@@ -171,6 +174,19 @@ export default class Graph extends Vue {
   height: 100%;
   margin: 0;
   padding: 0;
+  position: relative;
+}
+
+.refresh-button {
+  position: absolute;
+  right: 0;
+  top:0 ;
+  padding: 0.45em 0.55em;
+  color: gray;
+  background-color: $light-gray;
+  border: none;
+  cursor: pointer;
+  z-index: 1;
 }
 
 .canvas-wrapper {
@@ -187,6 +203,10 @@ export default class Graph extends Vue {
   flex-flow: row;
   padding: 1em;
   background-color: white;
+}
+
+.controls__axis {
+  margin-right: 1em;
 }
 
 #graphCanvas {
