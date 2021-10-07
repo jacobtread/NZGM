@@ -8,7 +8,7 @@
       <map name="canvas-map" id="canvasMap"></map>
     </div>
     <div class="controls">
-      <div class="controls__axis">
+      <div class="controls__box">
         <div class="select">
           <label class="select__label">X Axis</label>
           <select class="select__input" name="" v-model="xAxis">
@@ -27,6 +27,9 @@
             </option>
           </select>
         </div>
+  
+      </div>
+      <div class="controls__box">
         <div class="select">
           <label class="select__label">Z Axis</label>
           <select class="select__input" name="" v-model="zAxis">
@@ -36,8 +39,6 @@
             </option>
           </select>
         </div>
-      </div>
-      <div class="controls__size">
         <div class="select">
           <label class="select__label">Size</label>
           <select
@@ -232,7 +233,7 @@ export default class Graph extends Vue {
   background-color: white;
 }
 
-.controls__axis {
+.controls__box {
   margin-right: 1em;
 }
 

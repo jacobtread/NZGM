@@ -247,7 +247,7 @@ function plotDotPlot(
   const stackedDots = true; // TODO: REPLACE WITH SETTINGS
   const labels = false; // TODO: REPLACE WITH SETTINGS
 
-  const size = 12;
+  const size = 7;
   const radius = size / 2 * scaleFactor
 
   const xValues = [];
