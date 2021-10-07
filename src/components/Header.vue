@@ -89,7 +89,12 @@ import store from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { graphs as graphList } from "../graph";
 import Dialog from "@/components/Dialog.vue";
-import { hideLoader, importCSVFromURL, importFromCSV, showLoader } from "@/tools";
+import {
+  hideLoader,
+  importCSVFromURL,
+  importFromCSV,
+  showLoader,
+} from "@/tools";
 interface ToolbarItem {
   icon?: string;
   name?: string;
@@ -173,7 +178,25 @@ export default class Header extends Vue {
             fileUpload.click();
           },
         },
-        { icon: "content_paste", name: "Import from clipboard" },
+        {
+          icon: "content_paste",
+          name: "Import from clipboard",
+          action: () => {
+            if ("navigator" in window) {
+              showLoader("Loading Clipboard Contents");
+              navigator.clipboard
+                .readText()
+                .then((text) => {
+                  hideLoader();
+                  importFromCSV(text);
+                })
+                .catch((err) => {
+                  hideLoader();
+                  alert("Unable to read contents from clipboard: " + err);
+                });
+            }
+          },
+        },
         { icon: "table_chart", name: "Paste Table (Legacy)" },
         {
           icon: "link",
