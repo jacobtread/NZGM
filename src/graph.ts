@@ -98,8 +98,11 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   const cols: string[] = store.state.cols;
 
-  const [points, pointsRemoved] = getNumericPoints(xAxis)
+  const xPoints: RowData[] = getDataForCol(xAxis);
+  const yPoints: RowData[] = getDataForCol(yAxis);
+  const zPoints: RowData[] = getDataForCol(zAxis);
 
+  const [points, pointsRemoved] = getNumericPoints(xAxis)
   const allPoints: number[] = [...points];
 
   if (points.length == 0) {
@@ -116,8 +119,10 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   const left = 90 * scaleFactor;
   const right = width - 60 * scaleFactor;
 
-  const xMin = Math.min.apply(null, points);
-  const xMax = Math.max.apply(null, points);
+  const xNumeric = getDataForCol(xAxis, true) as number[];
+  const xMin = Math.min(...xNumeric);
+  const xMax = Math.max(...xNumeric);
+
 
   // TODO: Use min max settings
   const [min, max, step] = axisMinMaxStep(xMin, xMax);
@@ -136,10 +141,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
 
   let yGroups: GroupsData | null = null;
   let zGroups: GroupsData | null = null;
-
-  const xPoints: RowData[] = getDataForCol(xAxis);
-  const yPoints: RowData[] = getDataForCol(yAxis);
-  const zPoints: RowData[] = getDataForCol(zAxis);
 
   if (yAxis != -1) {
     const differentGroups: GroupsData | null = splitData(allPoints, yPoints, 10, "Category 1");
@@ -185,7 +186,6 @@ export function dotPlot(ctx: CanvasRenderingContext2D): void {
   }
 
   ctx.strokeStyle = '#000000';
-  // axisHorizontal(ctx, left, right, oYPixel + 10 * scaleFactor, min, max, step);
 
 
   watermark(ctx, width, height)
@@ -210,7 +210,7 @@ function plotYSplit(
   if (yPoints.length > 0) {
     const groups = Object.keys(yGroups);
     groups.sort(sortOrder).reverse();
-    
+
     const gMaxHeight = maxHeight / groups.length;
     for (const group of groups) {
       const points = yGroups[group];
@@ -226,25 +226,20 @@ function plotYSplit(
   }
 }
 
-function getPoints(axis: number): number[] {
-  const rows: RowData[][] = store.state.rows;
-  const points: number[] = []
-  for (let index = 0; index < rows.length; index++) {
-    const row = rows[index];
-    const value = row[axis];
-    points.push(index);
-  }
-  return points
-}
 
 function getDataForCol(col: number, asNumber = false): RowData[] {
+  if (col == -1) return [];
   const rows: RowData[][] = store.state.rows;
   const points: RowData[] = []
   for (let index = 0; index < rows.length; index++) {
     const row: RowData[] = rows[index];
     const value: RowData = row[col];
-    if (asNumber && typeof value == 'string') points.push(parseFloat(value))
-    else points.push(value);
+    if (value === undefined) continue;
+    if (asNumber && typeof value == 'string') {
+      points.push(parseFloat(value));
+    } else {
+      points.push(value);
+    }
   }
   return points
 }
@@ -390,7 +385,7 @@ function axisHorizontal(
       line(ctx, xPixel, gridLineTop, xPixel, y);
       ctx.strokeStyle = "#000";
     }
-    curX += step;
+    curX = parseFloat((curX + step).toPrecision(8));
   }
 }
 

@@ -155,7 +155,7 @@ export default class Graph extends Vue {
     const canvas = ctx.canvas;
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     dotPlot(ctx);
     const data = canvas.toDataURL();
     wrapper.style.backgroundImage = 'url("'+data+'")';
