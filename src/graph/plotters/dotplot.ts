@@ -199,14 +199,14 @@ function renderData(
   if (settings.bool('sum')) {
     const y = baseline - h;
     const textSize: number = settings.num('sum-text-size');
-    text(ctx, `min: ${minValue}`, textSize, left - scale(60), y - (4 * textSize), "left", "#FF0000")
-    text(ctx, `max: ${maxValue}`, textSize, left - scale(60), y - (3 * textSize), "left", "#FF0000")
-    text(ctx, `mean: ${mea}`, textSize, left - scale(60), y - (2 * textSize), "left", "#FF0000")
-    text(ctx, `med: ${med}`, textSize, left - scale(60), y - textSize, "left", "#FF0000")
+    text(ctx, `min: ${minValue}`, textSize, left - scale(60), y - scale(4 * textSize), "left", "#FF0000")
+    text(ctx, `max: ${maxValue}`, textSize, left - scale(60), y - scale(3 * textSize), "left", "#FF0000")
+    text(ctx, `mean: ${mea}`, textSize, left - scale(60), y - scale(2 * textSize), "left", "#FF0000")
+    text(ctx, `med: ${med}`, textSize, left - scale(60), y - scale(textSize), "left", "#FF0000")
     text(ctx, `lq: ${lq}`, textSize, left - scale(60), y, "left", "#FF0000")
-    text(ctx, `uq: ${uq}`, textSize, left - scale(60), y + (textSize), "left", "#FF0000")
-    text(ctx, `sd: ${sd}`, textSize, left - scale(60), y + (2 * textSize), "left", "#FF0000")
-    text(ctx, `num: ${count}`, textSize, left - scale(60), y + (3 * textSize), "left", "#FF0000")
+    text(ctx, `uq: ${uq}`, textSize, left - scale(60), y + scale(textSize), "left", "#FF0000")
+    text(ctx, `sd: ${sd}`, textSize, left - scale(60), y + scale(2 * textSize), "left", "#FF0000")
+    text(ctx, `num: ${count}`, textSize, left - scale(60), y + scale(3 * textSize), "left", "#FF0000")
   }
 
   const informalCI: boolean = settings.bool('informal-ci');
@@ -234,6 +234,15 @@ function renderData(
       text(ctx, `${maxIn}`, 10, maxGraph, y, "left", "#0000FF")
     }
 
+  }
+
+  if (settings.bool('mean-dot')) {
+    const meanGraph: number = dataToPixel(mea, min, max, left, right);
+    ctx.fillStyle = '#FF0000';
+    ctx.beginPath();
+    ctx.arc(meanGraph, baseline - scale(5), scale(7), 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fill();
   }
 
 }
