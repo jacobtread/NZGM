@@ -1,6 +1,6 @@
 import store, { GraphData, RowGroup } from "@/store";
 import { DataGroups, Settings } from "@/graph/types";
-import { dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
+import { box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
 import { axisMinMaxStep } from "@/tools";
 import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/math";
 
@@ -136,28 +136,90 @@ function renderData(
   const minNOGraph: number = dataToPixel(minNO, min, max, left, right);
   const maxNOGraph: number = dataToPixel(maxNO, min, max, left, right);
 
-  const boxPlot: boolean = settings.bool('box-plot');
-  if (boxPlot) {
 
-    const y = baseline - maxHeight * 0.1;
-    const h = maxHeight * 0.1;
+  const h: number = maxHeight * 0.1;
 
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = scale(1);
-    line(ctx, minGraph, y - scale(5), minGraph, y + scale(5));
-    line(ctx, lqGraph, y - h, lqGraph, y + h);
-    line(ctx, medGraph, y - h, medGraph, y + h);
-    line(ctx, uqGraph, y - h, uqGraph, y + h);
-    line(ctx, maxGraph, y - scale(5), maxGraph, y + scale(5));
+  if (settings.bool('box-plot')) {
+    drawBoxPlot(
+      ctx,
+      minGraph,
+      maxGraph,
+      lqGraph,
+      uqGraph,
+      medGraph,
+      baseline - maxHeight * 0.1,
+      h
+    )
+  }
 
-    line(ctx, minGraph, y, lqGraph, y);
+  if (settings.bool('high-box-plot')) {
+    drawBoxPlot(
+      ctx,
+      minGraph,
+      maxGraph,
+      lqGraph,
+      uqGraph,
+      medGraph,
+      baseline - maxHeight * 0.8,
+      h
+    )
+  }
 
-    line(ctx, lqGraph, y + h, uqGraph, y + h);
-    line(ctx, lqGraph, y - h, uqGraph, y - h);
-    line(ctx, uqGraph, y, maxGraph, y);
+  if (settings.bool('box-no-whisker')) {
+    drawBoxPlot(
+      ctx,
+      minGraph,
+      maxGraph,
+      lqGraph,
+      uqGraph,
+      medGraph,
+      baseline - maxHeight * 0.1,
+      h,
+      false
+    );
+  }
+  if (settings.bool('box-no-outlier')) {
+    drawBoxPlot(
+      ctx,
+      minNOGraph,
+      maxNOGraph,
+      lqGraph,
+      uqGraph,
+      medGraph,
+      baseline - maxHeight * 0.1,
+      h
+    );
   }
 
 
+}
+
+function drawBoxPlot(
+  ctx: CanvasRenderingContext2D,
+  min: number,
+  max: number,
+  lq: number,
+  uq: number,
+  med: number,
+  y: number,
+  h: number,
+  whisker = true,
+) {
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = scale(1);
+  // Quartile
+  box(ctx, lq, y - h, uq, y + h)
+  // Median Line
+  line(ctx, med, y - h, med, y + h);
+  if (whisker) {
+    // Left Whisker
+    line(ctx, min, y, lq, y); // Line
+    line(ctx, min, y - scale(5), min, y + scale(5)); // Cap
+
+    // Right Whisker
+    line(ctx, uq, y, max, y); // Line
+    line(ctx, max, y - scale(5), max, y + scale(5)); // Cap
+  }
 }
 
 function renderGraph(
@@ -212,23 +274,25 @@ export function createDotPlot(ctx: CanvasRenderingContext2D) {
   const [yPoints, ySkipped]: [RowGroup, RowGroup] = getColumnData(yColumn);
   const [zPoints, zSkipped]: [RowGroup, RowGroup] = getColumnData(zColumn);
 
+  const skipped: RowGroup = [...xSkipped, ...ySkipped, ...zSkipped];
+
   const left = scale(90);
   const right = width - scale(60);
 
   if (xPoints.length == 0) { // No Numeric Data Provided
     text(ctx, "No Numeric Data Selected", 20, width / 2, (height / 2) - scale(45), "center", "#FF0000");
-    text(ctx, "the 𝑥 axis requires numeric data", 15, width / 2, (height / 2) - scale(15), "left", "#666666");
-    text(ctx, "to render a graph", 15, width / 2, (height / 2) + scale(15), "left", "#666666");
+    text(ctx, "the 𝑥 axis requires numeric data", 15, width / 2, (height / 2) - scale(15), "center", "#666666");
+    text(ctx, "to render a graph", 15, width / 2, (height / 2) + scale(15), "center", "#666666");
     return; // Dont continue rendering;
   }
 
-  if (xSkipped.length != 0) { // Some data was not numeric
+  if (skipped.length != 0) { // Some data was not numeric
 
     text(ctx, "Some non numeric data was present", 10, left, scale(30), "center", "#FF0000");
     text(ctx, "at the following rows:", 10, left, scale(45), "center", "#FF0000");
 
     let y: number = scale(60);
-    for (const index of xSkipped) {
+    for (const index of skipped) {
       // Print out the row indexes
       text(ctx, `${index}`, 10, left, y, "center", "#666666");
       y += scale(15);

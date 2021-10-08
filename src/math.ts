@@ -63,7 +63,7 @@ export function minNoOutliers(values: number[], lq: number, uq: number): number 
 }
 
 export function maxNoOutliers(values: number[], lq: number, uq: number): number {
-  values.sort((a, b) => a - b);
+  values.sort((a, b) => b - a);
   let max = values[0];
   let i = 0;
   while (i < values.length && max > uq + 1.5 * (uq - lq)) {

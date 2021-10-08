@@ -229,6 +229,18 @@ export function line(
   ctx.stroke();
 }
 
+export function box(
+  ctx: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number
+) {
+  ctx.beginPath();
+  ctx.rect(x1, y1, x2 - x1, y2 - y1);
+  ctx.stroke();
+}
+
 export function watermark(
   ctx: CanvasRenderingContext2D,
   width: number,
