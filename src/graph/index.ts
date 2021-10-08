@@ -112,12 +112,12 @@ export function numericMax(values: RowGroup): number {
   return maxValue;
 }
 
-export function getColumnData(column: number): [RowGroup, RowGroup] {
+export function getColumnData(column: number): [RowGroup, number[]] {
   if (column == -1) return [[], []]; /* Ignore none columns */
   const rows: RowData[][] = store.state.rows;
   const values: RowGroup = [];
-  const skipped: RowGroup = [];
-  for (const index in rows) {
+  const skipped: number[] = [];
+  for (let index = 0; index < rows.length; index++) {
     const row: RowGroup = rows[index];
     const value: RowData = row[column];
     if (isEmptyRow(row)) continue;
@@ -131,12 +131,12 @@ export function getColumnData(column: number): [RowGroup, RowGroup] {
   return [values, skipped];
 }
 
-export function getColumnDataNumeric(column: number): [number[], RowGroup] {
+export function getColumnDataNumeric(column: number): [number[], number[]] {
   if (column == -1) return [[], []]; /* Ignore none columns */
   const rows: RowData[][] = store.state.rows;
   const values: number[] = [];
-  const skipped: RowGroup = [];
-  for (const index in rows) {
+  const skipped: number[] = [];
+  for (let index = 0; index < rows.length; index++) {
     const row: RowGroup = rows[index];
     const value: RowData = row[column];
     if (isEmptyRow(row)) continue;
