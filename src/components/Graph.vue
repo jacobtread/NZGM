@@ -1,10 +1,16 @@
 <template>
   <div class="graph-wrapper">
-    <button class="refresh-button" @click="resizeGraph">
-      <i class="material-icons">refresh</i>
-    </button>
+    <div class="buttons">
+      <button class="button" @click="download">
+        <i class="material-icons">download</i>
+      </button>
+      <button class="button" @click="resizeGraph">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
     <div class="canvas-wrapper" id="canvasWrapper">
-      <canvas id="graphCanvas" usesmap="canvas-map" />
+      <img id="graph" src="" alt="" />
+      <canvas id="graphCanvas" usemap="#canvas-map" />
       <map name="canvas-map" id="canvasMap"></map>
     </div>
     <div class="controls">
@@ -116,6 +122,7 @@ import store, { GraphData, State } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import { mapState } from "vuex";
 import { watermark } from "@/graph";
+import { hideLoader, showLoader } from "@/tools";
 @Options({
   computed: mapState<State>({
     rows: (state: State) => state.rows,
@@ -181,12 +188,14 @@ export default class Graph extends Vue {
       "graphCanvas"
     ) as HTMLCanvasElement;
     store.state.graph.scaleFactor = 1;
+    graphCanvas.style.transform = "scale(1) translate(-50%,-50%)";
     if (this.size == 0) {
       graphCanvas.style.width = "100%";
       graphCanvas.style.height = "100%";
     } else if (this.size == 1) {
       graphCanvas.style.width = "500%";
       graphCanvas.style.height = "500%";
+      graphCanvas.style.transform = "scale(0.2) translate(-250%, -250%)";
       store.state.graph.scaleFactor = 5;
     } else if (this.size == 2) {
       graphCanvas.style.width = "800px";
@@ -202,6 +211,7 @@ export default class Graph extends Vue {
     graphCanvas.height = graphCanvas.offsetHeight;
     this.renderGraph();
   }
+  
   resetMap(): void {
     const map: HTMLMapElement = document.getElementById(
       "canvasMap"
@@ -217,7 +227,10 @@ export default class Graph extends Vue {
     this.resetMap();
     const wrapper: HTMLElement = document.getElementById(
       "canvasWrapper"
-    ) as HTMLElement;
+    ) as HTMLImageElement;
+    const graphImg: HTMLImageElement = document.getElementById(
+      "graph"
+    ) as HTMLImageElement;
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
@@ -225,9 +238,15 @@ export default class Graph extends Vue {
       "2d"
     ) as CanvasRenderingContext2D;
     const canvas = ctx.canvas;
+    graphCanvas.onresize = () => {
+      const bounds: DOMRect = canvas.getBoundingClientRect();
+      canvas.width = bounds.width;
+      canvas.height = bounds.height;
+    };
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = "#ffffff";
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fill();
 
     const graphType = this.graphType;
     const graph = graphs[graphType];
@@ -237,7 +256,35 @@ export default class Graph extends Vue {
     watermark(ctx, ctx.canvas.width, ctx.canvas.height);
 
     const data = canvas.toDataURL();
-    wrapper.style.backgroundImage = 'url("' + data + '")';
+    graphImg.src = data;
+    wrapper.style.backgroundImage = "url('"+data+"')";
+  }
+
+  download() {
+    const graphCanvas: HTMLCanvasElement = document.getElementById(
+      "graphCanvas"
+    ) as HTMLCanvasElement;
+    const fileName = "graph.png";
+    showLoader("Downloading Image");
+    graphCanvas.toBlob((data) => {
+      if (window.navigator.msSaveOrOpenBlob)
+        // IE10+
+        window.navigator.msSaveOrOpenBlob(data, fileName);
+      else {
+        // Others
+        var a = document.createElement("a"),
+          url = URL.createObjectURL(data);
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 0);
+      }
+      hideLoader();
+    });
   }
 
   get size(): number {
@@ -294,25 +341,21 @@ export default class Graph extends Vue {
   position: relative;
 }
 
-.refresh-button {
+.buttons {
   position: absolute;
   right: 0;
   top: 0;
-  padding: 0.45em 0.55em;
-  color: gray;
-  background-color: $light-gray;
-  border: none;
-  cursor: pointer;
   z-index: 2;
-}
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
-.canvas-wrapper {
-  flex: auto;
-  overflow: hidden;
-  position: relative;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  .button {
+    padding: 0.45em 0.55em;
+    color: gray;
+    background-color: $light-gray;
+    border: none;
+    cursor: pointer;
+  }
 }
 
 .controls {
@@ -352,22 +395,30 @@ export default class Graph extends Vue {
   }
 }
 
-#canvasMap {
+
+.canvas-wrapper {
+  flex: auto;
+  overflow: hidden;
+  position: relative;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+#graph {
   position: absolute;
-  width: 100%;
-  height: 100%;
   left: 0;
   top: 0;
-  z-index: 1;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
 }
 
 #graphCanvas {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   background-color: black;
   aspect-ratio: auto 944 / 777;
+  
   display: hidden;
   visibility: hidden;
 }
