@@ -128,7 +128,7 @@ function renderData(
       map.appendChild(area);
     }
 
-    if(pointLabels) {
+    if (pointLabels) {
       text(ctx, `${data}`, 10, (x + pointRadius) + scale(2), y + scale(4), "left", "#0000FF")
     }
   }
@@ -194,6 +194,19 @@ function renderData(
       baseline - maxHeight * 0.1,
       h
     );
+  }
+
+  if (settings.bool('sum')) {
+    const y = baseline - h;
+    const textSize: number = settings.num('sum-text-size');
+    text(ctx, `min: ${minValue}`, textSize, left - scale(60), y - (4 * textSize), "left", "#FF0000")
+    text(ctx, `max: ${maxValue}`, textSize, left - scale(60), y - (3 * textSize), "left", "#FF0000")
+    text(ctx, `mean: ${mea}`, textSize, left - scale(60), y - (2 * textSize), "left", "#FF0000")
+    text(ctx, `med: ${med}`, textSize, left - scale(60), y - textSize, "left", "#FF0000")
+    text(ctx, `lq: ${lq}`, textSize, left - scale(60), y, "left", "#FF0000")
+    text(ctx, `uq: ${uq}`, textSize, left - scale(60), y + (textSize), "left", "#FF0000")
+    text(ctx, `sd: ${sd}`, textSize, left - scale(60), y + (2 * textSize), "left", "#FF0000")
+    text(ctx, `num: ${points.length}`, textSize, left - scale(60), y + (3 * textSize), "left", "#FF0000")
   }
 }
 

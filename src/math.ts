@@ -18,7 +18,7 @@ export function sum(values: number[]): number {
 }
 
 export function mean(values: number[]): number {
-  return sum(values) / values.length;
+  return floatp(sum(values) / values.length, 5);
 }
 
 export function lowerQuartile(values: number[]): number {
@@ -46,9 +46,9 @@ export function upperQuartile(values: number[]): number {
 export function standardDeviation(values: number[]): number {
   const _mean: number = mean(values);
   const squareDiffs = values.map(a => (a - _mean) ** 2);
-  return Math.sqrt(
+  return floatp(Math.sqrt(
     sum(squareDiffs) / (values.length - 1)
-  );
+  ), 5);
 }
 
 export function minNoOutliers(values: number[], lq: number, uq: number): number {
