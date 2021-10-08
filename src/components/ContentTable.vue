@@ -11,10 +11,7 @@
       <tbody>
         <tr v-for="(_, rindex) in rows" :key="rindex" @click="select(row)">
           <td v-for="(_, index) in cols" :key="index">
-            <input
-              type="text"
-              v-model="rows[rindex][index]"
-            />
+            <input type="text" v-model="rows[rindex][index]" />
           </td>
         </tr>
       </tbody>
@@ -29,7 +26,6 @@ import { Vue } from "vue-class-component";
 export default class ContentTable extends Vue {
   displayedRows = 50;
   lastScrollPoint = 0;
-
 
   get rows(): RowData[][] {
     const rows = store.state.rows;
@@ -80,8 +76,6 @@ export default class ContentTable extends Vue {
   table {
     width: 100%;
     border-collapse: collapse;
-    padding-top: 35px;
-    overflow-x: auto;
     min-width: 400px;
 
     tr th,
@@ -96,15 +90,12 @@ export default class ContentTable extends Vue {
       }
     }
     thead {
-      position: absolute;
-      background-color: darken($primary, 5);
-      height: 35px;
-      left: 0;
-      z-index: 1;
-      top: 0;
 
       th {
-        position: relative;
+        background-color: darken($primary, 5);
+        position: sticky;
+        top: 0;
+        z-index: 1;
 
         input {
           width: 100%;
