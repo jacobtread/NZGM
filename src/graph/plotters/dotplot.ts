@@ -140,7 +140,7 @@ function renderData(
   const maxGraph: number = dataToPixel(maxValue, min, max, left, right);
   const minNOGraph: number = dataToPixel(minNO, min, max, left, right);
   const maxNOGraph: number = dataToPixel(maxNO, min, max, left, right);
-
+  const count: number = points.length;
 
   const h: number = maxHeight * 0.1;
 
@@ -206,8 +206,36 @@ function renderData(
     text(ctx, `lq: ${lq}`, textSize, left - scale(60), y, "left", "#FF0000")
     text(ctx, `uq: ${uq}`, textSize, left - scale(60), y + (textSize), "left", "#FF0000")
     text(ctx, `sd: ${sd}`, textSize, left - scale(60), y + (2 * textSize), "left", "#FF0000")
-    text(ctx, `num: ${points.length}`, textSize, left - scale(60), y + (3 * textSize), "left", "#FF0000")
+    text(ctx, `num: ${count}`, textSize, left - scale(60), y + (3 * textSize), "left", "#FF0000")
   }
+
+  const informalCI: boolean = settings.bool('informal-ci');
+  const informalCILimits: boolean = settings.bool('ci-limits');
+
+  if (informalCI || informalCILimits) {
+
+    const halfWidth: number = 1.5 * (uq - lq) / Math.sqrt(count);
+    const minIn: number = floatp(med - halfWidth, 5);
+    const maxIn: number = floatp(med + halfWidth, 5);
+
+    const minGraph: number = dataToPixel(minIn, min, max, left, right);
+    const maxGraph: number = dataToPixel(maxIn, min, max, left, right);
+
+    if (informalCI) {
+      const y: number = baseline - h;
+      ctx.lineWidth = scale(10);
+      ctx.strokeStyle = "#0000FF";
+      line(ctx, minGraph, y, maxGraph, y);
+    }
+
+    if (informalCILimits) {
+      const y: number = (baseline - h) + (maxHeight * 0.1 + scale(8));
+      text(ctx, `${minIn}`, 10, minGraph, y, "right", "#0000FF")
+      text(ctx, `${maxIn}`, 10, maxGraph, y, "left", "#0000FF")
+    }
+
+  }
+
 }
 
 function drawBoxPlot(
