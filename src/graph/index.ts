@@ -77,9 +77,9 @@ export function splitData(
           else if (value < secondGroupMax) group = `b: ${firstGroupMax} - ${secondGroupMax}`
           else if (value < thirdGroupMax) group = `c: ${secondGroupMax} - ${thirdGroupMax}`
           else group = `d: > ${thirdGroupMax}`;
-          if (uniqueGroups[group] == undefined) uniqueGroups[group] = [];
-          else uniqueGroups[group].push(parseInt(index));
-        }
+        } else group = 'invalid';
+        if (uniqueGroups[group] == undefined) uniqueGroups[group] = [];
+        else uniqueGroups[group].push(parseInt(index));
       }
     }
   }
@@ -140,7 +140,7 @@ export function getColumnDataNumeric(column: number): [number[], RowGroup] {
     const row: RowGroup = rows[index];
     const value: RowData = row[column];
     if (isEmptyRow(row)) continue;
-    if (value == undefined) {
+    if (value == undefined || !isNumeric(value)) {
       /* Column not defined */
       skipped.push(index);
     } else {
@@ -174,6 +174,41 @@ export function sortFirstNumber(as: string, bs: string) {
   return bMatch[i] ? -1 : 0;
 }
 
+export function firstSF(number: number): number {
+  if (number == 0) return 0;
+  while (number < 0.1) {
+    number *= 10;
+  }
+  while (number >= 1) {
+    number /= 10;
+  }
+  number *= 10;
+  return intf(number)
+}
+
+export function axisMinMaxStep(min: number, max: number): [number, number, number] {
+  if (min == max) {
+    min += 1;
+    max += 1;
+  }
+  const range: number = max - min;
+  const rangeRound: number = floatp(range, 1);
+  let steps: number = firstSF(rangeRound);
+  if (steps < 2) steps *= 10;
+  if (steps < 3) steps *= 5;
+  if (steps < 5) steps *= 2;
+  let step: number = floatp(rangeRound / steps, 15);
+  if (step == 0) step = 1;
+  let minTick: number = intf(min / step) * step;
+  if (minTick > min) minTick -= step;
+  let maxTick: number = intf(max / step) * step;
+  if (minTick < min) maxTick += step;
+  if (maxTick == minTick) {
+    maxTick++;
+    minTick--;
+  }
+  return [minTick, maxTick, step];
+}
 
 export function scale(value: number): number {
   return value * store.state.graph.scaleFactor;
@@ -195,6 +230,10 @@ export function floatp(value: number, precision: number): number {
 export function int(value: string | number): number {
   if (typeof value == "number") return value;
   else return parseFloat(value);
+}
+
+export function intf(value: number): number {
+  return parseInt(value.toFixed(0));
 }
 
 export function dataToPixel(data: number, min: number, max: number, minPx: number, maxPx: number): number {

@@ -9,7 +9,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(_, rindex) in rows" :key="rindex" @click="select(row)">
+        <tr v-for="(_, rindex) in rows" :key="rindex" @click="select(_)">
           <td v-for="(_, index) in cols" :key="index">
             <input type="text" v-model="rows[rindex][index]" />
           </td>
@@ -29,11 +29,9 @@ export default class ContentTable extends Vue {
 
   get rows(): RowData[][] {
     const rows = store.state.rows;
-    if (rows.length > this.displayedRows) {
-      return rows.slice(0, this.displayedRows);
-    } else {
+ 
       return rows;
-    }
+    
   }
 
   set rows(value: RowData[][]) {

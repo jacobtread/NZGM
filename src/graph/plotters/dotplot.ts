@@ -1,7 +1,6 @@
 import store, { GraphData, RowGroup } from "@/store";
 import { DataGroups, Settings } from "@/graph/types";
-import { box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
-import { axisMinMaxStep } from "@/tools";
+import { axisMinMaxStep, box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
 import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/math";
 
 let settings: Settings;
@@ -340,20 +339,15 @@ export function createDotPlot(ctx: CanvasRenderingContext2D) {
   }
 
   if (skipped.length != 0) { // Some data was not numeric
-
-    text(ctx, "Some non numeric data was present", 10, left, scale(30), "center", "#FF0000");
-    text(ctx, "at the following rows:", 10, left, scale(45), "center", "#FF0000");
+    text(ctx, "Some non numeric data was present", 10, scale(10), scale(30), "left", "#FF0000");
+    text(ctx, "at the following rows:", 10, scale(10), scale(45), "left", "#FF0000");
 
     let y: number = scale(60);
     for (const index of skipped) {
       // Print out the row indexes
-      text(ctx, `${index}`, 10, left, y, "center", "#666666");
+      text(ctx, `${index}`, 10, scale(10), y, "left", "#666666");
       y += scale(15);
     }
-
-    text(ctx, "the 𝑥 axis requires numeric data", 15, width / 2, (height / 2) - scale(15), "left", "#666666");
-    text(ctx, "to render a graph", 15, width / 2, (height / 2) + scale(15), "left", "#666666");
-
   }
 
   const baseline: number = height - scale(60); /* The baseline point on the graph */
