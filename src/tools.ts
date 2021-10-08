@@ -2,13 +2,13 @@ import axios, { AxiosResponse } from "axios";
 import store from "./store";
 
 export function importFromCSV(file: string): void {
-  showLoader('Importing Content')
+  showLoader("Importing Content")
   const lines: string[] = file.split("\n");
   let header = true;
   if (lines.length < 1) return;
   store.state.rows = []; // Clear rows;
   for (const line of lines) {
-    const parts: string[] = line.split(',');
+    const parts: string[] = line.split(",");
     if (header) {
       store.state.cols = parts;
       header = false;
@@ -30,18 +30,18 @@ export function hideLoader() {
 
 export async function importCSVFromURL(url: string): Promise<void> {
   try {
-    showLoader('Importing Content')
+    showLoader("Importing Content")
     const response: AxiosResponse = await axios.get(url);
     const data = response.data;
     importFromCSV(data);
   } catch (e) {
-    alert('Failed to load contents from ' + url)
+    alert("Failed to load contents from " + url)
   }
   hideLoader();
 }
 
 export function isNumeric(/* eslint-disable */ value: any): boolean {
-  return value !== undefined && (typeof value === 'number' || /^-?\d+$/.test(value));
+  return value !== undefined && (typeof value === "number" || /^-?\d+$/.test(value));
 }
 
 export function axisMinMaxStep(min: number, max: number): [number, number, number] {

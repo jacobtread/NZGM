@@ -28,15 +28,15 @@ export type State = {
 
 export default createStore<State>({
   state: {
-    cols: ['', ''],
-    rows: [['', '']],
+    cols: ["", ""],
+    rows: [["", ""]],
     loading: {
       show: false,
-      message: ''
+      message: ""
     },
     graph: {
-      title: '',
-      type: 'dot-plot',
+      title: "",
+      type: "dot-plot",
       xAxis: 0,
       yAxis: -1,
       zAxis: -1,
@@ -48,10 +48,10 @@ export default createStore<State>({
           return (this.values[name] ?? false) as boolean;
         },
         str(name: string): string {
-          return (this.values[name] ?? '') as string;
+          return (this.values[name] ?? "") as string;
         },
         num(name: string): number {
-          return (parseFloat('' + this.values[name] ?? '0')) as number;
+          return (parseFloat("" + this.values[name] ?? "0")) as number;
         }
       }
     }

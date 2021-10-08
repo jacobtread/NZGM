@@ -21,7 +21,7 @@ function isEmptyRow(row: RowGroup): boolean {
     if (row[index] == undefined) continue;
     else {
       const value = row[index];
-      if (typeof value == 'string' && value.length < 1) continue;
+      if (typeof value == "string" && value.length < 1) continue;
       return false;
     }
   }
@@ -54,12 +54,12 @@ export function splitData(
   const groups: string[] = Object.keys(uniqueGroups);
   if (groups.length > maxGroups) {
     if (maxGroups < 4) {
-      console.error('SEL 1')
+      console.error("SEL 1")
       //ERR SELECT CATEGORICAL OR NUMERICAL FOR VAR WITH MAX OR FEWER GROUPS
       return {};
     }
     if (!isNumeric(groups[0])) {
-      console.error('SEL 2')
+      console.error("SEL 2")
       // ERR SELECT CATEGORICAL VAR WITH MAX OR FEWER GROUPS OR NUMERICAL VAR
       return {};
     } else {
@@ -72,7 +72,7 @@ export function splitData(
         let value = data[index];
         let group: string | number = value;
         if (isNumeric(value)) {
-          if (typeof value == 'string') value = parseFloat(value);
+          if (typeof value == "string") value = parseFloat(value);
           if (value < firstGroupMax) group = `a: < ${firstGroupMax}`
           else if (value < secondGroupMax) group = `b: ${firstGroupMax} - ${secondGroupMax}`
           else if (value < thirdGroupMax) group = `c: ${secondGroupMax} - ${thirdGroupMax}`
@@ -90,8 +90,8 @@ export function numericMin(values: RowGroup): number {
   if (values.length == 0) return 0;
   let minValue = 0;
   for (const value of values) {
-    if (typeof value == 'number' && value < minValue) minValue = value;
-    else if (typeof value == 'string') {
+    if (typeof value == "number" && value < minValue) minValue = value;
+    else if (typeof value == "string") {
       const number: number = parseFloat(value);
       if (number < minValue) minValue = number;
     }
@@ -103,8 +103,8 @@ export function numericMax(values: RowGroup): number {
   if (values.length == 0) return 0;
   let maxValue = 0;
   for (const value of values) {
-    if (typeof value == 'number' && value > maxValue) maxValue = value;
-    else if (typeof value == 'string') {
+    if (typeof value == "number" && value > maxValue) maxValue = value;
+    else if (typeof value == "string") {
       const number: number = parseFloat(value);
       if (number > maxValue) maxValue = number;
     }

@@ -16,12 +16,12 @@ function renderGrid(
   step: number
 ) {
   const gridLineTop = 50;
-  ctx.strokeStyle = '#000000';
-  ctx.fillStyle = '#000000';
+  ctx.strokeStyle = "#000000";
+  ctx.fillStyle = "#000000";
   ctx.lineWidth = scale(1);
   line(ctx, x1 - scale(10), y, x2 + scale(10), y);
   let dataX: number = floatp(min, 8);
-  const renderGridLines: boolean = settings.bool('grid-lines');
+  const renderGridLines: boolean = settings.bool("grid-lines");
   while (dataX <= max) {
     const x: number = dataToPixel(dataX, min, max, x1, x2);
     line(ctx, x, y, x, y + scale(6));
@@ -53,9 +53,10 @@ function renderData(
 
   ctx.lineWidth = scale(2);
 
-  const stripGraph = settings.bool('strip-graph');
-  const stackDots: boolean = settings.bool('stacked-dots');
-  const pointSize: number = settings.num('point-size');
+  const stripGraph = settings.bool("strip-graph");
+  const stackDots: boolean = settings.bool("stacked-dots");
+  const pointSize: number = settings.num("point-size");
+  const pointLabels: boolean = settings.bool("point-labels");
 
   const pointRadius = scale(pointSize / 2)
 
@@ -103,7 +104,6 @@ function renderData(
   positions.sort((a, b) => a[sortIndex] - b[sortIndex]);
 
   for (const [x, xRel, data] of positions) {
-    ctx.beginPath();
     if (lastX == xRel) y -= yHeight;
     else y = baseline - scale(10);
 
@@ -115,16 +115,21 @@ function renderData(
     lastX = xRel;
 
     // Render Point
-    ctx.strokeStyle = '#000000';
+    ctx.beginPath();
+    ctx.strokeStyle = "#000000";
     ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
     ctx.stroke();
 
     if (createMap) {
-      const area: HTMLAreaElement = document.createElement('area');
-      area.shape = 'circle';
+      const area: HTMLAreaElement = document.createElement("area");
+      area.shape = "circle";
       area.coords = `${invScale(x)},${invScale(y)},${invScale(pointRadius)}`
       area.alt = `${data}`;
       map.appendChild(area);
+    }
+
+    if(pointLabels) {
+      text(ctx, `${data}`, 10, (x + pointRadius) + scale(2), y + scale(4), "left", "#0000FF")
     }
   }
 
@@ -139,7 +144,7 @@ function renderData(
 
   const h: number = maxHeight * 0.1;
 
-  if (settings.bool('box-plot')) {
+  if (settings.bool("box-plot")) {
     drawBoxPlot(
       ctx,
       minGraph,
@@ -152,7 +157,7 @@ function renderData(
     )
   }
 
-  if (settings.bool('high-box-plot')) {
+  if (settings.bool("high-box-plot")) {
     drawBoxPlot(
       ctx,
       minGraph,
@@ -165,7 +170,7 @@ function renderData(
     )
   }
 
-  if (settings.bool('box-no-whisker')) {
+  if (settings.bool("box-no-whisker")) {
     drawBoxPlot(
       ctx,
       minGraph,
@@ -178,7 +183,7 @@ function renderData(
       false
     );
   }
-  if (settings.bool('box-no-outlier')) {
+  if (settings.bool("box-no-outlier")) {
     drawBoxPlot(
       ctx,
       minNOGraph,
@@ -190,8 +195,6 @@ function renderData(
       h
     );
   }
-
-
 }
 
 function drawBoxPlot(
@@ -205,7 +208,7 @@ function drawBoxPlot(
   h: number,
   whisker = true,
 ) {
-  ctx.strokeStyle = '#000000';
+  ctx.strokeStyle = "#000000";
   ctx.lineWidth = scale(1);
   // Quartile
   box(ctx, lq, y - h, uq, y + h)
@@ -346,11 +349,11 @@ export function createDotPlot(ctx: CanvasRenderingContext2D) {
     for (const group of groups) {
       const indexes: number[] = zGroups[group];
       const width: number = x + blockWidth;
-      text(ctx, group, 15, (x + (width - scale(50))) / 2, baseline - maxHeight, "center");
       if (indexes.length > 0) {
         const data: number[] = dataFromIndexes(indexes, xPoints)
         renderGraph(ctx, data, yPoints, yGroups, left + scale(30), right - scale(50), baseline, graphMin, graphMax, graphStep, maxHeight)
       }
+      text(ctx, group, 15, (x + (width - scale(50))) / 2, baseline - maxHeight, "center");
       x += blockWidth;
     }
   } else {
