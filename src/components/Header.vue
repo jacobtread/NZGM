@@ -80,16 +80,16 @@
 </template>
 
 <script lang="ts">
-import store from "@/store";
+import store, { ContentData, RowData, SelectedData } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
 import {
   importCSVFromURL,
   importFromClipboard,
-  importFromCSV,
   importFromFile,
-  showLoader,
+  removeIndexX,
+  removeIndexY,
   toast,
 } from "@/tools";
 interface ToolbarItem {
@@ -175,13 +175,50 @@ export default class Header extends Vue {
     {
       name: "Edit",
       children: [
-        { name: "Remove Row" },
+        {
+          name: "Remove Row",
+          action(): void {
+            const selected: SelectedData = store.state.data.selected;
+            const row: number = selected.row;
+            if (row != -1) {
+              store.state.data.rows = store.state.data.rows.filter(
+                (_, index) => _ && index != row
+              );
+            }
+          },
+        },
         { name: "Remove Specific Row" },
-        { name: "Remove Last Row" },
+        {
+          name: "Remove Last Row",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const rows: RowData[][] = data.rows;
+            if (rows.length < 1) return;
+            data.rows = data.rows.slice(0, data.rows.length - 1);
+          },
+        },
         {},
-        { name: "Remove Column" },
+        {
+          name: "Remove Column",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const col: number = data.selected.col;
+            if (col != -1) {
+              data.rows = removeIndexY(data.rows, col);
+              data.cols = removeIndexX(data.cols, col);
+            }
+          },
+        },
         { name: "Remove Specific Column" },
-        { name: "Remove Last Column" },
+        {
+          name: "Remove Last Column",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const col: number = data.cols.length - 1;
+            data.rows = removeIndexY(data.rows, col);
+            data.cols = removeIndexX(data.cols, col);
+          },
+        },
       ],
     },
     {
