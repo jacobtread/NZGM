@@ -12,6 +12,13 @@
   height: 100vh;
 }
 
+main {
+  position: relative;
+  display: flex;
+  flex-flow: row;
+  height: calc(100% - 90px);
+}
+
 .resize-area {
   position: fixed;
   left: 0;
