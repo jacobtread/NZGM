@@ -150,8 +150,6 @@ table {
 
   border-collapse: collapse;
 
-
-
   th {
     position: sticky;
     top: 0;
@@ -165,6 +163,7 @@ table {
       padding: 0.5em;
       color: white;
       text-align: center;
+      min-height: 2em;
     }
 
     &:nth-child(1) p {
@@ -192,11 +191,11 @@ table {
 
       td {
         position: relative;
-
         p {
           font-size: 0.8em;
           padding: 0.5em;
           text-align: center;
+          min-height: 2em;
         }
 
         &.selected {
