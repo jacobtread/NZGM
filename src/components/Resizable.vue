@@ -49,7 +49,7 @@ export default class App extends Vue {
     width: 10px;
     height: 100%;
     background: #ececec;
-    z-index: 99;
+    z-index: 3;
 
     &:hover {
       background: #d4d4d4;

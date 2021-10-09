@@ -82,11 +82,11 @@ import { Options, Vue } from "vue-class-component";
 import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
 import {
-  hideLoader,
   importCSVFromURL,
   importFromCSV,
   importFromFile,
   showLoader,
+  toast,
 } from "@/tools";
 interface ToolbarItem {
   icon?: string;
@@ -157,11 +157,9 @@ export default class Header extends Vue {
               navigator.clipboard
                 .readText()
                 .then((text) => {
-                  hideLoader();
                   importFromCSV(text);
                 })
                 .catch((err) => {
-                  hideLoader();
                   alert("Unable to read contents from clipboard: " + err);
                 });
             }
@@ -198,6 +196,7 @@ export default class Header extends Vue {
         {
           name: "Insert Row",
           action(): void {
+            toast("Inserted row");
             store.state.data.rows.push(new Array(store.state.data.cols.length));
           },
         },
@@ -238,7 +237,7 @@ export default class Header extends Vue {
   display: flex;
   border-bottom: 1px solid rgb(216, 216, 216);
   height: 90px;
-  z-index: 99;
+  z-index: 3;
 
   img {
     height: 90px;
@@ -308,7 +307,7 @@ export default class Header extends Vue {
       min-width: 300px;
       padding: 0.5em;
       background: white;
-      z-index: 100;
+      z-index: 4;
       border: 1px solid $light-gray;
 
       &__separator {
