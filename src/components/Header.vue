@@ -148,6 +148,21 @@ export default class Header extends Vue {
       name: "Data",
       children: [
         {
+          icon: "delete",
+          name: "Clear Data",
+          action: (): void => {
+            if (
+              confirm(
+                "Are you sure you want to clear the current data table? Make sure to download this data first because it will not be saved."
+              )
+            ) {
+              store.state.data.rows = [[""]];
+              store.state.data.cols = [""];
+              store.state.data.selected = { row: -1, col: -1 };
+            }
+          },
+        },
+        {
           icon: "file_upload",
           name: "Open File",
           action: (): void => {
