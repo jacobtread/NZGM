@@ -1,5 +1,5 @@
 module.exports = {
-    publicPath: process.env.GITHUB_PAGES === "production"
+    publicPath: process.env.GITHUB_PAGES
       ? "/NZGM/"
       : "/"
   }
