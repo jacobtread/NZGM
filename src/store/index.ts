@@ -21,13 +21,15 @@ export type ContentData = {
   rows: RowData[][]
 }
 
+export type LoadingData = {
+  show: boolean;
+  message: string;
+}
+
 export type State = {
   data: ContentData;
   graph: GraphData;
-  loading: {
-    show: boolean;
-    message: string;
-  }
+  loading: LoadingData;
 }
 
 export default createStore<State>({
