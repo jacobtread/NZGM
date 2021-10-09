@@ -26,10 +26,21 @@ export type LoadingData = {
   message: string;
 }
 
+export type ToastType = "info" | "warn" | "error";
+
+export type Toast = {
+  id: number;
+  text: string;
+  duration: number;
+  type: ToastType;
+  timeout?: number;
+}
+
 export type State = {
   data: ContentData;
   graph: GraphData;
   loading: LoadingData;
+  toasts: Toast[];
 }
 
 export default createStore<State>({
@@ -42,6 +53,7 @@ export default createStore<State>({
       show: false,
       message: ""
     },
+    toasts: [],
     graph: {
       title: "",
       type: "dot-plot",

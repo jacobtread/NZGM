@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import store, { ContentData } from "./store";
+import store, { ContentData, ToastType } from "./store";
 
 export function importFromCSV(file: string): void {
   showLoader("Importing Content")
@@ -17,6 +17,7 @@ export function importFromCSV(file: string): void {
       data.rows.push(parts);
     }
   }
+  toast(`Imported ${data.rows.length} row(s)`)
   hideLoader()
 }
 
@@ -36,8 +37,6 @@ export function importFromFile(): void {
       if (!event.target) return alert("Failed to load file!");
       const content = event.target.result as string;
       importFromCSV(content);
-      const rows = store.state.data.rows;
-      alert(`Imported ${rows.length}row(s)`);
     };
   }
 }
@@ -58,11 +57,21 @@ export async function importCSVFromURL(url: string): Promise<void> {
     const data: string = response.data;
     importFromCSV(data);
   } catch (e) {
-    alert("Failed to load contents from " + url)
+    toast(`Failed to load contents from ${url}`, "error")
   }
   hideLoader();
 }
 
 export function isNumeric(value: string | number): boolean {
   return value !== undefined && (typeof value === "number" || /^-?\d+$/.test(value));
+}
+
+let toastID = 0;
+
+export function toast(text: string, type: ToastType = "info", duration = 2000): void {
+  toastID++;
+  if (toastID > 100) {
+    toastID = 0;
+  }
+  store.state.toasts.push({ id: toastID, text, type, duration });
 }

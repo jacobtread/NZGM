@@ -203,6 +203,7 @@ export default class Header extends Vue {
         {
           name: "Insert Column",
           action(): void {
+            toast("Inserted column");
             store.state.data.cols.push("");
           },
         },
