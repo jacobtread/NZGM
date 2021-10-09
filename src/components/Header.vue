@@ -4,8 +4,8 @@
       src="../assets/img/logo-white.svg"
       alt="NZGM"
       title="NZGrapherModern"
-      width="auto"
-      height="90px"
+      width="148"
+      height="90"
     />
     <div class="header__content">
       <div class="graph-name">
