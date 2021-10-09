@@ -178,12 +178,15 @@ export default class Header extends Vue {
         {
           name: "Remove Row",
           action(): void {
+            const data: ContentData = store.state.data;
             const selected: SelectedData = store.state.data.selected;
             const row: number = selected.row;
             if (row != -1) {
-              store.state.data.rows = store.state.data.rows.filter(
-                (_, index) => _ && index != row
-              );
+              data.rows = removeIndexX(data.rows, row);
+              toast(`Removed row ${row}`);
+              data.selected = { row: -1, col: -1 };
+            } else {
+              toast("No row selected!", "error");
             }
           },
         },
@@ -195,6 +198,7 @@ export default class Header extends Vue {
             const rows: RowData[][] = data.rows;
             if (rows.length < 1) return;
             data.rows = data.rows.slice(0, data.rows.length - 1);
+            toast("Removed last row");
           },
         },
         {},
@@ -204,8 +208,13 @@ export default class Header extends Vue {
             const data: ContentData = store.state.data;
             const col: number = data.selected.col;
             if (col != -1) {
+              const columnName: string = data.cols[col];
               data.rows = removeIndexY(data.rows, col);
               data.cols = removeIndexX(data.cols, col);
+              toast(`Removed Column "${columnName}"`);
+              data.selected = { row: -1, col: -1 };
+            } else {
+              toast("No column selected!", "error");
             }
           },
         },
@@ -215,8 +224,10 @@ export default class Header extends Vue {
           action(): void {
             const data: ContentData = store.state.data;
             const col: number = data.cols.length - 1;
+            const columnName: string = data.cols[col];
             data.rows = removeIndexY(data.rows, col);
             data.cols = removeIndexX(data.cols, col);
+            toast(`Removed Column "${columnName}"`);
           },
         },
       ],
