@@ -3,7 +3,12 @@
     <table>
       <thead>
         <tr>
-          <th v-for="(_, index) in cols" :key="index" @click="select(-1, index)">
+          <th
+            v-for="(_, index) in cols"
+            :key="index"
+            @click="select(-1, index)"
+            :class="{ selected: selected.col == index }"
+          >
             <input type="text" v-model="cols[index]" />
           </th>
         </tr>
@@ -19,7 +24,7 @@
             v-for="(_, colIndex) in cols"
             :key="colIndex"
             :class="{ selected: selected.col == colIndex }"
-            @click="select(rowIndex, colIndex)"
+            @click="select(rowIndex, -1)"
           >
             <input
               :data-col="colIndex"
@@ -130,6 +135,9 @@ export default class ContentTable extends Vue {
           text-align: left;
         }
       }
+      th.selected {
+        background-color: darken($primary, 15) !important;
+      }
     }
 
     tbody {
@@ -138,6 +146,10 @@ export default class ContentTable extends Vue {
 
         &:nth-child(odd) {
           background-color: lighten($light-gray, 5);
+
+          .selected {
+            background-color: darken($light-gray, 5);
+          }
         }
 
         &:hover {
@@ -153,13 +165,13 @@ export default class ContentTable extends Vue {
             text-align: left;
           }
         }
+
+        .selected {
+          background-color: $light-gray;
+        }
       }
       tr.selected {
-        background-color: darken($primary, 5) !important;
-
-        td {
-          color: white !important;
-        }
+        background-color: darken($light-gray, 15);
       }
     }
   }
