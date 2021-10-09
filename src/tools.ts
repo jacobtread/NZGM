@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import store, { ContentData, ToastType } from "./store";
+import store, { ContentData, ToastType } from "@/store";
 
 export function importFromCSV(file: string): void {
   showLoader("Importing Content")

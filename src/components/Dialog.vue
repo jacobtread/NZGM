@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
+
 @Options({ props: ["open"] })
 export default class Dialog extends Vue {
   closeDialog(): void {

@@ -56,6 +56,7 @@
 <script lang="ts">
 import store, { RowData, SelectedData } from "@/store";
 import { Vue } from "vue-class-component";
+
 export default class ContentTable extends Vue {
   displayedRows = 50;
   lastScrollPoint = 0;

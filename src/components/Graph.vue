@@ -115,14 +115,17 @@
 </template>
 
 <script lang="ts">
+import { Options, Vue } from "vue-class-component";
+import { mapState } from "vuex";
+
+import store, { GraphData, State } from "@/store";
+import { hideLoader, showLoader } from "@/tools";
+
 import { addDefaultSettings } from "@/graph";
 import { GraphTypeData } from "@/graph/types";
 import graphs from "@/graph/list";
-import store, { GraphData, State } from "@/store";
-import { Options, Vue } from "vue-class-component";
-import { mapState } from "vuex";
 import { watermark } from "@/graph";
-import { hideLoader, showLoader } from "@/tools";
+
 @Options({
   computed: mapState<State>({
     data: (state: State) => state.data,

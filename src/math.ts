@@ -1,4 +1,4 @@
-import { floatp } from "./graph";
+import { floatp } from "@/graph";
 
 export function median(values: number[]): number {
   const count: number = values.length;

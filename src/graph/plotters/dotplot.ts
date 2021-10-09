@@ -1,6 +1,23 @@
 import store, { GraphData, RowGroup } from "@/store";
 import { DataGroups, Settings } from "@/graph/types";
-import { axisMinMaxStep, box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, getPointColor, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
+import {
+  axisMinMaxStep,
+  box,
+  dataFromIndexes,
+  dataToPixel,
+  floatp,
+  getColumnData,
+  getColumnDataNumeric,
+  getPointColor,
+  invScale,
+  line,
+  numericMax,
+  numericMin,
+  scale,
+  sortFirstNumber,
+  splitData,
+  text
+} from "@/graph";
 import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/math";
 
 let settings: Settings;
