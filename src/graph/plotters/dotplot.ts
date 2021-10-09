@@ -17,7 +17,7 @@ export function createDotPlot(ctx: CanvasRenderingContext2D): void {
   const yColumn: number = graphData.yAxis;
   const zColumn: number = graphData.zAxis;
 
-  const columnNames: string[] = store.state.cols;
+  const columnNames: string[] = store.state.data.cols;
 
   const [xPoints, xSkipped]: [number[], RowGroup] = getColumnDataNumeric(xColumn);
   const [yPoints, ySkipped]: [RowGroup, RowGroup] = getColumnData(yColumn);

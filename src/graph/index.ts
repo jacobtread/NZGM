@@ -16,7 +16,7 @@ export function addDefaultSettings(definitions: SettingDefinition[]): void {
 }
 
 function isEmptyRow(row: RowGroup): boolean {
-  const cols: string[] = store.state.cols;
+  const cols: string[] = store.state.data.cols;
   for (const index in cols) {
     if (row[index] == undefined) continue;
     else {
@@ -114,7 +114,7 @@ export function numericMax(values: RowGroup): number {
 
 export function getColumnData(column: number): [RowGroup, number[]] {
   if (column == -1) return [[], []]; /* Ignore none columns */
-  const rows: RowData[][] = store.state.rows;
+  const rows: RowData[][] = store.state.data.rows;
   const values: RowGroup = [];
   const skipped: number[] = [];
   for (let index = 0; index < rows.length; index++) {
@@ -133,7 +133,7 @@ export function getColumnData(column: number): [RowGroup, number[]] {
 
 export function getColumnDataNumeric(column: number): [number[], number[]] {
   if (column == -1) return [[], []]; /* Ignore none columns */
-  const rows: RowData[][] = store.state.rows;
+  const rows: RowData[][] = store.state.data.rows;
   const values: number[] = [];
   const skipped: number[] = [];
   for (let index = 0; index < rows.length; index++) {

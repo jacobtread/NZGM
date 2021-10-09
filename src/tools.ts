@@ -1,19 +1,20 @@
 import axios, { AxiosResponse } from "axios";
-import store from "./store";
+import store, { ContentData } from "./store";
 
 export function importFromCSV(file: string): void {
   showLoader("Importing Content")
   const lines: string[] = file.split("\n");
+  const data: ContentData = store.state.data;
   let header = true;
   if (lines.length < 1) return;
-  store.state.rows = []; // Clear rows;
+  data.rows = []; // Clear rows;
   for (const line of lines) {
     const parts: string[] = line.split(",");
     if (header) {
-      store.state.cols = parts;
+      data.cols = parts;
       header = false;
     } else {
-      store.state.rows.push(parts);
+      data.rows.push(parts);
     }
   }
   hideLoader()
@@ -31,8 +32,8 @@ export function hideLoader(): void {
 export async function importCSVFromURL(url: string): Promise<void> {
   try {
     showLoader("Importing Content")
-    const response: AxiosResponse = await axios.get(url);
-    const data = response.data;
+    const response: AxiosResponse<string> = await axios.get(url);
+    const data: string = response.data;
     importFromCSV(data);
   } catch (e) {
     alert("Failed to load contents from " + url)

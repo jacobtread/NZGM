@@ -19,7 +19,7 @@
           <label class="select__label">X Axis</label>
           <select class="select__input" name="" v-model="xAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in cols" :key="index">
+            <option :value="index" v-for="(col, index) in data.cols" :key="index">
               {{ col }}
             </option>
           </select>
@@ -28,7 +28,7 @@
           <label class="select__label">Y Axis</label>
           <select class="select__input" name="" v-model="yAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in cols" :key="index">
+            <option :value="index" v-for="(col, index) in data.cols" :key="index">
               {{ col }}
             </option>
           </select>
@@ -39,7 +39,7 @@
           <label class="select__label">Z Axis</label>
           <select class="select__input" name="" v-model="zAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in cols" :key="index">
+            <option :value="index" v-for="(col, index) in data.cols" :key="index">
               {{ col }}
             </option>
           </select>
@@ -125,33 +125,11 @@ import { watermark } from "@/graph";
 import { hideLoader, showLoader } from "@/tools";
 @Options({
   computed: mapState<State>({
-    rows: (state: State) => state.rows,
-    cols: (state: State) => state.cols,
+    data: (state: State) => state.data,
     title: (state: State) => state.graph.title,
   }),
   watch: {
-    title() {
-      this.renderGraph();
-    },
-    xAxis() {
-      this.renderGraph();
-    },
-    yAxis() {
-      this.renderGraph();
-    },
-    zAxis() {
-      this.renderGraph();
-    },
-    size() {
-      this.renderGraph();
-    },
-    rows: {
-      handler() {
-        this.renderGraph();
-      },
-      deep: true,
-    },
-    cols: {
+    data: {
       handler() {
         this.renderGraph();
       },
@@ -177,7 +155,7 @@ export default class Graph extends Vue {
     this.setupSettings();
   }
 
-  setupSettings() {
+  setupSettings(): void {
     const graphType = this.graphType;
     const graph = graphs[graphType];
     addDefaultSettings(graph.settings);
@@ -211,7 +189,7 @@ export default class Graph extends Vue {
     graphCanvas.height = graphCanvas.offsetHeight;
     this.renderGraph();
   }
-  
+
   resetMap(): void {
     const map: HTMLMapElement = document.getElementById(
       "canvasMap"
@@ -253,10 +231,10 @@ export default class Graph extends Vue {
 
     const data = canvas.toDataURL();
     graphImg.src = data;
-    wrapper.style.backgroundImage = "url('"+data+"')";
+    wrapper.style.backgroundImage = "url('" + data + "')";
   }
 
-  download() {
+  download(): void {
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
@@ -391,7 +369,6 @@ export default class Graph extends Vue {
   }
 }
 
-
 .canvas-wrapper {
   flex: auto;
   overflow: hidden;
@@ -414,7 +391,7 @@ export default class Graph extends Vue {
   position: absolute;
   background-color: black;
   aspect-ratio: auto 944 / 777;
-  
+
   display: hidden;
   visibility: hidden;
 }

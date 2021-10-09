@@ -16,9 +16,13 @@ export type GraphData = {
   settings: Settings
 }
 
+export type ContentData = {
+  cols: string[],
+  rows: RowData[][]
+}
+
 export type State = {
-  rows: RowData[][];
-  cols: string[];
+  data: ContentData;
   graph: GraphData;
   loading: {
     show: boolean;
@@ -28,8 +32,10 @@ export type State = {
 
 export default createStore<State>({
   state: {
-    cols: ["", ""],
-    rows: [["", ""]],
+    data: {
+      cols: ["", ""],
+      rows: [["", ""]],
+    },
     loading: {
       show: false,
       message: ""

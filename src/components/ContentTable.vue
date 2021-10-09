@@ -26,14 +26,13 @@
 
 <script lang="ts">
 import store, { RowData } from "@/store";
-import { isNumeric as _numeric } from "@/tools";
 import { Vue } from "vue-class-component";
 export default class ContentTable extends Vue {
   displayedRows = 50;
   lastScrollPoint = 0;
 
   get rows(): RowData[][] {
-    const rows = store.state.rows;
+    const rows = store.state.data.rows;
     if (rows.length > this.displayedRows) {
       return rows.slice(0, this.displayedRows);
     } else {
@@ -42,15 +41,15 @@ export default class ContentTable extends Vue {
   }
 
   set rows(value: RowData[][]) {
-    store.state.rows = value;
+    store.state.data.rows = value;
   }
 
   get cols(): string[] {
-    return store.state.cols;
+    return store.state.data.cols;
   }
 
   set cols(value: string[]) {
-    store.state.cols = value;
+    store.state.data.cols = value;
   }
 
   select(row: RowData[]): void {

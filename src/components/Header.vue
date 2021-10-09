@@ -125,7 +125,7 @@ export default class Header extends Vue {
       if (!event.target) return alert("Failed to load file!");
       var content = event.target.result as string;
       importFromCSV(content);
-      const rows = store.state.rows;
+      const rows = store.state.data.rows;
       alert(`Imported ${rows.length}row(s)`);
       hideLoader();
     };
@@ -139,7 +139,7 @@ export default class Header extends Vue {
     importCSVFromURL(this.importURL)
       .then(() => {
         this.importURL = "";
-        const rows = store.state.rows;
+        const rows = store.state.data.rows;
         alert(`Imported ${rows.length}row(s)`);
       })
       .catch(() => alert("Failed to import csv"));
@@ -171,7 +171,7 @@ export default class Header extends Vue {
         {
           icon: "file_upload",
           name: "Open File",
-          action: () => {
+          action: (): void => {
             const fileUpload: HTMLInputElement = document.getElementById(
               "fileUpload"
             ) as HTMLInputElement;
@@ -181,7 +181,7 @@ export default class Header extends Vue {
         {
           icon: "content_paste",
           name: "Import from clipboard",
-          action: () => {
+          action: (): void => {
             if ("navigator" in window) {
               showLoader("Loading Clipboard Contents");
               navigator.clipboard
@@ -201,7 +201,9 @@ export default class Header extends Vue {
         {
           icon: "link",
           name: "Import from URL",
-          action: () => (this.pickURLDialog = true),
+          action: (): void => {
+            this.pickURLDialog = true;
+          },
         },
         { icon: "highlight_alt", name: "Select & Copy Data Table" },
         { icon: "file_download", name: "Download Data" },
@@ -226,13 +228,13 @@ export default class Header extends Vue {
         {
           name: "Insert Row",
           action(): void {
-            store.state.rows.push(new Array(store.state.cols.length));
+            store.state.data.rows.push(new Array(store.state.data.cols.length));
           },
         },
         {
           name: "Insert Column",
           action(): void {
-            store.state.cols.push("");
+            store.state.data.cols.push("");
           },
         },
       ],
