@@ -3,7 +3,7 @@
     <table>
       <thead>
         <tr>
-          <th v-for="(_, index) in cols" :key="index">
+          <th v-for="(_, index) in cols" :key="index" @click="select(-1, index)">
             <input type="text" v-model="cols[index]" />
           </th>
         </tr>

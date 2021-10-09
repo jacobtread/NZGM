@@ -218,7 +218,6 @@ export default class Header extends Vue {
             }
           },
         },
-        { name: "Remove Specific Column" },
         {
           name: "Remove Last Column",
           action(): void {
