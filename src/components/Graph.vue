@@ -238,11 +238,7 @@ export default class Graph extends Vue {
       "2d"
     ) as CanvasRenderingContext2D;
     const canvas = ctx.canvas;
-    graphCanvas.onresize = () => {
-      const bounds: DOMRect = canvas.getBoundingClientRect();
-      canvas.width = bounds.width;
-      canvas.height = bounds.height;
-    };
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = "#ffffff";
     ctx.rect(0, 0, canvas.width, canvas.height);
