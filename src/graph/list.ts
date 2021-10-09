@@ -7,6 +7,7 @@ export default {
     func: createDotPlot,
     settings: [
       { key: "point-size", name: "Point Size", type: "slider", min: 3, max: 19, step: 1, default: 7 },
+      { key: "point-transparency", name: "Point Transparency", type: "slider", min: 0, max: 10, step: 0.1, default: 5 },
       { key: "sum", name: "Summaries", type: "toggle" },
       { key: "sum-text-size", name: "Summary Text Size", type: "slider", min: 5, max: 25, step: 1, default: 13 },
       { key: "box-plot", name: "Box Plots", type: "toggle" },
@@ -22,7 +23,7 @@ export default {
       { key: "grid-lines", name: "Grid Lines", type: "toggle", default: true },
       { key: "invert-colours", name: "Invert Colours", type: "toggle" },
       { key: "thick-lines", name: "Thick Lines", type: "toggle" },
-      { key: "show-removed", name: "Show ID of removed points", type: "toggle" },
+      { key: "show-removed", name: "Show row of removed points", type: "toggle", default: true },
     ]
   },
   "pairs-plot": {

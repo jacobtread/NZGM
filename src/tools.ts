@@ -1,5 +1,4 @@
 import axios, { AxiosResponse } from "axios";
-import { floatp, intf } from "./graph";
 import store from "./store";
 
 export function importFromCSV(file: string): void {
@@ -20,12 +19,12 @@ export function importFromCSV(file: string): void {
   hideLoader()
 }
 
-export function showLoader(message: string) {
+export function showLoader(message: string): void {
   store.state.loading.show = true;
   store.state.loading.message = message;
 }
 
-export function hideLoader() {
+export function hideLoader(): void {
   store.state.loading.show = false;
 }
 
@@ -41,6 +40,6 @@ export async function importCSVFromURL(url: string): Promise<void> {
   hideLoader();
 }
 
-export function isNumeric(/* eslint-disable */ value: any): boolean {
+export function isNumeric(value: string | number): boolean {
   return value !== undefined && (typeof value === "number" || /^-?\d+$/.test(value));
 }

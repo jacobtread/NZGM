@@ -2,7 +2,7 @@ import { DataGroups, SettingDefinition, Settings } from "@/graph/types";
 import store, { RowData, RowGroup } from "@/store";
 import { isNumeric } from "@/tools";
 
-export function addDefaultSettings(definitions: SettingDefinition[]) {
+export function addDefaultSettings(definitions: SettingDefinition[]): void {
   const output: Settings = store.state.graph.settings;
   for (const def of definitions) {
     if (output.values[def.key] !== undefined) continue;
@@ -150,7 +150,7 @@ export function getColumnDataNumeric(column: number): [number[], number[]] {
   return [values, skipped];
 }
 
-export function sortFirstNumber(as: string, bs: string) {
+export function sortFirstNumber(as: string, bs: string): number {
   if (as == bs) return 0;
   const regex = /(\.\d+)|(\d+(\.\d+)?)|([^\d.]+)|(\.\D+)|(\.$)/g;
   const aMatch = as.toLowerCase().match(regex);
@@ -240,6 +240,16 @@ export function dataToPixel(data: number, min: number, max: number, minPx: numbe
   return (data - min) / (max - min) * (maxPx - minPx) + minPx;
 }
 
+export function getPointColor(settings: Settings): string | null {
+  const transparency: number = settings.num('point-transparency');
+  if (transparency == 0) return '#000000';
+  else if (transparency == 10) return null;
+  else {
+    const opacity: number = (10 - transparency) / 10;
+    return `rgba(0,0,0, ${opacity})`
+  }
+}
+
 export function text(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -248,7 +258,7 @@ export function text(
   y: number,
   align: CanvasTextAlign = "left",
   fill = "#000000"
-) {
+): void {
   ctx.fillStyle = fill;
   ctx.font = `bold ${scale(size)}px Arial`;
   ctx.textAlign = align;
@@ -261,7 +271,7 @@ export function line(
   y1: number,
   x2: number,
   y2: number
-) {
+): void {
   ctx.beginPath();
   ctx.moveTo(x1, y1);
   ctx.lineTo(x2, y2);
@@ -274,7 +284,7 @@ export function box(
   y1: number,
   x2: number,
   y2: number
-) {
+): void {
   ctx.beginPath();
   ctx.rect(x1, y1, x2 - x1, y2 - y1);
   ctx.stroke();
@@ -284,7 +294,7 @@ export function watermark(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number
-) {
+): void {
   text(ctx, "Made with NZGM", 13, scale(10), height - scale(10), "left");
   text(ctx, "jacobtread.github.io/NZGM", 13, width - scale(10), height - scale(10), "right");
 }

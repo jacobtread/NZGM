@@ -12,11 +12,9 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-@Options({
-  props: ["open"],
-})
+@Options({ props: ["open"] })
 export default class Dialog extends Vue {
-  closeDialog() {
+  closeDialog(): void {
     this.$emit("close");
   }
 }
@@ -47,19 +45,17 @@ export default class Dialog extends Vue {
   display: grid;
   grid-template-columns: auto;
   grid-gap: 1.5em;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
   border: 2px solid $light-gray;
 
-  ::v-deep {
-    h1 {
-      font-size: 1.25em;
-    }
+  &:deep(h1) {
+    font-size: 1.25em;
+  }
 
-    p {
-      display: block;
-      line-height: 1.5;
-      margin-bottom: 1em;
-    }
+  &:deep(p) {
+    display: block;
+    line-height: 1.5;
+    margin-bottom: 1em;
   }
 }
 

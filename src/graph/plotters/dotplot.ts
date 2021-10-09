@@ -1,11 +1,11 @@
 import store, { GraphData, RowGroup } from "@/store";
 import { DataGroups, Settings } from "@/graph/types";
-import { axisMinMaxStep, box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
+import { axisMinMaxStep, box, dataFromIndexes, dataToPixel, floatp, getColumnData, getColumnDataNumeric, getPointColor, invScale, line, numericMax, numericMin, scale, sortFirstNumber, splitData, text } from "@/graph";
 import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/math";
 
 let settings: Settings;
 
-export function createDotPlot(ctx: CanvasRenderingContext2D) {
+export function createDotPlot(ctx: CanvasRenderingContext2D): void {
 
   const width: number = ctx.canvas.width;
   const height: number = ctx.canvas.height;
@@ -35,7 +35,7 @@ export function createDotPlot(ctx: CanvasRenderingContext2D) {
     return; // Dont continue rendering;
   }
 
-  if (skipped.length != 0) { // Some data was not numeric
+  if (skipped.length != 0 && settings.bool('show-removed')) { // Some data was not numeric
     text(ctx, "Some non numeric data was present", 10, scale(10), scale(30), "left", "#FF0000");
     text(ctx, "at the following rows:", 10, scale(10), scale(45), "left", "#FF0000");
 
@@ -115,7 +115,7 @@ function renderGraph(
   max: number,
   step: number,
   maxHeight: number,
-) {
+): void {
   renderGrid(ctx, left, right, baseline + scale(10), min, max, step);
   if (yPoints.length > 0) {
     const groups: string[] = Object.keys(yGroups);
@@ -144,7 +144,7 @@ function renderGrid(
   min: number,
   max: number,
   step: number
-) {
+): void {
   const gridLineTop = 50;
   ctx.strokeStyle = "#000000";
   ctx.fillStyle = "#000000";
@@ -176,12 +176,16 @@ function renderData(
   maxHeight: number,
   sortIndex = 2,
   createMap = true
-) {
+): void {
   const map: HTMLMapElement = document.getElementById(
     "canvasMap"
   ) as HTMLMapElement;
 
   ctx.lineWidth = scale(2);
+
+  if (settings.bool('thick-liness')) {
+    ctx.lineWidth = scale(5);
+  }
 
   const stripGraph = settings.bool("strip-graph");
   const stackDots: boolean = settings.bool("stacked-dots");
@@ -205,6 +209,7 @@ function renderData(
 
   const counts: { [key: number]: number } = {}
   for (const [_, xRel] of positions) {
+    _;
     if (counts[xRel] == undefined) counts[xRel] = 1;
     else counts[xRel]++;
   }
@@ -220,6 +225,7 @@ function renderData(
 
   positions.sort((a, b) => a[sortIndex] - b[sortIndex]);
 
+  const pointColor = getPointColor(settings);
   for (const [x, xRel, data] of positions) {
     if (lastX == xRel) y -= yHeight;
     else y = baseline - scale(10);
@@ -230,12 +236,13 @@ function renderData(
     );
 
     lastX = xRel;
-
-    // Render Point
-    ctx.beginPath();
-    ctx.strokeStyle = "#000000";
-    ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
-    ctx.stroke();
+    if (pointColor != null) {
+      // Render Point
+      ctx.beginPath();
+      ctx.strokeStyle = pointColor;
+      ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
 
     if (createMap) {
       const area: HTMLAreaElement = document.createElement("area");
@@ -401,7 +408,7 @@ function drawBoxPlot(
   y: number,
   h: number,
   whisker = true,
-) {
+): void {
   ctx.strokeStyle = "#000000";
   ctx.lineWidth = scale(1);
   // Quartile
