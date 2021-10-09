@@ -24,7 +24,7 @@ export function mean(values: number[]): number {
 export function lowerQuartile(values: number[]): number {
   const count = values.length;
   values.sort((a, b) => a - b);
-  const n = (Math.floor(count / 2)) / 2 - 0.5;
+  const n = Math.floor(count / 2) / 2 - 0.5;
   let q: number;
   if (n < 0) { q = median(values); }
   else if (Math.ceil(n) == n) { q = values[n]; }
@@ -35,7 +35,7 @@ export function lowerQuartile(values: number[]): number {
 export function upperQuartile(values: number[]): number {
   const count = values.length;
   values.sort((a, b) => b - a);
-  const n = (Math.floor(count / 2)) / 2 - 0.5;
+  const n = Math.floor(count / 2) / 2 - 0.5;
   let q: number;
   if (n < 0) { q = median(values); }
   else if (Math.ceil(n) == n) { q = values[n]; }

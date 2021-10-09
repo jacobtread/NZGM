@@ -88,12 +88,12 @@ export function splitData(
 
 export function numericMin(values: RowGroup): number {
   if (values.length == 0) return 0;
-  let minValue = 0;
+  let minValue = -1;
   for (const value of values) {
-    if (typeof value == "number" && value < minValue) minValue = value;
+    if (typeof value == "number" && (minValue == -1 || value < minValue)) minValue = value;
     else if (typeof value == "string") {
       const number: number = parseFloat(value);
-      if (number < minValue) minValue = number;
+      if (minValue == -1 || number < minValue) minValue = number;
     }
   }
   return minValue;
