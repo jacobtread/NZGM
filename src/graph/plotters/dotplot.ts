@@ -5,6 +5,137 @@ import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, stan
 
 let settings: Settings;
 
+export function createDotPlot(ctx: CanvasRenderingContext2D) {
+
+  const width: number = ctx.canvas.width;
+  const height: number = ctx.canvas.height;
+
+  const graphData: GraphData = store.state.graph;
+  settings = graphData.settings;
+
+  const xColumn: number = graphData.xAxis;
+  const yColumn: number = graphData.yAxis;
+  const zColumn: number = graphData.zAxis;
+
+  const columnNames: string[] = store.state.cols;
+
+  const [xPoints, xSkipped]: [number[], RowGroup] = getColumnDataNumeric(xColumn);
+  const [yPoints, ySkipped]: [RowGroup, RowGroup] = getColumnData(yColumn);
+  const [zPoints, zSkipped]: [RowGroup, RowGroup] = getColumnData(zColumn);
+
+  const skipped: RowGroup = [...xSkipped, ...ySkipped, ...zSkipped];
+
+  const left = scale(90);
+  const right = width - scale(60);
+
+  if (xPoints.length == 0) { // No Numeric Data Provided
+    text(ctx, "No Numeric Data Selected", 20, width / 2, (height / 2) - scale(45), "center", "#FF0000");
+    text(ctx, "the 𝑥 axis requires numeric data", 15, width / 2, (height / 2) - scale(15), "center", "#666666");
+    text(ctx, "to render a graph", 15, width / 2, (height / 2) + scale(15), "center", "#666666");
+    return; // Dont continue rendering;
+  }
+
+  if (skipped.length != 0) { // Some data was not numeric
+    text(ctx, "Some non numeric data was present", 10, scale(10), scale(30), "left", "#FF0000");
+    text(ctx, "at the following rows:", 10, scale(10), scale(45), "left", "#FF0000");
+
+    let y: number = scale(60);
+    for (const index of skipped) {
+      // Print out the row indexes
+      text(ctx, `${index}`, 10, scale(10), y, "left", "#666666");
+      y += scale(15);
+    }
+  }
+
+  const baseline: number = height - scale(60); /* The baseline point on the graph */
+  const maxHeight: number = height - scale(120); /* The highest allowed point */
+
+  const minX = Math.min(...xPoints);
+  const maxX = Math.max(...xPoints);
+
+  const minY = numericMin(yPoints);
+  const maxY = numericMax(yPoints);
+
+  const minZ = numericMin(zPoints);
+  const maxZ = numericMax(zPoints);
+
+  // Calculates min, max and step for the graph;
+  const [graphMin, graphMax, graphStep]: [number, number, number] = axisMinMaxStep(minX, maxX);
+
+  // Render Graph Title
+  text(ctx, graphData.title, 20, width / 2, scale(30), "center");
+
+  // Render X-Axis Title
+  text(ctx, columnNames[xColumn], 15, width / 2, height - scale(10), "center");
+
+  const yGroups: DataGroups = splitData(yPoints, 10, minY, maxY);
+  const zGroups: DataGroups = splitData(zPoints, 10, minZ, maxZ);
+
+  if (yColumn != -1) { // Render Y-Axis Title
+    const x: number = scale(20);
+    const y: number = height / 2;
+    ctx.save();
+    ctx.translate(x, y);
+    // Rotate -90deg 
+    ctx.rotate(-Math.PI / 2);
+    text(ctx, columnNames[yColumn], 15, 0, 0, "center");
+    ctx.restore();
+  }
+
+  if (zColumn != -1) {
+    const groups: string[] = Object.keys(zGroups);
+    let x: number = scale(60);
+    // Width of each block
+    const blockWidth: number = (width - scale(40)) / groups.length;
+    for (const group of groups) {
+      const indexes: number[] = zGroups[group];
+      const width: number = x + blockWidth;
+      if (indexes.length > 0) {
+        const data: number[] = dataFromIndexes(indexes, xPoints)
+        renderGraph(ctx, data, yPoints, yGroups, left + scale(30), right - scale(50), baseline, graphMin, graphMax, graphStep, maxHeight)
+      }
+      text(ctx, group, 15, (x + (width - scale(50))) / 2, baseline - maxHeight, "center");
+      x += blockWidth;
+    }
+  } else {
+    renderGraph(ctx, xPoints, yPoints, yGroups, left, right, baseline, graphMin, graphMax, graphStep, maxHeight);
+  }
+
+}
+
+function renderGraph(
+  ctx: CanvasRenderingContext2D,
+  xPoints: number[],
+  yPoints: RowGroup,
+  yGroups: DataGroups,
+  left: number,
+  right: number,
+  baseline: number,
+  min: number,
+  max: number,
+  step: number,
+  maxHeight: number,
+) {
+  renderGrid(ctx, left, right, baseline + scale(10), min, max, step);
+  if (yPoints.length > 0) {
+    const groups: string[] = Object.keys(yGroups);
+    groups.sort(sortFirstNumber).reverse();
+    const groupMaxHeight: number = maxHeight / groups.length;
+    let y: number = baseline;
+    for (const group of groups) {
+      const indexes: number[] = yGroups[group];
+      if (indexes.length > 0) {
+        const data: number[] = dataFromIndexes(indexes, xPoints)
+        renderData(ctx, data, left, right, y, min, max, maxHeight);
+      }
+      text(ctx, group, 15, right + scale(10), y - (groupMaxHeight / 2), "right");
+      y -= groupMaxHeight;
+    }
+  } else {
+    renderData(ctx, xPoints, left, right, baseline, min, max, maxHeight);
+  }
+}
+
 function renderGrid(
   ctx: CanvasRenderingContext2D,
   x1: number,
@@ -71,19 +202,6 @@ function renderData(
     positions.push([x, xRel, data])
   }
 
-  const lq: number = lowerQuartile(points);
-  const uq: number = upperQuartile(points);
-
-  const med: number = median(points);
-  const mea: number = mean(points);
-
-  const minValue: number = floatp(Math.min(...points), 10);
-  const maxValue: number = floatp(Math.max(...points), 10);
-
-  const minNO: number = minNoOutliers(points, lq, uq);
-  const maxNO: number = maxNoOutliers(points, lq, uq);
-
-  const sd: number = standardDeviation(points);
 
   const counts: { [key: number]: number } = {}
   for (const [_, xRel] of positions) {
@@ -132,6 +250,34 @@ function renderData(
     }
   }
 
+  drawAdditonal(ctx, points, left, right, baseline, min, max, maxHeight);
+
+}
+
+function drawAdditonal(
+  ctx: CanvasRenderingContext2D,
+  points: number[],
+  left: number,
+  right: number,
+  baseline: number,
+  min: number,
+  max: number,
+  maxHeight: number,
+) {
+
+  const lq: number = lowerQuartile(points);
+  const uq: number = upperQuartile(points);
+
+  const med: number = median(points);
+  const mea: number = mean(points);
+
+  const minValue: number = floatp(Math.min(...points), 10);
+  const maxValue: number = floatp(Math.max(...points), 10);
+
+  const minNO: number = minNoOutliers(points, lq, uq);
+  const maxNO: number = maxNoOutliers(points, lq, uq);
+
+  const sd: number = standardDeviation(points);
   const minGraph: number = dataToPixel(minValue, min, max, left, right);
   const lqGraph: number = dataToPixel(lq, min, max, left, right);
   const medGraph: number = dataToPixel(med, min, max, left, right);
@@ -243,7 +389,6 @@ function renderData(
     ctx.closePath();
     ctx.fill();
   }
-
 }
 
 function drawBoxPlot(
@@ -272,136 +417,4 @@ function drawBoxPlot(
     line(ctx, uq, y, max, y); // Line
     line(ctx, max, y - scale(5), max, y + scale(5)); // Cap
   }
-}
-
-function renderGraph(
-  ctx: CanvasRenderingContext2D,
-  xPoints: number[],
-  yPoints: RowGroup,
-  yGroups: DataGroups,
-  left: number,
-  right: number,
-  baseline: number,
-  min: number,
-  max: number,
-  step: number,
-  maxHeight: number,
-) {
-  renderGrid(ctx, left, right, baseline + scale(10), min, max, step);
-  if (yPoints.length > 0) {
-    const groups: string[] = Object.keys(yGroups);
-    groups.sort(sortFirstNumber).reverse();
-    const groupMaxHeight: number = maxHeight / groups.length;
-    let y: number = baseline;
-    for (const group of groups) {
-      const indexes: number[] = yGroups[group];
-      if (indexes.length > 0) {
-        const data: number[] = dataFromIndexes(indexes, xPoints)
-        renderData(ctx, data, left, right, y, min, max, maxHeight);
-      }
-      text(ctx, group, 15, right + scale(10), y - (groupMaxHeight / 2), "right");
-      y -= groupMaxHeight;
-    }
-  } else {
-    renderData(ctx, xPoints, left, right, baseline, min, max, maxHeight);
-  }
-}
-
-
-export function createDotPlot(ctx: CanvasRenderingContext2D) {
-
-  const width: number = ctx.canvas.width;
-  const height: number = ctx.canvas.height;
-
-  const graphData: GraphData = store.state.graph;
-  settings = graphData.settings;
-
-  const xColumn: number = graphData.xAxis;
-  const yColumn: number = graphData.yAxis;
-  const zColumn: number = graphData.zAxis;
-
-  const columnNames: string[] = store.state.cols;
-
-  const [xPoints, xSkipped]: [number[], RowGroup] = getColumnDataNumeric(xColumn);
-  const [yPoints, ySkipped]: [RowGroup, RowGroup] = getColumnData(yColumn);
-  const [zPoints, zSkipped]: [RowGroup, RowGroup] = getColumnData(zColumn);
-
-  const skipped: RowGroup = [...xSkipped, ...ySkipped, ...zSkipped];
-
-  const left = scale(90);
-  const right = width - scale(60);
-
-  if (xPoints.length == 0) { // No Numeric Data Provided
-    text(ctx, "No Numeric Data Selected", 20, width / 2, (height / 2) - scale(45), "center", "#FF0000");
-    text(ctx, "the 𝑥 axis requires numeric data", 15, width / 2, (height / 2) - scale(15), "center", "#666666");
-    text(ctx, "to render a graph", 15, width / 2, (height / 2) + scale(15), "center", "#666666");
-    return; // Dont continue rendering;
-  }
-
-  if (skipped.length != 0) { // Some data was not numeric
-    text(ctx, "Some non numeric data was present", 10, scale(10), scale(30), "left", "#FF0000");
-    text(ctx, "at the following rows:", 10, scale(10), scale(45), "left", "#FF0000");
-
-    let y: number = scale(60);
-    for (const index of skipped) {
-      // Print out the row indexes
-      text(ctx, `${index}`, 10, scale(10), y, "left", "#666666");
-      y += scale(15);
-    }
-  }
-
-  const baseline: number = height - scale(60); /* The baseline point on the graph */
-  const maxHeight: number = height - scale(120); /* The highest allowed point */
-
-  const minX = Math.min(...xPoints);
-  const maxX = Math.max(...xPoints);
-
-  const minY = numericMin(yPoints);
-  const maxY = numericMax(yPoints);
-
-  const minZ = numericMin(zPoints);
-  const maxZ = numericMax(zPoints);
-
-  // Calculates min, max and step for the graph;
-  const [graphMin, graphMax, graphStep]: [number, number, number] = axisMinMaxStep(minX, maxX);
-
-  // Render Graph Title
-  text(ctx, graphData.title, 20, width / 2, scale(30), "center");
-
-  // Render X-Axis Title
-  text(ctx, columnNames[xColumn], 15, width / 2, height - scale(10), "center");
-
-  const yGroups: DataGroups = splitData(yPoints, 10, minY, maxY);
-  const zGroups: DataGroups = splitData(zPoints, 10, minZ, maxZ);
-
-  if (yColumn != -1) { // Render Y-Axis Title
-    const x: number = scale(20);
-    const y: number = height / 2;
-    ctx.save();
-    ctx.translate(x, y);
-    // Rotate -90deg 
-    ctx.rotate(-Math.PI / 2);
-    text(ctx, columnNames[yColumn], 15, 0, 0, "center");
-    ctx.restore();
-  }
-
-  if (zColumn != -1) {
-    const groups: string[] = Object.keys(zGroups);
-    let x: number = scale(60);
-    // Width of each block
-    const blockWidth: number = (width - scale(40)) / groups.length;
-    for (const group of groups) {
-      const indexes: number[] = zGroups[group];
-      const width: number = x + blockWidth;
-      if (indexes.length > 0) {
-        const data: number[] = dataFromIndexes(indexes, xPoints)
-        renderGraph(ctx, data, yPoints, yGroups, left + scale(30), right - scale(50), baseline, graphMin, graphMax, graphStep, maxHeight)
-      }
-      text(ctx, group, 15, (x + (width - scale(50))) / 2, baseline - maxHeight, "center");
-      x += blockWidth;
-    }
-  } else {
-    renderGraph(ctx, xPoints, yPoints, yGroups, left, right, baseline, graphMin, graphMax, graphStep, maxHeight);
-  }
-
 }
