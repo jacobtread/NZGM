@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "3782a7fbdc2da6a0ebad",
-    "url": "/NZGM/css/app.08808ded.css"
+    "revision": "a34668f9e2bedd818acf",
+    "url": "/NZGM/css/app.2bce91cd.css"
   },
   {
     "revision": "847a59ff1ddc2f24dedda39411456177",
     "url": "/NZGM/img/logo-white.847a59ff.svg"
   },
   {
-    "revision": "5ee1156c98c2b0050ca8312ff4acaf77",
+    "revision": "ced2e33adc01d05ece5712bdb77cfcaa",
     "url": "/NZGM/index.html"
   },
   {
-    "revision": "3782a7fbdc2da6a0ebad",
-    "url": "/NZGM/js/app.7d4093cf.js"
+    "revision": "a34668f9e2bedd818acf",
+    "url": "/NZGM/js/app.aa09b744.js"
   },
   {
     "revision": "a90d7860953000d68392",
@@ -26,5 +26,9 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
     "url": "/NZGM/robots.txt"
+  },
+  {
+    "revision": "eb21c3bf0aca4a8c1a5be853c35f0f95",
+    "url": "/NZGM/site.webmanifest"
   }
 ]);
