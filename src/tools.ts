@@ -41,6 +41,19 @@ export function importFromFile(): void {
   }
 }
 
+export async function importFromClipboard(): Promise<void> {
+  if ("navigator" in window) {
+    showLoader("Loading Clipboard Contents");
+    try {
+      const text = await navigator.clipboard.readText();
+      importFromCSV(text);
+    } catch (e) {
+      toast("Unable to read contents of clipboard", "error");
+      console.error(e);
+    }
+  }
+}
+
 export function showLoader(message: string): void {
   store.state.loading.show = true;
   store.state.loading.message = message;

@@ -72,7 +72,10 @@
         v-model="importURL"
       />
     </label>
-    <button class="button" @click="importFromURL">Import</button>
+    <template #buttons>
+      <button @click="importFromURL">Import</button>
+      <button @click="pickURLDialog = false">Cancel</button>
+    </template>
   </Dialog>
 </template>
 
@@ -83,6 +86,7 @@ import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
 import {
   importCSVFromURL,
+  importFromClipboard,
   importFromCSV,
   importFromFile,
   showLoader,
@@ -152,17 +156,7 @@ export default class Header extends Vue {
           icon: "content_paste",
           name: "Import from clipboard",
           action: (): void => {
-            if ("navigator" in window) {
-              showLoader("Loading Clipboard Contents");
-              navigator.clipboard
-                .readText()
-                .then((text) => {
-                  importFromCSV(text);
-                })
-                .catch((err) => {
-                  alert("Unable to read contents from clipboard: " + err);
-                });
-            }
+            importFromClipboard();
           },
         },
         { icon: "table_chart", name: "Paste Table (Legacy)" },

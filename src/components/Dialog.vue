@@ -4,6 +4,9 @@
       <transition name="dialog">
         <div class="dialog">
           <slot />
+          <div class="buttons">
+            <slot name="buttons" />
+          </div>
         </div>
       </transition>
     </div>
@@ -57,6 +60,27 @@ export default class Dialog extends Vue {
     line-height: 1.5;
     margin-bottom: 1em;
   }
+
+  &:deep(.button) {
+    display: inline-block !important;
+  }
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-content: space-between;
+  grid-gap: 1em;
+
+  :deep(button) {
+    padding: 1em 0.5em;
+    background: $primary;
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+
 }
 
 .dialog-leave-active,
