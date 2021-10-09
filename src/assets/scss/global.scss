@@ -54,10 +54,6 @@ select {
   display: inline-block;
   text-align: left;
   
-  &__input {
-
-  }
-
   &__text {
     margin-left: 0.75em;
     display: inline-block;
@@ -116,7 +112,6 @@ select {
 }
 
 .button {
-  
   padding: 0.5em 1em;
   background-color: $primary;
   border: none;

@@ -1,15 +1,13 @@
 <template>
-  <div class="content">
-    <Header />
-    <main>
-      <Resizable>
-        <ContentTable />
-      </Resizable>
-      <Graph />
-      <Loader :show="loading.show" />
-    </main>
-    <div class="resize-area"></div>
-  </div>
+  <Header />
+  <main>
+    <Resizable>
+      <ContentTable />
+    </Resizable>
+    <Graph />
+    <Loader :show="loading.show" />
+  </main>
+  <div class="resize-area"></div>
 </template>
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
@@ -30,20 +28,13 @@ import store, { LoadingData } from "./store";
   },
 })
 export default class App extends Vue {
-
   get loading(): LoadingData {
     return store.state.loading;
   }
-
 }
 </script>
 <style lang="scss">
 @import "./assets/scss/global.scss";
-@import "./assets/scss/global.scss";
-
-.content {
-  height: 100%;
-}
 
 main {
   position: relative;
