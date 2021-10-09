@@ -12,10 +12,22 @@
   height: 100vh;
 }
 
-.dragging * {
+.resize-area {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
   cursor: col-resize;
-  user-select: none;
+  pointer-events: none;
+  z-index: -1;
 }
+
+.resizing .resize-area {
+ z-index: 999;
+ pointer-events: initial;
+}
+
 
 select {
   appearance: none;

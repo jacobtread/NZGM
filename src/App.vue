@@ -24,6 +24,7 @@
         </div>
       </div>
     </main>
+    <div class="resize-area"></div>
   </div>
 </template>
 <script lang="ts">

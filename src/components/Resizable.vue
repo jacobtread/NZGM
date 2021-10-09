@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="resizable"
-    style="width: 50%"
-  >
+  <div class="resizable" style="width: 50%">
     <slot />
     <span class="resizable__handle" @mousedown="dragging = true"></span>
   </div>
@@ -18,18 +15,11 @@ export default class App extends Vue {
     const el: HTMLElement = this.$el;
     document.onmousemove = (event: MouseEvent): void => {
       if (!this.dragging) return;
-      document.getElementById("app")?.classList.add("dragging");
+      document.getElementById("app")?.classList.add("resizing");
       event = event || window.event;
       let x: number;
       if (event.pageX == null && event.clientX != null) {
-        let eventDoc: Document = document;
-        let doc: HTMLElement = eventDoc.documentElement;
-        let body: HTMLElement = eventDoc.body;
-
-        x =
-          event.clientX +
-          ((doc && doc.scrollLeft) || (body && body.scrollLeft) || 0) -
-          ((doc && doc.clientLeft) || (body && body.clientLeft) || 0);
+        x = event.clientX;
       } else {
         x = event.pageX;
       }
@@ -37,7 +27,7 @@ export default class App extends Vue {
       el.style.width = width + "px";
     };
     document.onmouseup = () => {
-      document.getElementById("app")?.classList.remove("dragging");
+      document.getElementById("app")?.classList.remove("resizing");
       this.dragging = false;
     };
   }
@@ -49,15 +39,17 @@ export default class App extends Vue {
   position: relative;
   height: 100%;
   min-width: 300px;
+  margin-right: 10px;
 
   &__handle {
     cursor: col-resize;
     position: absolute;
-    right: 0;
+    right: -10px;
     top: 0;
-    width: 4px;
+    width: 10px;
     height: 100%;
+    background: red;
+    z-index: 99;
   }
-
 }
 </style>
