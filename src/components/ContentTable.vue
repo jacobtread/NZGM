@@ -9,13 +9,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(_, rindex) in rows" :key="rindex" @click="select(row)">
-          <td v-for="(_, index) in cols" :key="index">
+        <tr
+          :class="{ selected: selected.row == rowIndex }"
+          v-for="(_, rowIndex) in rows"
+          :key="rowIndex"
+          @click.self="select(rowIndex, -1)"
+        >
+          <td
+            v-for="(_, colIndex) in cols"
+            :key="colIndex"
+            :class="{ selected: selected.col == colIndex }"
+            @click="select(rowIndex, colIndex)"
+          >
             <input
-              :data-col="index"
-              :data-row="rindex"
+              :data-col="colIndex"
+              :data-row="rowIndex"
               type="text"
-              v-model="rows[rindex][index]"
+              v-model="rows[rowIndex][colIndex]"
             />
           </td>
         </tr>
@@ -25,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import store, { RowData } from "@/store";
+import store, { RowData, SelectedData } from "@/store";
 import { Vue } from "vue-class-component";
 export default class ContentTable extends Vue {
   displayedRows = 50;
@@ -44,6 +54,10 @@ export default class ContentTable extends Vue {
     store.state.data.rows = value;
   }
 
+  get selected(): SelectedData {
+    return store.state.data.selected;
+  }
+
   get cols(): string[] {
     return store.state.data.cols;
   }
@@ -52,8 +66,11 @@ export default class ContentTable extends Vue {
     store.state.data.cols = value;
   }
 
-  select(row: RowData[]): void {
-    console.log(row);
+  select(rowIndex: number, colIndex: number): void {
+    store.state.data.selected = {
+      col: colIndex,
+      row: rowIndex,
+    };
   }
 
   mounted(): void {
@@ -86,12 +103,13 @@ export default class ContentTable extends Vue {
     tr th,
     tr td {
       position: relative;
+      text-align: center;
       input {
         border: none;
         padding: 0.5em;
-        width: 100%;
         border-radius: 0;
         background-color: transparent;
+        width: 100%;
       }
     }
     thead {
@@ -134,6 +152,13 @@ export default class ContentTable extends Vue {
           &:nth-of-type(1) input {
             text-align: left;
           }
+        }
+      }
+      tr.selected {
+        background-color: darken($primary, 5) !important;
+
+        td {
+          color: white !important;
         }
       }
     }

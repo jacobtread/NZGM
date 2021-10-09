@@ -19,6 +19,12 @@ export type GraphData = {
 export type ContentData = {
   cols: string[],
   rows: RowData[][]
+  selected: SelectedData;
+}
+
+export type SelectedData = {
+  row: number;
+  col: number;
 }
 
 export type LoadingData = {
@@ -48,6 +54,7 @@ export default createStore<State>({
     data: {
       cols: ["", ""],
       rows: [["", ""]],
+      selected: { row: -1, col: -1 }
     },
     loading: {
       show: false,

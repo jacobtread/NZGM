@@ -8,6 +8,7 @@ export function importFromCSV(file: string): void {
   let header = true;
   if (lines.length < 1) return;
   data.rows = []; // Clear rows;
+  data.selected = { row: -1, col: -1 };
   for (const line of lines) {
     const parts: string[] = line.split(",");
     if (header) {
