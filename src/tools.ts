@@ -63,6 +63,30 @@ export function hideLoader(): void {
   store.state.loading.show = false;
 }
 
+export function removeIndexY<T>(values: T[][], index: number): T[][] {
+  const output: T[][] = [];
+  for (const row of values) {
+    if (index == 0) output.push(row.slice(1, values.length));
+    else if (index == row.length - 1)
+      output.push(row.slice(0, row.length - 1));
+    else {
+      output.push([
+        ...row.slice(0, index),
+        ...row.slice(index + 1, row.length),
+      ]);
+    }
+  }
+  return output;
+}
+export function removeIndexX<T>(values: T[], index: number): T[] {
+  if (index == 0) return values.slice(1, values.length);
+  else if (index == values.length - 1) return values.slice(0, values.length - 1);
+  else return [
+    ...values.slice(0, index),
+    ...values.slice(index + 1, values.length),
+  ];
+}
+
 export async function importCSVFromURL(url: string): Promise<void> {
   try {
     showLoader("Importing Content")
