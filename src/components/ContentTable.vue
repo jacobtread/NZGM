@@ -81,6 +81,7 @@ export default class ContentTable extends Vue {
     width: 100%;
     border-collapse: collapse;
     min-width: 400px;
+    font-size: 0.9em;
 
     tr th,
     tr td {
