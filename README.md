@@ -21,6 +21,23 @@ This application does not yet support smaller screen sizes and requires JavaScri
 
 ### Web Server
 
+This application can be served from any webserver that is able to serve static files (I would hope all of them)
+
+Using a prebuilt version from the releases [Here](https://github.com/jacobtread/NZGM/releases/) you can simply extract the zip file and copy everything into the public directory of your webserver and you're good to go!
+
+Otherwise if you would like to build the site yourself you will need to have [NodeJS](https://nodejs.org/en/) installed (tested using v14.18.0) and then you can clone this repository and run 
+
+```
+npm install
+npm run build
+```
+
+or if you are using the yarn package manager
+
+```
+yarn install
+yarn build
+```
 
 ### Docker
 
@@ -30,28 +47,18 @@ You can quickly and easily deploy this application to docker using its provided 
 
 This project includes a captain-definition file so that it can be easly set up and used with CapRover [See Here](https://caprover.com/docs/captain-definition-file.html)
 
-### Web Server
 
+## Developement
 
-## Project setup
+To run a hot-reloading version of this project for development purposes you can use
+the following command
+
 ```
-yarn install
+npm run serve
 ```
 
-### Compiles and hot-reloads for development
+or with yarn package manager
+
 ```
 yarn serve
 ```
-
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
