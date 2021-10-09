@@ -74,14 +74,6 @@
     </label>
     <button class="button" @click="importFromURL">Import</button>
   </Dialog>
-  <input
-    style="display: none"
-    type="file"
-    placeholder="example.csv"
-    id="fileUpload"
-    accept="csv"
-    @change="importFromFile"
-  />
 </template>
 
 <script lang="ts">
@@ -93,6 +85,7 @@ import {
   hideLoader,
   importCSVFromURL,
   importFromCSV,
+  importFromFile,
   showLoader,
 } from "@/tools";
 interface ToolbarItem {
@@ -110,26 +103,6 @@ interface ToolbarItem {
 export default class Header extends Vue {
   pickURLDialog = false;
   importURL = "";
-
-  importFromFile(): void {
-    const fileUpload: HTMLInputElement = document.getElementById(
-      "fileUpload"
-    ) as HTMLInputElement;
-    const files = fileUpload.files;
-    if (!files || files.length < 1) return alert("No files selected");
-    const file = files[0];
-    const reader = new FileReader();
-    showLoader("Loading File");
-    reader.readAsText(file);
-    reader.onload = (event: ProgressEvent<FileReader>) => {
-      if (!event.target) return alert("Failed to load file!");
-      var content = event.target.result as string;
-      importFromCSV(content);
-      const rows = store.state.data.rows;
-      alert(`Imported ${rows.length}row(s)`);
-      hideLoader();
-    };
-  }
 
   importFromURL(): void {
     var regex = /^(ftp|http|https):\/\/[^ "]+$/;
@@ -172,10 +145,7 @@ export default class Header extends Vue {
           icon: "file_upload",
           name: "Open File",
           action: (): void => {
-            const fileUpload: HTMLInputElement = document.getElementById(
-              "fileUpload"
-            ) as HTMLInputElement;
-            fileUpload.click();
+            importFromFile();
           },
         },
         {
