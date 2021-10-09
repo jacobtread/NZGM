@@ -88,6 +88,8 @@ import {
   importCSVFromURL,
   importFromClipboard,
   importFromFile,
+  insertIndexX,
+  insertIndexY,
   removeIndexX,
   removeIndexY,
   toast,
@@ -242,10 +244,95 @@ export default class Header extends Vue {
           },
         },
         {
+          name: "Insert Row Before",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const selected: SelectedData = store.state.data.selected;
+            const row: number = selected.row;
+            if (row != -1) {
+              data.rows = insertIndexX<RowData[]>(
+                new Array(store.state.data.cols.length),
+                data.rows,
+                row - 1
+              );
+              toast(`Inserted row after ${row}`);
+              data.selected.row++;
+            } else {
+              toast("No row selected!", "error");
+            }
+          },
+        },
+        {
+          name: "Insert Row After",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const selected: SelectedData = store.state.data.selected;
+            const row: number = selected.row;
+            if (row != -1) {
+              data.rows = insertIndexX<RowData[]>(
+                new Array(store.state.data.cols.length),
+                data.rows,
+                row
+              );
+              toast(`Inserted row after ${row}`);
+            } else {
+              toast("No row selected!", "error");
+            }
+          },
+        },
+        {},
+        {
           name: "Insert Column",
           action(): void {
             toast("Inserted column");
             store.state.data.cols.push("");
+          },
+        },
+                {
+          name: "Insert Column Before",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const selected: SelectedData = store.state.data.selected;
+            const col: number = selected.col;
+            if (col != -1) {
+              data.cols = insertIndexX<string>(
+                '',
+                data.cols,
+                col - 1
+              );
+              data.rows = insertIndexY(
+                '',
+                data.rows,
+                col - 1
+              )
+              toast(`Inserted column after ${col}`);
+              data.selected.col++;
+            } else {
+              toast("No column selected!", "error");
+            }
+          },
+        },
+        {
+          name: "Insert Column After",
+          action(): void {
+            const data: ContentData = store.state.data;
+            const selected: SelectedData = store.state.data.selected;
+            const col: number = selected.col;
+            if (col != -1) {
+              data.cols = insertIndexX<string>(
+                '',
+                data.cols,
+                col
+              );
+                 data.rows = insertIndexY(
+                '',
+                data.rows,
+                col
+              )
+              toast(`Inserted column after ${col}`);
+            } else {
+              toast("No column selected!", "error");
+            }
           },
         },
       ],
