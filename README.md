@@ -11,6 +11,8 @@
 
 The mordern alternative to [NZGrapher](https://github.com/mathsnz/NZGrapher/) with many improvements in performance and runs completely serverless with live edit for the data, settings, title and axies. All packed into a new and modern looking UI design. 
 
+THIS APPLICATION IS WIP AND DOES NOT FEATURE EVERYTHING INCLUDED IN NZGrapher
+
 This application is written in Typescript, SCSS, and HTML and uses VueJS
 
 There is a live version of this application [Here](https://jacobtread.github.io/NZGM/)
