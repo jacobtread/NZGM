@@ -18,7 +18,7 @@ import {
   splitData,
   text
 } from "@/graph";
-import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/math";
+import { lowerQuartile, maxNoOutliers, mean, median, minNoOutliers, random, standardDeviation, upperQuartile } from "@/tools/math";
 
 let settings: Settings;
 
