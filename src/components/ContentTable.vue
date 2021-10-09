@@ -9,7 +9,15 @@
             @click="select(-1, index)"
             :class="{ selected: selected.col == index }"
           >
-            <input type="text" v-model="cols[index]" />
+            <input
+              class="col-input"
+              type="text"
+              v-model="cols[index]"
+              :data-col="index"
+              v-if="editColumnIndex == index"
+              @blur="editColumn(-1)"
+            />
+            <p @dblclick="editColumn(index)">{{ cols[index] }}</p>
           </th>
         </tr>
       </thead>
@@ -24,14 +32,20 @@
             v-for="(_, colIndex) in cols"
             :key="colIndex"
             :class="{ selected: selected.col == colIndex }"
-            @click="select(rowIndex, -1)"
+            @click="select(rowIndex, colIndex)"
           >
             <input
+              class="row-input"
               :data-col="colIndex"
               :data-row="rowIndex"
               type="text"
               v-model="rows[rowIndex][colIndex]"
+              v-if="editRowIndex == rowIndex && editRowColumnIndex == colIndex"
+              @blur="editRow(-1, -1)"
             />
+            <p @dblclick="editRow(rowIndex, colIndex)">
+              {{ rows[rowIndex][colIndex] }}
+            </p>
           </td>
         </tr>
       </tbody>
@@ -45,6 +59,36 @@ import { Vue } from "vue-class-component";
 export default class ContentTable extends Vue {
   displayedRows = 50;
   lastScrollPoint = 0;
+
+  editColumnIndex = -1;
+  editRowIndex = -1;
+  editRowColumnIndex = -1;
+
+  editColumn(index: number): void {
+    this.editColumnIndex = index;
+    this.editRowIndex = -1;
+    this.editRowColumnIndex = -1;
+    setTimeout(() => {
+      const element: HTMLElement | null = document.querySelector(
+        `.col-input[data-col="${this.editColumnIndex}"]`
+      );
+      if (!element) return;
+      element.focus();
+    }, 15);
+  }
+
+  editRow(index: number, column: number): void {
+    this.editRowIndex = index;
+    this.editRowColumnIndex = column;
+    this.editColumnIndex = -1;
+    setTimeout(() => {
+      const element: HTMLElement | null = document.querySelector(
+        `.row-input[data-col="${this.editRowColumnIndex}"][data-row="${this.editRowIndex}"]`
+      );
+      if (!element) return;
+      element.focus();
+    }, 15);
+  }
 
   get rows(): RowData[][] {
     const rows = store.state.data.rows;
@@ -98,82 +142,89 @@ export default class ContentTable extends Vue {
   width: 100%;
   height: 100%;
   overflow: auto;
+}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 400px;
-    font-size: 0.9em;
+table {
+  width: 100%;
+  min-width: 400px;
 
-    tr th,
-    tr td {
-      position: relative;
+  border-collapse: collapse;
+
+
+
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    background-color: darken($primary, 5);
+
+    p {
+      font-weight: bold;
+      font-size: 0.9em;
+      padding: 0.5em;
+      color: white;
       text-align: center;
-      input {
-        border: none;
-        padding: 0.5em;
-        border-radius: 0;
-        background-color: transparent;
-        width: 100%;
-      }
     }
-    thead {
-      th {
-        background-color: darken($primary, 5);
-        position: sticky;
-        top: 0;
-        z-index: 1;
 
-        input {
-          width: 100%;
-          color: white;
-          font-weight: bold;
+    &:nth-child(1) p {
+      text-align: left;
+    }
+
+    &.selected {
+      background-color: darken($primary, 15);
+    }
+  }
+
+  tbody {
+    width: 100%;
+    tr {
+      border-top: 1px solid $light-gray;
+      border-bottom: 1px solid $light-gray;
+
+      &:nth-child(odd) {
+        background-color: lighten($light-gray, 5);
+
+        .selected {
+          background-color: darken($light-gray, 5);
+        }
+      }
+
+      td {
+        position: relative;
+
+        p {
+          font-size: 0.8em;
+          padding: 0.5em;
           text-align: center;
         }
 
-        &:nth-of-type(1) input {
+        &.selected {
+          background-color: $light-gray;
+        }
+
+        &:nth-child(1) p {
           text-align: left;
         }
       }
-      th.selected {
-        background-color: darken($primary, 15) !important;
-      }
-    }
 
-    tbody {
-      tr {
-        border: 1px solid $light-gray;
-
-        &:nth-child(odd) {
-          background-color: lighten($light-gray, 5);
-
-          .selected {
-            background-color: darken($light-gray, 5);
-          }
-        }
-
-        &:hover {
-          background-color: $light-gray;
-        }
-
-        td {
-          input {
-            text-align: center;
-          }
-
-          &:nth-of-type(1) input {
-            text-align: left;
-          }
-        }
-
-        .selected {
-          background-color: $light-gray;
-        }
-      }
-      tr.selected {
+      &.selected {
         background-color: darken($light-gray, 15);
+        .selected {
+          background-color: darken($light-gray, 15);
+        }
       }
     }
   }
+}
+
+.col-input,
+.row-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
 }
 </style>
