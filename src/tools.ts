@@ -79,6 +79,7 @@ export function removeIndexY<T>(values: T[][], index: number): T[][] {
   }
   return output;
 }
+
 export function removeIndexX<T>(values: T[], index: number): T[] {
   if (index == 0) return values.slice(1, values.length);
   else if (index == values.length - 1) return values.slice(0, values.length - 1);
@@ -86,6 +87,33 @@ export function removeIndexX<T>(values: T[], index: number): T[] {
     ...values.slice(0, index),
     ...values.slice(index + 1, values.length),
   ];
+}
+
+export function insertIndexX<T>(value: T, values: T[], index: number): T[] {
+  if (index == 0) return [value, ...values];
+  else if (index == values.length - 1) return [...values, value];
+  else return [
+    ...values.slice(0, index + 1),
+    value,
+    ...values.slice(index + 1, values.length),
+  ];
+}
+
+export function insertIndexY<T>(value: T, values: T[][], index: number): T[][] {
+  const output: T[][] = [];
+  for (const row of values) {
+    if (index == 0) output.push([value, ...row]);
+    else if (index == row.length - 1)
+      output.push([...row, value]);
+    else {
+      output.push([
+        ...row.slice(0, index + 1),
+        value,
+        ...row.slice(index + 1, row.length),
+      ]);
+    }
+  }
+  return output;
 }
 
 export async function importCSVFromURL(url: string): Promise<void> {
