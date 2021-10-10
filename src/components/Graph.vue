@@ -1,5 +1,5 @@
 <template>
-  <div class="graph-wrapper">
+  <div class="graph-wrapper" id="graphWrapper">
     <div class="buttons">
       <button class="button" @click="download">
         <i class="material-icons">download</i>
@@ -8,8 +8,12 @@
         <i class="material-icons">refresh</i>
       </button>
     </div>
-    <div class="canvas-wrapper" id="canvasWrapper">
-      <img id="graph" src="" alt="" />
+    <div
+      class="canvas-wrapper"
+      id="canvasWrapper"
+      :class="{ scaled: graphValue.scaleFactor == 5 }"
+    >
+      <img id="graph" src="" alt="" usemap="#canvas-map" />
       <canvas id="graphCanvas" usemap="#canvas-map" />
       <map name="canvas-map" id="canvasMap"></map>
     </div>
@@ -19,7 +23,11 @@
           <label class="select__label">X Axis</label>
           <select class="select__input" name="" v-model="xAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in data.cols" :key="index">
+            <option
+              :value="index"
+              v-for="(col, index) in data.cols"
+              :key="index"
+            >
               {{ col }}
             </option>
           </select>
@@ -28,7 +36,11 @@
           <label class="select__label">Y Axis</label>
           <select class="select__input" name="" v-model="yAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in data.cols" :key="index">
+            <option
+              :value="index"
+              v-for="(col, index) in data.cols"
+              :key="index"
+            >
               {{ col }}
             </option>
           </select>
@@ -39,7 +51,11 @@
           <label class="select__label">Z Axis</label>
           <select class="select__input" name="" v-model="zAxis">
             <option value="-1">None</option>
-            <option :value="index" v-for="(col, index) in data.cols" :key="index">
+            <option
+              :value="index"
+              v-for="(col, index) in data.cols"
+              :key="index"
+            >
               {{ col }}
             </option>
           </select>
@@ -153,6 +169,9 @@ import { watermark } from "@/graph";
   },
 })
 export default class Graph extends Vue {
+  width = 0;
+  height = 0;
+
   mounted(): void {
     this.resizeGraph();
     this.setupSettings();
@@ -165,60 +184,50 @@ export default class Graph extends Vue {
   }
 
   resizeGraph(): void {
-    const graphCanvas: HTMLCanvasElement = document.getElementById(
-      "graphCanvas"
-    ) as HTMLCanvasElement;
-    store.state.graph.scaleFactor = 1;
-    graphCanvas.style.transform = "scale(1) translate(-50%,-50%)";
+    const graphWrapper: HTMLElement = document.getElementById(
+      "canvasWrapper"
+    ) as HTMLElement;
+    this.graphValue.scaleFactor = 1;
     if (this.size == 0) {
-      graphCanvas.style.width = "100%";
-      graphCanvas.style.height = "100%";
+      // Auto
+      this.width = graphWrapper.offsetWidth;
+      this.height = graphWrapper.offsetHeight;
     } else if (this.size == 1) {
-      graphCanvas.style.width = "500%";
-      graphCanvas.style.height = "500%";
-      graphCanvas.style.transform = "scale(0.2) translate(-250%, -250%)";
-      store.state.graph.scaleFactor = 5;
+      // Auto - HighRes
+      console.log(graphWrapper.offsetWidth, graphWrapper.offsetHeight);
+      this.width = graphWrapper.offsetWidth * 5;
+      this.height = graphWrapper.offsetHeight * 5;
+      this.graphValue.scaleFactor = 5;
     } else if (this.size == 2) {
-      graphCanvas.style.width = "800px";
-      graphCanvas.style.height = "600px";
+      // Standard
+      this.width = 800;
+      this.height = 600;
     } else if (this.size == 3) {
-      graphCanvas.style.width = "500px";
-      graphCanvas.style.height = "400px";
+      // Small
+      this.width = 500;
+      this.height = 400;
     } else if (this.size == 4) {
-      graphCanvas.style.width = "800px";
-      graphCanvas.style.height = "300px";
+      // Short
+      this.width = 800;
+      this.height = 300;
     }
-    graphCanvas.width = graphCanvas.offsetWidth;
-    graphCanvas.height = graphCanvas.offsetHeight;
     this.renderGraph();
   }
 
-  resetMap(): void {
-    const map: HTMLMapElement = document.getElementById(
-      "canvasMap"
-    ) as HTMLMapElement;
-    map.innerHTML = "";
-  }
-
-  get graphTypeData(): GraphTypeData {
-    return graphs[this.graphType];
-  }
-
   renderGraph(): void {
-    this.resetMap();
-    const wrapper: HTMLElement = document.getElementById(
-      "canvasWrapper"
-    ) as HTMLImageElement;
-    const graphImg: HTMLImageElement = document.getElementById(
-      "graph"
-    ) as HTMLImageElement;
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
+    const graphImg: HTMLImageElement = document.getElementById(
+      "graph"
+    ) as HTMLImageElement;
+    this.resetMap();
     const ctx: CanvasRenderingContext2D = graphCanvas.getContext(
       "2d"
     ) as CanvasRenderingContext2D;
     const canvas = ctx.canvas;
+    canvas.width = this.width;
+    canvas.height = this.height;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.imageSmoothingEnabled = true;
     ctx.fillStyle = "#ffffff";
@@ -234,7 +243,17 @@ export default class Graph extends Vue {
 
     const data = canvas.toDataURL();
     graphImg.src = data;
-    wrapper.style.backgroundImage = "url('" + data + "')";
+  }
+
+  resetMap(): void {
+    const map: HTMLMapElement = document.getElementById(
+      "canvasMap"
+    ) as HTMLMapElement;
+    map.innerHTML = "";
+  }
+
+  get graphTypeData(): GraphTypeData {
+    return graphs[this.graphType];
   }
 
   download(): void {
@@ -376,24 +395,24 @@ export default class Graph extends Vue {
   flex: auto;
   overflow: hidden;
   position: relative;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.scaled {
+    display: block;
+    #graph {
+      flex: auto;
+      width: 100%;
+      height: 100%;
+    }
+  }
 }
 
-#graph {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-}
 
 #graphCanvas {
   position: absolute;
   background-color: black;
-  aspect-ratio: auto 944 / 777;
 
   display: hidden;
   visibility: hidden;

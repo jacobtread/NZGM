@@ -14,6 +14,7 @@ import {
   numericMax,
   numericMin,
   scale,
+  scrollToRow,
   sortFirstNumber,
   splitData,
   text
@@ -211,8 +212,9 @@ function renderData(
 
   const pointRadius = scale(pointSize / 2)
 
-  const positions: [number, number, number][] = [];
-  for (const data of points) {
+  const positions: [number, number, number, number][] = [];
+  for (let index = 0; index < points.length; index++) {
+    const data = points[index];
     const x: number = dataToPixel(data, min, max, left, right);
     let xRel: number;
     if (stackDots) {
@@ -220,9 +222,8 @@ function renderData(
     } else {
       xRel = Math.floor(x / (pointRadius * 3)) * pointRadius * 3;
     }
-    positions.push([x, xRel, data])
+    positions.push([x, xRel, data, index])
   }
-
 
   const counts: { [key: number]: number } = {}
   for (const [_, xRel] of positions) {
@@ -243,7 +244,7 @@ function renderData(
   positions.sort((a, b) => a[sortIndex] - b[sortIndex]);
 
   const pointColor = getPointColor(settings);
-  for (const [x, xRel, data] of positions) {
+  for (const [x, xRel, data, index] of positions) {
     if (lastX == xRel) y -= yHeight;
     else y = baseline - scale(10);
 
@@ -266,6 +267,11 @@ function renderData(
       area.shape = "circle";
       area.coords = `${invScale(x)},${invScale(y)},${invScale(pointRadius)}`
       area.alt = `${data}`;
+      area.href = "https://example.com";
+      area.title = `${index + 1}: ${data}`;
+      area.onmouseenter = function() {
+        scrollToRow(index);
+      }
       map.appendChild(area);
     }
 

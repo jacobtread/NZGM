@@ -20,6 +20,7 @@ export type ContentData = {
   cols: string[],
   rows: RowData[][]
   selected: SelectedData;
+  moveTo: number;
 }
 
 export type SelectedData = {
@@ -54,7 +55,8 @@ export default createStore<State>({
     data: {
       cols: ["", ""],
       rows: [["", ""]],
-      selected: { row: -1, col: -1 }
+      selected: { row: -1, col: -1},
+      moveTo: -1,
     },
     loading: {
       show: false,

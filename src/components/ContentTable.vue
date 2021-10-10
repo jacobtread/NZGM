@@ -3,6 +3,9 @@
     <table>
       <thead>
         <tr>
+          <th>
+            <p>id</p>
+          </th>
           <th
             v-for="(_, index) in cols"
             :key="index"
@@ -27,7 +30,9 @@
           v-for="(_, rowIndex) in rows"
           :key="rowIndex"
           @click.self="select(rowIndex, -1)"
+          :data-row="rowIndex"
         >
+          <td><p>{{rowIndex + 1}}</p></td>
           <td
             v-for="(_, colIndex) in cols"
             :key="colIndex"
@@ -55,8 +60,15 @@
 
 <script lang="ts">
 import store, { RowData, SelectedData } from "@/store";
-import { Vue } from "vue-class-component";
+import { Options, Vue } from "vue-class-component";
 
+@Options({
+  watch: {
+    dMoveTo() {
+      this.scrollToRow(store.state.data.moveTo);
+    },
+  },
+})
 export default class ContentTable extends Vue {
   displayedRows = 50;
   lastScrollPoint = 0;
@@ -114,6 +126,25 @@ export default class ContentTable extends Vue {
 
   set cols(value: string[]) {
     store.state.data.cols = value;
+  }
+
+  get dMoveTo(): number {
+    return store.state.data.moveTo;
+  }
+
+  scrollToRow(row: number): void {
+    if (row == -1) return;
+    if (row > this.displayedRows) {
+      this.displayedRows = row + 5;
+    }
+    store.state.data.selected.row = row;
+    setTimeout(() => {
+      const element: HTMLElement | null = document.querySelector(
+        `tr[data-row="${row}"]`
+      );
+      if (element == null) return;
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
   }
 
   select(rowIndex: number, colIndex: number): void {

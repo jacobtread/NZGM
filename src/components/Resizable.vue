@@ -38,7 +38,6 @@ export default class App extends Vue {
 .resizable {
   position: relative;
   height: 100%;
-  min-width: 300px;
   margin-right: 10px;
 
   &__handle {

@@ -15,6 +15,10 @@ export function addDefaultSettings(definitions: SettingDefinition[]): void {
   }
 }
 
+export function scrollToRow(row: number): void {
+  store.state.data.moveTo = row;
+}
+
 function isEmptyRow(row: RowGroup): boolean {
   const cols: string[] = store.state.data.cols;
   for (const index in cols) {
