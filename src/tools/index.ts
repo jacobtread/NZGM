@@ -9,17 +9,34 @@ export function importFromCSV(file: string): void {
   if (lines.length < 1) return;
   data.rows = []; // Clear rows;
   data.selected = { row: -1, col: -1 };
+  const splitChar: string = getSplittingChar(file);
   for (const line of lines) {
-    const parts: string[] = line.split(",");
+    const parts: string[] = line.split(splitChar);
     if (header) {
       data.cols = parts;
       header = false;
     } else {
+      if (parts.length > data.cols.length) {
+        data.cols.push(...new Array(parts.length - data.cols.length).fill(''));
+      }
       data.rows.push(parts);
     }
   }
   toast(`Imported ${data.rows.length} row(s)`)
   hideLoader()
+}
+
+export function getSplittingChar(data: string): string {
+  const commas: number = (data.match(/,/g) ?? []).length;
+  const semiColons: number = (data.match(/;/g) ?? []).length;
+  const tabs: number = (data.match(/\t/g) ?? []).length;
+  if (semiColons > tabs && semiColons > commas) {
+    return ';';
+  } else if (tabs > semiColons && tabs > commas) {
+    return '\t';
+  } else {
+    return ',';
+  }
 }
 
 export function importFromFile(): void {
