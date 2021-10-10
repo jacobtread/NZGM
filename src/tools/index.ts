@@ -129,7 +129,7 @@ export async function importCSVFromURL(url: string): Promise<void> {
 }
 
 export function isNumeric(value: string | number): boolean {
-  return value !== undefined && (typeof value === "number" || /^-?\d+$/.test(value));
+  return value !== undefined && (typeof value === "number" || /^[+-]?(\d*|\d{1,3}(,\d{3})*)(\.\d+)?\b$/.test(value));
 }
 
 let toastID = 0;
