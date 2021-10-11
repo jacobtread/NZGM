@@ -1,7 +1,7 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "007003c118f82fc77ed0",
-    "url": "/NZGM/css/app.c7ee4683.css"
+    "revision": "c431043c5736fb14fc5d",
+    "url": "/NZGM/css/app.9e4a19a8.css"
   },
   {
     "revision": "7ab94ff0f2ce5804ea125fa67b9b8999",
@@ -12,20 +12,24 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/NZGM/fonts/material-icons.a639499a.woff"
   },
   {
+    "revision": "08a7dee0749e6a6a775704436272c13a",
+    "url": "/NZGM/img/github.08a7dee0.svg"
+  },
+  {
     "revision": "847a59ff1ddc2f24dedda39411456177",
     "url": "/NZGM/img/logo-white.847a59ff.svg"
   },
   {
-    "revision": "e33f89a2eb3f59efabc430e3868ad8a9",
+    "revision": "13e736129d8cd3ccdcd4e8a5bbd49f1f",
     "url": "/NZGM/index.html"
   },
   {
-    "revision": "007003c118f82fc77ed0",
-    "url": "/NZGM/js/app.ff60a2ee.js"
+    "revision": "c431043c5736fb14fc5d",
+    "url": "/NZGM/js/app.75663534.js"
   },
   {
-    "revision": "95ab4b985649eb9c6a9d",
-    "url": "/NZGM/js/chunk-vendors.9967d219.js"
+    "revision": "89e2106be103816b7ebf",
+    "url": "/NZGM/js/chunk-vendors.f2def9a0.js"
   },
   {
     "revision": "30c17263c3843ad500e3bd2ee6219165",
