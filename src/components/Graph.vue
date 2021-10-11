@@ -335,7 +335,7 @@ export default class Graph extends Vue {
   margin: 0;
   padding: 0;
   position: relative;
-    overflow: auto;
+  overflow: auto;
 }
 
 .buttons {
@@ -409,7 +409,6 @@ export default class Graph extends Vue {
     }
   }
 }
-
 
 #graphCanvas {
   position: absolute;

@@ -1,10 +1,14 @@
 <template>
   <Header />
   <main>
-    <Resizable>
-      <ContentTable />
-    </Resizable>
-    <Graph />
+    <ResizableGrid>
+      <template #left>
+        <ContentTable />
+      </template>
+      <template #right>
+        <Graph />
+      </template>
+    </ResizableGrid>
     <Loader :show="loading.show" />
     <Toaster />
   </main>
@@ -15,7 +19,7 @@ import { Options, Vue } from "vue-class-component";
 import Header from "@/components/Header.vue";
 import ContentTable from "@/components/ContentTable.vue";
 import Graph from "@/components/Graph.vue";
-import Resizable from "@/components/Resizable.vue";
+import ResizableGrid from "@/components/ResizableGrid.vue";
 import Loader from "@/components/Loader.vue";
 import Toaster from "@/components/Toaster.vue";
 import store, { LoadingData } from "@/store";
@@ -25,7 +29,7 @@ import store, { LoadingData } from "@/store";
     Header,
     ContentTable,
     Graph,
-    Resizable,
+    ResizableGrid,
     Loader,
     Toaster,
   },
