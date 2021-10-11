@@ -335,6 +335,7 @@ export default class Graph extends Vue {
   margin: 0;
   padding: 0;
   position: relative;
+    overflow: auto;
 }
 
 .buttons {
@@ -393,11 +394,11 @@ export default class Graph extends Vue {
 
 .canvas-wrapper {
   flex: auto;
-  overflow: hidden;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: auto;
 
   &.scaled {
     display: block;
