@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/NZGM/img/logo-white.847a59ff.svg"
   },
   {
-    "revision": "5ef208d44416e8c336112747f7cb242f",
+    "revision": "b41d7af55e3ba92931a849dbea711c05",
     "url": "/NZGM/index.html"
   },
   {
