@@ -1,5 +1,5 @@
 <template>
-  <div id="graphWrapper">
+  <div id="graphWrapper" :class="{ loading }">
     <div class="buttons">
       <button class="button--icon" @click="download">
         <i class="material-icons">download</i>
@@ -9,6 +9,7 @@
       </button>
     </div>
     <div id="canvasWrapper" :class="{ scaled }">
+      <Loader :show="loading" :message="'Loading Graph'" />
       <img id="graph" src="" alt="" usemap="#canvas-map" />
       <canvas id="graphCanvas" usemap="#canvas-map" />
       <map name="canvas-map" id="canvasMap"></map>
@@ -23,14 +24,15 @@ import { Options, Vue } from "vue-class-component";
 import store, { ContentData, GraphData } from "@/store";
 import { hideLoader, showLoader, startDownloadBlob, toast } from "@/tools";
 
-import { text, watermark } from "@/graph";
+import { watermark } from "@/graph";
 import graphTypes from "@/graph/list";
 
 import GraphControls from "@/components/GraphControls.vue";
-
+import Loader from "@/components/Loader.vue";
 @Options({
   components: {
     GraphControls,
+    Loader,
   },
   watch: {
     contentData: {
@@ -48,6 +50,7 @@ export default class Graph extends Vue {
   graphCanvas: HTMLCanvasElement | undefined;
   graphImg: HTMLImageElement | undefined;
   scaled = false;
+  loading = false;
 
   mounted(): void {
     this.graphWrapper = document.getElementById("canvasWrapper") as HTMLElement;
@@ -58,9 +61,10 @@ export default class Graph extends Vue {
     this.resizeGraph();
     document.addEventListener("app-resize", (): void => {
       this.resizeGraph();
+      this.loading = false;
     });
     document.addEventListener("app-resize-start", (): void => {
-      this.showLoadingGraph();
+      this.loading = true; 
     });
   }
 
@@ -91,32 +95,6 @@ export default class Graph extends Vue {
     }
     this.scaled = this.graph.scaleFactor == 5;
     this.renderGraph();
-  }
-
-  showLoadingGraph(): void {
-    if (
-      this.graphImg == null ||
-      this.graphCanvas == null ||
-      this.graphWrapper == null
-    ) {
-      return;
-    }
-    this.resetMap();
-    const ctx: CanvasRenderingContext2D = this.graphCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    this.scaled = true;
-    const canvas = ctx.canvas;
-    canvas.width = this.width;
-    canvas.height = this.height;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.imageSmoothingEnabled = true;
-    ctx.fillStyle = "#ffffff";
-    ctx.rect(0, 0, canvas.width, canvas.height);
-    ctx.fill();
-    text(ctx, "Loading...", 20, this.width / 2, this.height / 2, "center");
-    const data = canvas.toDataURL();
-    this.graphImg.src = data;
   }
 
   renderGraph(): void {
@@ -156,7 +134,7 @@ export default class Graph extends Vue {
     showLoader("Downloading Image");
     graphCanvas.toBlob((data: Blob | null) => {
       if (!data) {
-        toast("Failed to create image download", "error")
+        toast("Failed to create image download", "error");
       } else {
         startDownloadBlob(data, "graph.png");
         hideLoader();
@@ -193,6 +171,16 @@ export default class Graph extends Vue {
   padding: 1em;
   position: relative;
   overflow: auto;
+
+  &.loading {
+    #graph {
+      display: none;
+    }
+  }
+
+  .loading-text {
+    font-size: 1.25em;
+  }
 }
 
 .buttons {
@@ -205,6 +193,7 @@ export default class Graph extends Vue {
 }
 
 #canvasWrapper {
+  position: relative;
   flex: auto;
   display: flex;
   align-items: center;

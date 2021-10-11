@@ -43,10 +43,10 @@ export default class App extends Vue {
       leftChild.style.width = "100%";
       handle.style.left = "calc(100% - 10px)";
     } else if (rightChild != null && leftChild != null) {
-      leftChild.style.width = "50%";
-      rightChild.style.width = "50%";
-      rightChild.style.left = "50%";
-      handle.style.left = "calc(50% - 5px)";
+      leftChild.style.width = "40%";
+      rightChild.style.width = "60%";
+      rightChild.style.left = "40%";
+      handle.style.left = "calc(40% - 5px)";
 
       document.onmousemove = (event: MouseEvent): void => {
         if (!this.dragging) return;
@@ -70,6 +70,7 @@ export default class App extends Vue {
         rightChild.style.left = leftPercent + "%";
         handle.style.left = `calc(${leftPercent}% - 5px)`;
       };
+      
       document.onmouseup = () => {
         app.classList.remove("resizing");
         this.dragging = false;

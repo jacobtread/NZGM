@@ -19,16 +19,12 @@
 </template>
 
 <script lang="ts">
-import store from "@/store";
 import { Options, Vue } from "vue-class-component";
 
 @Options({
-  props: ["show"],
+  props: ["show", "message"],
 })
 export default class Loader extends Vue {
-  get message(): string {
-    return store.state.loading.message;
-  }
 }
 </script>
 

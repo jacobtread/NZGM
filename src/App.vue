@@ -9,7 +9,7 @@
         <Graph />
       </template>
     </ResizableGrid>
-    <Loader :show="loading.show" />
+    <Loader :show="loading.show" :message="loading.message"/>
     <Toaster />
   </main>
   <div class="resize-area"></div>

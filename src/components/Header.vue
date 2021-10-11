@@ -195,7 +195,10 @@ export default class Header extends Vue {
           action: (): void => {
             const csvData: string = dataToCSV();
             const dataBlob: Blob = new Blob([csvData]);
-            startDownloadBlob(dataBlob, this.title.replaceAll(' ', '_') + '.csv')
+            startDownloadBlob(
+              dataBlob,
+              this.title.replaceAll(" ", "_") + ".csv"
+            );
           },
         },
         { icon: "save_alt", name: "Save Session" },
@@ -376,8 +379,8 @@ export default class Header extends Vue {
 .header {
   display: flex;
   border-bottom: 1px solid rgb(216, 216, 216);
-  height: 90px;
   z-index: 3;
+  flex-flow: row;
 
   img {
     height: 90px;
@@ -493,5 +496,32 @@ export default class Header extends Vue {
 .menu-leave-to {
   opacity: 0;
   transform: translateY(-15px);
+}
+
+@media all and (max-width: 650px) {
+  .header {
+    flex-flow: column;
+
+    img {
+      width: 100%;
+    }
+
+    &__controls {
+      justify-content: stretch;
+      padding-top: 0;
+      padding-bottom: 1em;
+      width: 100%;
+    }
+  }
+
+  .graph-name {
+    display: block;
+    &__input {
+      width: 100%;
+    }
+  }
+  .toolbar {
+    margin-top: 0.25em;
+  }
 }
 </style>
