@@ -172,20 +172,20 @@ export default class Header extends Vue {
           },
         },
         {
-          icon: "content_paste",
-          name: "Import from clipboard",
-          action: (): void => {
-            importFromClipboard();
-          },
-        },
-        { icon: "table_chart", name: "Paste Table (Legacy)" },
-        {
           icon: "link",
           name: "Import from URL",
           action: (): void => {
             this.pickURLDialog = true;
           },
         },
+        {
+          icon: "content_paste",
+          name: "Import from Clipboard",
+          action: (): void => {
+            importFromClipboard();
+          },
+        },
+
         { icon: "highlight_alt", name: "Select & Copy Data Table" },
         { icon: "file_download", name: "Download Data" },
         { icon: "save_alt", name: "Save Session" },
