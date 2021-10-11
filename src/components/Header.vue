@@ -87,6 +87,7 @@ import { Options, Vue } from "vue-class-component";
 import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
 import {
+  dataToCSV,
   importCSVFromURL,
   importFromClipboard,
   importFromFile,
@@ -94,6 +95,7 @@ import {
   insertIndexY,
   removeIndexX,
   removeIndexY,
+  startDownloadBlob,
   toast,
 } from "@/tools";
 interface ToolbarItem {
@@ -187,7 +189,15 @@ export default class Header extends Vue {
         },
 
         { icon: "highlight_alt", name: "Select & Copy Data Table" },
-        { icon: "file_download", name: "Download Data" },
+        {
+          icon: "file_download",
+          name: "Download Data",
+          action: (): void => {
+            const csvData: string = dataToCSV();
+            const dataBlob: Blob = new Blob([csvData]);
+            startDownloadBlob(dataBlob, this.title.replaceAll(' ', '_') + '.csv')
+          },
+        },
         { icon: "save_alt", name: "Save Session" },
       ],
     },

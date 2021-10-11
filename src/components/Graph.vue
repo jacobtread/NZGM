@@ -21,7 +21,7 @@
 import { Options, Vue } from "vue-class-component";
 
 import store, { ContentData, GraphData } from "@/store";
-import { hideLoader, showLoader } from "@/tools";
+import { hideLoader, showLoader, startDownloadBlob, toast } from "@/tools";
 
 import { text, watermark } from "@/graph";
 import graphTypes from "@/graph/list";
@@ -114,7 +114,7 @@ export default class Graph extends Vue {
     ctx.fillStyle = "#ffffff";
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fill();
-    text(ctx, "Loading...", 20, this.width/2, this.height/2, "center")
+    text(ctx, "Loading...", 20, this.width / 2, this.height / 2, "center");
     const data = canvas.toDataURL();
     this.graphImg.src = data;
   }
@@ -153,26 +153,14 @@ export default class Graph extends Vue {
     const graphCanvas: HTMLCanvasElement = document.getElementById(
       "graphCanvas"
     ) as HTMLCanvasElement;
-    const fileName = "graph.png";
     showLoader("Downloading Image");
-    graphCanvas.toBlob((data) => {
-      if (window.navigator.msSaveOrOpenBlob)
-        // IE10+
-        window.navigator.msSaveOrOpenBlob(data, fileName);
-      else {
-        // Others
-        var a = document.createElement("a"),
-          url = URL.createObjectURL(data);
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function () {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 0);
+    graphCanvas.toBlob((data: Blob | null) => {
+      if (!data) {
+        toast("Failed to create image download", "error")
+      } else {
+        startDownloadBlob(data, "graph.png");
+        hideLoader();
       }
-      hideLoader();
     });
   }
 
@@ -225,7 +213,7 @@ export default class Graph extends Vue {
   #graphCanvas {
     display: none;
   }
-  
+
   #graph {
     margin: 0 auto;
   }

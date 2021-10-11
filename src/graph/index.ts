@@ -19,7 +19,7 @@ export function scrollToRow(row: number): void {
   store.state.data.moveTo = row;
 }
 
-function isEmptyRow(row: RowGroup): boolean {
+export function isEmptyRow(row: RowGroup): boolean {
   const cols: string[] = store.state.data.cols;
   for (const index in cols) {
     if (row[index] == undefined) continue;

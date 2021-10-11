@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
-import store, { ContentData, ToastType } from "@/store";
+import store, { ContentData, RowData, ToastType } from "@/store";
+import { isEmptyRow } from "@/graph";
 
 export function importFromCSV(file: string): void {
   showLoader("Importing Content")
@@ -11,6 +12,7 @@ export function importFromCSV(file: string): void {
   data.selected = { row: -1, col: -1 };
   const splitChar: string = getSplittingChar(file);
   for (const line of lines) {
+    if (line.length == 0) continue;
     const parts: string[] = line.split(splitChar);
     if (header) {
       data.cols = parts;
@@ -70,6 +72,51 @@ export async function importFromClipboard(): Promise<void> {
       console.error(e);
     }
   }
+}
+
+export function dataToCSV(): string {
+  const cols: string[] = store.state.data.cols;
+  const rows: RowData[][] = store.state.data.rows;
+  let output = '';
+  for (let index = 0; index < cols.length; index++) {
+    output += cols[index];
+    if (index < cols.length - 1) {
+      output += ',';
+    }
+  }
+  output += '\n'
+  for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
+    const row: RowData[] = rows[rowIndex];
+    if (isEmptyRow(row)) continue;
+    for (let columnIndex = 0; columnIndex < cols.length; columnIndex++) {
+      const value = row[columnIndex];
+      if (value == undefined) continue;
+      output += value;
+      if (columnIndex < cols.length - 1) {
+        output += ',';
+      }
+    }
+    if (rowIndex < rows.length - 1) {
+      output += '\n'
+    }
+  }
+  return output;
+
+
+}
+
+export function startDownloadBlob(data: Blob, fileName: string): void {
+  toast("Starting download for " + fileName);
+  const element = document.createElement("a");
+  const url = URL.createObjectURL(data);
+  element.href = url;
+  element.download = fileName;
+  document.body.appendChild(element);
+  element.click();
+  setTimeout(function () {
+    document.body.removeChild(element);
+    window.URL.revokeObjectURL(url);
+  }, 0);
 }
 
 export function showLoader(message: string): void {
