@@ -18,7 +18,7 @@ import Graph from "@/components/Graph.vue";
 import Resizable from "@/components/Resizable.vue";
 import Loader from "@/components/Loader.vue";
 import Toaster from "@/components/Toaster.vue";
-import store, { LoadingData } from "./store";
+import store, { LoadingData } from "@/store";
 
 @Options({
   components: {
