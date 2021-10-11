@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <img
-      src="../assets/img/logo-white.svg"
+      src="@/assets/img/logo-white.svg"
       alt="NZGM"
       title="NZGrapherModern"
       width="148"

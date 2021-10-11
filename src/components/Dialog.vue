@@ -43,6 +43,7 @@ export default class Dialog extends Vue {
   top: 50%;
   transform: translate(-50%, -50%);
   padding: 1.5em;
+  width: 100%;
   max-width: 450px;
   background: #ececec;
   border-radius: 0.25em;
