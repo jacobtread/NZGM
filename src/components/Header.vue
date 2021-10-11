@@ -98,6 +98,9 @@ import {
   startDownloadBlob,
   toast,
 } from "@/tools";
+import { addDefaultSettings } from "@/graph";
+import graphTypes from "@/graph/list";
+
 interface ToolbarItem {
   icon?: string;
   name?: string;
@@ -109,6 +112,11 @@ interface ToolbarItem {
 
 @Options({
   components: { Dialog },
+  watch: {
+    graphType() {
+      addDefaultSettings(graphTypes[this.graphType].settings);
+    },
+  },
 })
 export default class Header extends Vue {
   pickURLDialog = false;

@@ -4,6 +4,8 @@ import store from "@/store";
 import "@/registerServiceWorker";
 
 import { importCSVFromURL } from "@/tools";
+import { addDefaultSettings } from "@/graph";
+import graphTypes from "@/graph/list";
 
 function importExample(): void {
   importCSVFromURL("https://raw.githubusercontent.com/mathsnz/NZGrapher/master/grapher/datasets/Babies.csv").then().catch();
@@ -15,6 +17,7 @@ function importExample(): void {
   graph.zAxis = -1;
   graph.size = 2;
   graph.scaleFactor = 1;
+  addDefaultSettings(graphTypes["dot-plot"].settings)
 }
 
 importExample();

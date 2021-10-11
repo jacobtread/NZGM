@@ -68,7 +68,6 @@
               class="checkbox__input"
               type="checkbox"
               name=""
-              @change="this.$emit('resize')"
               v-model="graphData.settings.values[setting.key]"
             />
             <span class="checkbox__text">{{ setting.name }}</span>
@@ -76,10 +75,10 @@
           <label class="slider" for="" v-if="setting.type == 'slider'">
             <span class="slider__name"
               >{{ setting.name }}
-              <span class="slider__value">{{
-                graphData.settings.values[setting.key]
-              }}</span></span
-            >
+              <span class="slider__value">
+                {{ graphData.settings.values[setting.key] }}
+              </span>
+            </span>
             <span class="slider__wrapper">
               <span class="slider__clamp">{{ setting.min }}</span>
               <input
@@ -89,7 +88,6 @@
                 id=""
                 :min="setting.min"
                 :max="setting.max"
-                @input="this.$emit('resize')"
                 v-model="graphData.settings.values[setting.key]"
               />
               <span class="slider__clamp">{{ setting.max }}</span>
@@ -112,36 +110,23 @@
 
 <script lang="ts">
 import { Options, Vue } from "vue-class-component";
-import { addDefaultSettings } from "@/graph";
 import store, { ContentData, GraphData } from "@/store";
 import graphTypes from "@/graph/list";
 import { GraphTypeData } from "@/graph/types";
 
 @Options({
   props: ["resizeGraph"],
-  watch: {
-    graphData: {
-      handler() {
-        this.setupSettings();
-      },
-      deep: true,
-    },
-  },
 })
 export default class GraphControls extends Vue {
   width = 0;
   height = 0;
 
-  mounted(): void {
-    this.setupSettings();
-  }
-
-  setupSettings(): void {
-    addDefaultSettings(this.graphType.settings);
-  }
-
   get graphData(): GraphData {
     return store.state.graph;
+  }
+
+  set graphData(value: GraphData) {
+    store.state.graph = value;
   }
 
   get graphType(): GraphTypeData {

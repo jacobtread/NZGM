@@ -41,6 +41,12 @@ import Loader from "@/components/Loader.vue";
       },
       deep: true,
     },
+    graph: {
+      handler() {
+        this.renderGraph();
+      },
+      deep: true,
+    },
   },
 })
 export default class Graph extends Vue {
