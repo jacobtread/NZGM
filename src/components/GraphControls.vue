@@ -68,6 +68,7 @@
               class="checkbox__input"
               type="checkbox"
               name=""
+              @change="this.$emit('resize')"
               v-model="graphData.settings.values[setting.key]"
             />
             <span class="checkbox__text">{{ setting.name }}</span>
@@ -88,6 +89,7 @@
                 id=""
                 :min="setting.min"
                 :max="setting.max"
+                @input="this.$emit('resize')"
                 v-model="graphData.settings.values[setting.key]"
               />
               <span class="slider__clamp">{{ setting.max }}</span>
