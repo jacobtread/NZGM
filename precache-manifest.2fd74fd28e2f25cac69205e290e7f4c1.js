@@ -1,18 +1,26 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "438b3af06b1e077988a9",
-    "url": "/NZGM/css/app.02fa629b.css"
+    "revision": "6062a118f5a71f488480",
+    "url": "/NZGM/css/app.c5c26a59.css"
+  },
+  {
+    "revision": "7ab94ff0f2ce5804ea125fa67b9b8999",
+    "url": "/NZGM/fonts/material-icons.7ab94ff0.woff2"
+  },
+  {
+    "revision": "a639499a22fe844d038c15cfb2e0c691",
+    "url": "/NZGM/fonts/material-icons.a639499a.woff"
   },
   {
     "revision": "847a59ff1ddc2f24dedda39411456177",
     "url": "/NZGM/img/logo-white.847a59ff.svg"
   },
   {
-    "revision": "5d25d04151f45c0e26e113d3b8c35db5",
+    "revision": "a348375d974f49ceb41d80282aa49121",
     "url": "/NZGM/index.html"
   },
   {
-    "revision": "438b3af06b1e077988a9",
+    "revision": "6062a118f5a71f488480",
     "url": "/NZGM/js/app.65a2ae98.js"
   },
   {
