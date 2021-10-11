@@ -1,9 +1,9 @@
 import { createApp } from "vue";
 import App from "@/App.vue";
-import "@/registerServiceWorker";
 import store from "@/store";
-import { importCSVFromURL } from "@/tools";
+import "@/registerServiceWorker";
 
+import { importCSVFromURL } from "@/tools";
 
 function importExample(): void {
   importCSVFromURL("https://raw.githubusercontent.com/mathsnz/NZGrapher/master/grapher/datasets/Babies.csv").then().catch();
@@ -19,4 +19,6 @@ function importExample(): void {
 
 importExample();
 
-createApp(App).use(store).mount("#app");
+createApp(App)
+  .use(store)
+  .mount("#app");
