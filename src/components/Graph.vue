@@ -328,7 +328,7 @@ export default class Graph extends Vue {
 @import "@/assets/scss/variables.scss";
 
 .graph-wrapper {
-  flex: auto;
+  padding: 1em;
   display: flex;
   flex-flow: column;
   height: 100%;

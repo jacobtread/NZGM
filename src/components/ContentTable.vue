@@ -1,61 +1,61 @@
 <template>
-  <div class="content">
-    <table>
-      <thead>
-        <tr>
-          <th>
-            <p>id</p>
-          </th>
-          <th
-            v-for="(_, index) in cols"
-            :key="index"
-            @click="select(-1, index)"
-            :class="{ selected: selected.col == index }"
-          >
-            <input
-              class="col-input"
-              type="text"
-              v-model="cols[index]"
-              :data-col="index"
-              v-if="editColumnIndex == index"
-              @blur="editColumn(-1)"
-            />
-            <p @dblclick="editColumn(index)">{{ cols[index] }}</p>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          :class="{ selected: selected.row == rowIndex }"
-          v-for="(_, rowIndex) in rows"
-          :key="rowIndex"
-          @click.self="select(rowIndex, -1)"
-          :data-row="rowIndex"
+  <table>
+    <thead>
+      <tr>
+        <th>
+          <p>id</p>
+        </th>
+        <th
+          v-for="(_, index) in cols"
+          :key="index"
+          @click="select(-1, index)"
+          :class="{ selected: selected.col == index }"
         >
-          <td><p>{{rowIndex + 1}}</p></td>
-          <td
-            v-for="(_, colIndex) in cols"
-            :key="colIndex"
-            :class="{ selected: selected.col == colIndex }"
-            @click="select(rowIndex, colIndex)"
-          >
-            <input
-              class="row-input"
-              :data-col="colIndex"
-              :data-row="rowIndex"
-              type="text"
-              v-model="rows[rowIndex][colIndex]"
-              v-if="editRowIndex == rowIndex && editRowColumnIndex == colIndex"
-              @blur="editRow(-1, -1)"
-            />
-            <p @dblclick="editRow(rowIndex, colIndex)">
-              {{ rows[rowIndex][colIndex] }}
-            </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+          <input
+            class="col-input"
+            type="text"
+            v-model="cols[index]"
+            :data-col="index"
+            v-if="editColumnIndex == index"
+            @blur="editColumn(-1)"
+          />
+          <p @dblclick="editColumn(index)">{{ cols[index] }}</p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        :class="{ selected: selected.row == rowIndex }"
+        v-for="(_, rowIndex) in rows"
+        :key="rowIndex"
+        @click.self="select(rowIndex, -1)"
+        :data-row="rowIndex"
+      >
+        <td>
+          <p>{{ rowIndex + 1 }}</p>
+        </td>
+        <td
+          v-for="(_, colIndex) in cols"
+          :key="colIndex"
+          :class="{ selected: selected.col == colIndex }"
+          @click="select(rowIndex, colIndex)"
+        >
+          <input
+            class="row-input"
+            :data-col="colIndex"
+            :data-row="rowIndex"
+            type="text"
+            v-model="rows[rowIndex][colIndex]"
+            v-if="editRowIndex == rowIndex && editRowColumnIndex == colIndex"
+            @blur="editRow(-1, -1)"
+          />
+          <p @dblclick="editRow(rowIndex, colIndex)">
+            {{ rows[rowIndex][colIndex] }}
+          </p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script lang="ts">
@@ -170,14 +170,9 @@ export default class ContentTable extends Vue {
 <style lang="scss" scoped>
 @import "../assets/scss/variables.scss";
 
-.content {
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-}
-
 table {
   width: 100%;
+  height: 100%;
   min-width: 400px;
 
   border-collapse: collapse;

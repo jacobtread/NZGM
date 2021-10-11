@@ -11,6 +11,7 @@
 </template>
 
 <script lang="ts">
+import { clamp } from "@/tools/math";
 import { Vue } from "vue-class-component";
 
 export default class App extends Vue {
@@ -51,8 +52,12 @@ export default class App extends Vue {
         } else {
           x = event.pageX;
         }
-        const leftPercent: number =
-          ((x - parent.offsetLeft) / parent.offsetWidth) * 100;
+        const leftPercent: number = clamp(
+          ((x - parent.offsetLeft) / parent.offsetWidth) * 100,
+          5,
+          90
+        );
+
         const rightPercent: number = 100 - leftPercent;
         leftChild.style.width = leftPercent + "%";
         rightChild.style.width = rightPercent + "%";
@@ -75,7 +80,9 @@ export default class App extends Vue {
   width: 100%;
 
   &__content {
-    position: fixed;
+    position: absolute;
+    overflow-x: auto;
+    height: 100%;
   }
 
   &__handle {
