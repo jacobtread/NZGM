@@ -3,7 +3,7 @@
     <div class="resizable__content" data-position="left">
       <slot name="left" />
     </div>
-    <span class="resizable__handle" @mousedown="dragging = true"></span>
+    <span class="resizable__handle" @mousedown="startResize"></span>
     <div class="resizable__content" data-position="right">
       <slot name="right" />
     </div>
@@ -16,6 +16,12 @@ import { Vue } from "vue-class-component";
 
 export default class App extends Vue {
   dragging = false;
+
+  startResize(): void {
+    this.dragging = true;
+    const event = new CustomEvent("app-resize-start", {});
+    document.dispatchEvent(event);
+  }
 
   mounted(): void {
     const app: HTMLElement = document.getElementById("app") as HTMLElement;
@@ -67,6 +73,8 @@ export default class App extends Vue {
       document.onmouseup = () => {
         app.classList.remove("resizing");
         this.dragging = false;
+        const event = new CustomEvent("app-resize", {});
+        document.dispatchEvent(event);
       };
     }
   }

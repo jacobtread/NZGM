@@ -163,10 +163,8 @@ export default class GraphControls extends Vue {
 @import "@/assets/scss/variables.scss";
 
 .controls {
-  flex: 0 0 auto;
   display: flex;
   flex-flow: row;
-  padding: 1em;
   background-color: white;
   position: relative;
   align-items: center;

@@ -117,3 +117,27 @@ select {
   }
 
 }
+
+.button {
+
+  &--icon {
+    padding: 0.45em 0.55em;
+    background-color: $light-gray;
+    color: gray;
+
+    border: none;
+    cursor: pointer;
+
+    transition: all 0.25s ease, transform 50ms ease;
+
+    &:hover {
+      background-color: $primary;
+      color: white;
+    }
+
+    &:active {
+      transform: scale(0.9);
+    }
+  }
+
+}

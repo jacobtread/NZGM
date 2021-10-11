@@ -1,18 +1,14 @@
 <template>
-  <div class="graph-wrapper" id="graphWrapper">
+  <div id="graphWrapper">
     <div class="buttons">
-      <button class="button" @click="download">
+      <button class="button--icon" @click="download">
         <i class="material-icons">download</i>
       </button>
-      <button class="button" @click="resizeGraph">
+      <button class="button--icon" @click="resizeGraph">
         <i class="material-icons">refresh</i>
       </button>
     </div>
-    <div
-      class="canvas-wrapper"
-      id="canvasWrapper"
-      :class="{ scaled: graph.scaleFactor == 5 }"
-    >
+    <div id="canvasWrapper" :class="{ scaled }">
       <img id="graph" src="" alt="" usemap="#canvas-map" />
       <canvas id="graphCanvas" usemap="#canvas-map" />
       <map name="canvas-map" id="canvasMap"></map>
@@ -27,7 +23,7 @@ import { Options, Vue } from "vue-class-component";
 import store, { ContentData, GraphData } from "@/store";
 import { hideLoader, showLoader } from "@/tools";
 
-import { watermark } from "@/graph";
+import { text, watermark } from "@/graph";
 import graphTypes from "@/graph/list";
 
 import GraphControls from "@/components/GraphControls.vue";
@@ -48,25 +44,37 @@ import GraphControls from "@/components/GraphControls.vue";
 export default class Graph extends Vue {
   width = 0;
   height = 0;
+  graphWrapper: HTMLElement | undefined;
+  graphCanvas: HTMLCanvasElement | undefined;
+  graphImg: HTMLImageElement | undefined;
+  scaled = false;
 
   mounted(): void {
+    this.graphWrapper = document.getElementById("canvasWrapper") as HTMLElement;
+    this.graphCanvas = document.getElementById(
+      "graphCanvas"
+    ) as HTMLCanvasElement;
+    this.graphImg = document.getElementById("graph") as HTMLImageElement;
     this.resizeGraph();
+    document.addEventListener("app-resize", (): void => {
+      this.resizeGraph();
+    });
+    document.addEventListener("app-resize-start", (): void => {
+      this.showLoadingGraph();
+    });
   }
 
   resizeGraph(): void {
-    const graphWrapper: HTMLElement = document.getElementById(
-      "canvasWrapper"
-    ) as HTMLElement;
+    if (this.graphWrapper == null) return;
     this.graph.scaleFactor = 1;
     if (this.size == 0) {
       // Auto
-      this.width = graphWrapper.offsetWidth;
-      this.height = graphWrapper.offsetHeight;
+      this.width = this.graphWrapper.offsetWidth;
+      this.height = this.graphWrapper.offsetHeight;
     } else if (this.size == 1) {
       // Auto - HighRes
-      console.log(graphWrapper.offsetWidth, graphWrapper.offsetHeight);
-      this.width = graphWrapper.offsetWidth * 5;
-      this.height = graphWrapper.offsetHeight * 5;
+      this.width = this.graphWrapper.offsetWidth * 5;
+      this.height = this.graphWrapper.offsetHeight * 5;
       this.graph.scaleFactor = 5;
     } else if (this.size == 2) {
       // Standard
@@ -81,18 +89,41 @@ export default class Graph extends Vue {
       this.width = 800;
       this.height = 300;
     }
+    this.scaled = this.graph.scaleFactor == 5;
     this.renderGraph();
   }
 
-  renderGraph(): void {
-    const graphCanvas: HTMLCanvasElement = document.getElementById(
-      "graphCanvas"
-    ) as HTMLCanvasElement;
-    const graphImg: HTMLImageElement = document.getElementById(
-      "graph"
-    ) as HTMLImageElement;
+  showLoadingGraph(): void {
+    if (
+      this.graphImg == null ||
+      this.graphCanvas == null ||
+      this.graphWrapper == null
+    ) {
+      return;
+    }
     this.resetMap();
-    const ctx: CanvasRenderingContext2D = graphCanvas.getContext(
+    const ctx: CanvasRenderingContext2D = this.graphCanvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+    this.scaled = true;
+    const canvas = ctx.canvas;
+    canvas.width = this.width;
+    canvas.height = this.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.imageSmoothingEnabled = true;
+    ctx.fillStyle = "#ffffff";
+    ctx.rect(0, 0, canvas.width, canvas.height);
+    ctx.fill();
+    text(ctx, "Loading...", 20, this.width/2, this.height/2, "center")
+    const data = canvas.toDataURL();
+    this.graphImg.src = data;
+  }
+
+  renderGraph(): void {
+    if (this.graphImg == null || this.graphCanvas == null) {
+      return;
+    }
+    const ctx: CanvasRenderingContext2D = this.graphCanvas.getContext(
       "2d"
     ) as CanvasRenderingContext2D;
     const canvas = ctx.canvas;
@@ -105,13 +136,10 @@ export default class Graph extends Vue {
     ctx.fill();
 
     const graph = graphTypes[this.graphType];
-
     graph.func(ctx);
-
     watermark(ctx, ctx.canvas.width, ctx.canvas.height);
-
     const data = canvas.toDataURL();
-    graphImg.src = data;
+    this.graphImg.src = data;
   }
 
   resetMap(): void {
@@ -169,13 +197,12 @@ export default class Graph extends Vue {
 <style lang="scss" scoped>
 @import "@/assets/scss/variables.scss";
 
-.graph-wrapper {
-  padding: 1em;
+#graphWrapper {
   display: flex;
   flex-flow: column;
   height: 100%;
-  margin: 0;
-  padding: 0;
+  width: 100%;
+  padding: 1em;
   position: relative;
   overflow: auto;
 }
@@ -187,39 +214,27 @@ export default class Graph extends Vue {
   z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
-
-  .button {
-    padding: 0.45em 0.55em;
-    color: gray;
-    background-color: $light-gray;
-    border: none;
-    cursor: pointer;
-  }
 }
 
-.canvas-wrapper {
+#canvasWrapper {
   flex: auto;
-  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
   overflow: auto;
+
+  #graphCanvas {
+    display: none;
+  }
+  
+  #graph {
+    margin: 0 auto;
+  }
 
   &.scaled {
     display: block;
     #graph {
-      flex: auto;
       width: 100%;
-      height: 100%;
     }
   }
-}
-
-#graphCanvas {
-  position: absolute;
-  background-color: black;
-
-  display: hidden;
-  visibility: hidden;
 }
 </style>
