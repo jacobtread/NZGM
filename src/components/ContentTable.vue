@@ -39,6 +39,7 @@
           :key="colIndex"
           :class="{ selected: selected.col == colIndex }"
           @click="select(rowIndex, colIndex)"
+          @dblclick="editRow(rowIndex, colIndex)"
         >
           <input
             class="row-input"
@@ -49,7 +50,7 @@
             v-if="editRowIndex == rowIndex && editRowColumnIndex == colIndex"
             @blur="editRow(-1, -1)"
           />
-          <p @dblclick="editRow(rowIndex, colIndex)">
+          <p>
             {{ rows[rowIndex][colIndex] }}
           </p>
         </td>
