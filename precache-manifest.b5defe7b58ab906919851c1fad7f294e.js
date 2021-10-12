@@ -38,9 +38,5 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
     "revision": "b6216d61c03e6ce0c9aea6ca7808f7ca",
     "url": "/NZGM/robots.txt"
-  },
-  {
-    "revision": "eb21c3bf0aca4a8c1a5be853c35f0f95",
-    "url": "/NZGM/site.webmanifest"
   }
 ]);
