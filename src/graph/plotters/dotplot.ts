@@ -267,7 +267,7 @@ function renderData(
       area.shape = "circle";
       area.coords = `${invScale(x)},${invScale(y)},${invScale(pointRadius)}`
       area.alt = `${data}`;
-      area.href = "https://example.com";
+      area.href = "#";
       area.title = `${index + 1}: ${data}`;
       area.onmouseenter = function() {
         scrollToRow(index);
