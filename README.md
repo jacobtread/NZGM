@@ -3,11 +3,11 @@
 
 # NZGM
 
-
-[![GitHub Pages](https://github.com/jacobtread/NZGM/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/jacobtread/NZGM/actions/workflows/ph-pages.yml)
 ![VueJS](https://img.shields.io/badge/Powered%20By-VueJS-68A063?style=for-the-badge)
 ![LINES OF CODE](https://img.shields.io/tokei/lines/github/jacobtread/NZGM?style=for-the-badge)
 ![LICENSE](https://img.shields.io/github/license/jacobtread/NZGM?style=for-the-badge)
+
+[![GitHub Pages](https://github.com/jacobtread/NZGM/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/jacobtread/NZGM/actions/workflows/ph-pages.yml)
 
 The mordern alternative to [NZGrapher](https://github.com/mathsnz/NZGrapher/) with many improvements in performance and runs completely serverless with live edit for the data, settings, title and axies. All packed into a new and modern looking UI design. 
 
