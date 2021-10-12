@@ -20,7 +20,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/NZGM/img/logo-white.847a59ff.svg"
   },
   {
-    "revision": "9ca7989c7b038ce00ce31f57f21c9171",
+    "revision": "032b4d7d2b8b1ae7c5a72d9b1a904368",
     "url": "/NZGM/index.html"
   },
   {
@@ -32,7 +32,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/NZGM/js/chunk-vendors.f2def9a0.js"
   },
   {
-    "revision": "30c17263c3843ad500e3bd2ee6219165",
+    "revision": "beb1a970ae003d7d212e1f9957b37844",
     "url": "/NZGM/manifest.json"
   },
   {
