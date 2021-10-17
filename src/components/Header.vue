@@ -51,6 +51,16 @@
     </div>
     <div class="header__controls">
       <div class="select">
+        <label class="select__label">Size</label>
+        <select class="select__input" name="" v-model="graphData.size">
+          <option value="0">Auto</option>
+          <option value="1">Auto - High Res</option>
+          <option value="2">Standard</option>
+          <option value="3">Small</option>
+          <option value="4">Short</option>
+        </select>
+      </div>
+      <div class="select">
         <label class="select__label">Graph Type</label>
         <select class="select__input" name="" v-model="graphType">
           <option :value="index" :key="index" v-for="(graph, index) in graphs">
@@ -82,7 +92,7 @@
 </template>
 
 <script lang="ts">
-import store, { ContentData, RowData, SelectedData } from "@/store";
+import store, { ContentData, GraphData, RowData, SelectedData } from "@/store";
 import { Options, Vue } from "vue-class-component";
 import graphList from "@/graph/list";
 import Dialog from "@/components/Dialog.vue";
@@ -145,6 +155,14 @@ export default class Header extends Vue {
   }
   get graphType(): string {
     return store.state.graph.type;
+  }
+
+  get graphData(): GraphData {
+    return store.state.graph;
+  }
+
+  set graphData(value: GraphData) {
+    store.state.graph = value;
   }
 
   set title(value: string) {
@@ -409,6 +427,10 @@ export default class Header extends Vue {
     display: flex;
     flex-flow: row;
     padding: 0.5em;
+
+    .select {
+      margin-left: 0.5em;
+    }
   }
 }
 

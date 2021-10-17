@@ -1,8 +1,11 @@
 <template>
   <div class="controls">
-    <div class="controls__box">
+    <div class="controls__box controls__box--axies">
       <div class="select" v-if="graphType.axisNames[0]">
-        <label class="select__label">X Axis <span class="axis-label">{{graphType.axisNames[0]}}</span></label>
+        <label class="select__label"
+          >X Axis
+          <span class="axis-label">{{ graphType.axisNames[0] }}</span></label
+        >
         <select class="select__input" name="" v-model="graphData.xAxis">
           <option value="-1">None</option>
           <option
@@ -15,7 +18,10 @@
         </select>
       </div>
       <div class="select" v-if="graphType.axisNames[1]">
-        <label class="select__label">Y Axis <span class="axis-label">{{graphType.axisNames[1]}}</span></label>
+        <label class="select__label"
+          >Y Axis
+          <span class="axis-label">{{ graphType.axisNames[1] }}</span></label
+        >
         <select class="select__input" name="" v-model="graphData.yAxis">
           <option value="-1">None</option>
           <option
@@ -27,10 +33,11 @@
           </option>
         </select>
       </div>
-    </div>
-    <div class="controls__box">
       <div class="select" v-if="graphType.axisNames[2]">
-        <label class="select__label">Z Axis <span class="axis-label">{{graphType.axisNames[2]}}</span></label>
+        <label class="select__label"
+          >Z Axis
+          <span class="axis-label">{{ graphType.axisNames[2] }}</span></label
+        >
         <select class="select__input" name="" v-model="graphData.zAxis">
           <option value="-1">None</option>
           <option
@@ -40,21 +47,6 @@
           >
             {{ col }}
           </option>
-        </select>
-      </div>
-      <div class="select">
-        <label class="select__label">Size</label>
-        <select
-          class="select__input"
-          name=""
-          v-model="graphData.size"
-          @change="this.$emit('resize')"
-        >
-          <option value="0">Auto</option>
-          <option value="1">Auto - High Res</option>
-          <option value="2">Standard</option>
-          <option value="3">Small</option>
-          <option value="4">Short</option>
         </select>
       </div>
     </div>
@@ -151,10 +143,10 @@ export default class GraphControls extends Vue {
 
 .controls {
   display: flex;
-  flex-flow: row;
+  flex-flow: column;
   background-color: white;
   position: relative;
-  align-items: center;
+  align-items: top;
   justify-content: space-between;
 }
 
@@ -165,11 +157,15 @@ export default class GraphControls extends Vue {
 }
 
 .controls__box {
-  margin-right: 1em;
+
+  &--axies {
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: 1em;
+  }
 
   &--long {
     flex: auto;
-    display: flex;
     flex-flow: column;
 
     &__title {
