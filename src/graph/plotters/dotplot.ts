@@ -110,7 +110,7 @@ export function createDotPlot(ctx: CanvasRenderingContext2D): void {
       const width: number = x + blockWidth;
       if (indexes.length > 0) {
         const data: number[] = dataFromIndexes(indexes, xPoints)
-        renderGraph(ctx, data, yPoints, yGroups, left + scale(30), right - scale(50), baseline, graphMin, graphMax, graphStep, maxHeight)
+        renderGraph(ctx, data, yPoints, yGroups, x + scale(30), width - scale(50), baseline, graphMin, graphMax, graphStep, maxHeight)
       }
       text(ctx, group, 15, (x + (width - scale(50))) / 2, baseline - maxHeight, "center");
       x += blockWidth;

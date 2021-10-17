@@ -5,7 +5,7 @@ module.exports = {
   pwa: {
     name: "NZGM",
     themeColor: "#1565c0",
-    assetsVersion: "0.1.0",
+    assetsVersion: "0.5.1",
     iconPaths: {
       faviconSVG: 'img/icons/logo.svg',
       favicon32: 'img/icons/favicon-32x32.png',
