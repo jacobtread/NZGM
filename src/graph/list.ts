@@ -24,33 +24,13 @@ export default {
       { key: "invert-colours", name: "Invert Colours", type: "toggle" },
       { key: "thick-lines", name: "Thick Lines", type: "toggle" },
       { key: "show-removed", name: "Show row of removed points", type: "toggle", default: true },
-    ]
-  },
-  "pairs-plot": {
-    name: "Pairs Plot",
-    func: createDotPlot,
-    settings: []
+    ],
+    axisNames: ['Numerical', 'Category 1', 'Category 2']
   },
   "bar-graph": {
     name: "Bar Graph",
     func: createDotPlot,
-    settings: []
-  },
-  "histogram": {
-    name: "Histogram",
-    func: createDotPlot,
-    settings: []
-
-  },
-  "pie-chart": {
-    name: "Pie Chart",
-    func: createDotPlot,
-    settings: []
-
-  },
-  "scatter-graph": {
-    name: "Scatter Graph",
-    func: createDotPlot,
-    settings: []
+    settings: [],
+    axisNames: ['Numerical', 'Split']
   },
 } as { [key: string]: GraphTypeData };

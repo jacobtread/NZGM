@@ -1,8 +1,8 @@
 <template>
   <div class="controls">
     <div class="controls__box">
-      <div class="select">
-        <label class="select__label">X Axis</label>
+      <div class="select" v-if="graphType.axisNames[0]">
+        <label class="select__label">X Axis <span class="axis-label">{{graphType.axisNames[0]}}</span></label>
         <select class="select__input" name="" v-model="graphData.xAxis">
           <option value="-1">None</option>
           <option
@@ -14,8 +14,8 @@
           </option>
         </select>
       </div>
-      <div class="select">
-        <label class="select__label">Y Axis</label>
+      <div class="select" v-if="graphType.axisNames[1]">
+        <label class="select__label">Y Axis <span class="axis-label">{{graphType.axisNames[1]}}</span></label>
         <select class="select__input" name="" v-model="graphData.yAxis">
           <option value="-1">None</option>
           <option
@@ -29,8 +29,8 @@
       </div>
     </div>
     <div class="controls__box">
-      <div class="select">
-        <label class="select__label">Z Axis</label>
+      <div class="select" v-if="graphType.axisNames[2]">
+        <label class="select__label">Z Axis <span class="axis-label">{{graphType.axisNames[2]}}</span></label>
         <select class="select__input" name="" v-model="graphData.zAxis">
           <option value="-1">None</option>
           <option
@@ -156,6 +156,12 @@ export default class GraphControls extends Vue {
   position: relative;
   align-items: center;
   justify-content: space-between;
+}
+
+.axis-label {
+  color: #363d44;
+  font-weight: bold;
+  font-size: 0.7em;
 }
 
 .controls__box {
