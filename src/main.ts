@@ -15,7 +15,7 @@ function importExample(): void {
   graph.xAxis = 1;
   graph.yAxis = -1;
   graph.zAxis = -1;
-  graph.size = 2;
+  graph.size = 0;
   graph.scaleFactor = 1;
   addDefaultSettings(graphTypes["dot-plot"].settings)
 }

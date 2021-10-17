@@ -1,100 +1,107 @@
 <template>
-  <div class="controls">
-    <div class="controls__box controls__box--axies">
-      <div class="select" v-if="graphType.axisNames[0]">
-        <label class="select__label"
-          >X Axis
-          <span class="axis-label">{{ graphType.axisNames[0] }}</span></label
-        >
-        <select class="select__input" name="" v-model="graphData.xAxis">
-          <option value="-1">None</option>
-          <option
-            :value="index"
-            v-for="(col, index) in contentData.cols"
-            :key="index"
+  <div>
+    <button class="controls-min button--icon" @click="toggleControls">
+      <i class="material-icons">{{
+        controls ? "expand_more" : "expand_less"
+      }}</i>
+    </button>
+    <div class="controls" v-if="controls">
+      <div class="controls__box controls__box--axies">
+        <div class="select" v-if="graphType.axisNames[0]">
+          <label class="select__label"
+            >X Axis
+            <span class="axis-label">{{ graphType.axisNames[0] }}</span></label
           >
-            {{ col }}
-          </option>
-        </select>
-      </div>
-      <div class="select" v-if="graphType.axisNames[1]">
-        <label class="select__label"
-          >Y Axis
-          <span class="axis-label">{{ graphType.axisNames[1] }}</span></label
-        >
-        <select class="select__input" name="" v-model="graphData.yAxis">
-          <option value="-1">None</option>
-          <option
-            :value="index"
-            v-for="(col, index) in contentData.cols"
-            :key="index"
+          <select class="select__input" name="" v-model="graphData.xAxis">
+            <option value="-1">None</option>
+            <option
+              :value="index"
+              v-for="(col, index) in contentData.cols"
+              :key="index"
+            >
+              {{ col }}
+            </option>
+          </select>
+        </div>
+        <div class="select" v-if="graphType.axisNames[1]">
+          <label class="select__label"
+            >Y Axis
+            <span class="axis-label">{{ graphType.axisNames[1] }}</span></label
           >
-            {{ col }}
-          </option>
-        </select>
-      </div>
-      <div class="select" v-if="graphType.axisNames[2]">
-        <label class="select__label"
-          >Z Axis
-          <span class="axis-label">{{ graphType.axisNames[2] }}</span></label
-        >
-        <select class="select__input" name="" v-model="graphData.zAxis">
-          <option value="-1">None</option>
-          <option
-            :value="index"
-            v-for="(col, index) in contentData.cols"
-            :key="index"
+          <select class="select__input" name="" v-model="graphData.yAxis">
+            <option value="-1">None</option>
+            <option
+              :value="index"
+              v-for="(col, index) in contentData.cols"
+              :key="index"
+            >
+              {{ col }}
+            </option>
+          </select>
+        </div>
+        <div class="select" v-if="graphType.axisNames[2]">
+          <label class="select__label"
+            >Z Axis
+            <span class="axis-label">{{ graphType.axisNames[2] }}</span></label
           >
-            {{ col }}
-          </option>
-        </select>
+          <select class="select__input" name="" v-model="graphData.zAxis">
+            <option value="-1">None</option>
+            <option
+              :value="index"
+              v-for="(col, index) in contentData.cols"
+              :key="index"
+            >
+              {{ col }}
+            </option>
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="controls__box--long">
-      <label class="controls__box--long__title">Settings</label>
-      <div class="controls__box--long__content">
-        <template v-for="(setting, index) in graphType.settings" :key="index">
-          <label class="checkbox" v-if="setting.type == 'toggle'">
-            <span class="checkbox__mark"></span>
-            <input
-              class="checkbox__input"
-              type="checkbox"
-              name=""
-              v-model="graphData.settings.values[setting.key]"
-            />
-            <span class="checkbox__text">{{ setting.name }}</span>
-          </label>
-          <label class="slider" for="" v-if="setting.type == 'slider'">
-            <span class="slider__name"
-              >{{ setting.name }}
-              <span class="slider__value">
-                {{ graphData.settings.values[setting.key] }}
-              </span>
-            </span>
-            <span class="slider__wrapper">
-              <span class="slider__clamp">{{ setting.min }}</span>
+      <div class="controls__box--long">
+        <label class="controls__box--long__title">Settings</label>
+        <div class="controls__box--long__content">
+          <template v-for="(setting, index) in graphType.settings" :key="index">
+            <label class="checkbox" v-if="setting.type == 'toggle'">
+              <span class="checkbox__mark"></span>
               <input
-                class="slider__input"
-                type="range"
+                class="checkbox__input"
+                type="checkbox"
                 name=""
-                id=""
-                :min="setting.min"
-                :max="setting.max"
                 v-model="graphData.settings.values[setting.key]"
               />
-              <span class="slider__clamp">{{ setting.max }}</span>
-            </span>
-          </label>
-          <label class="input" for="" v-if="setting.type == 'number'">
-            <span class="input__name">{{ setting.name }} </span>
-            <input
-              type="number"
-              name=""
-              id=""
-              v-model="graphData.settings.values[setting.key]"
-            />
-          </label>
-        </template>
+              <span class="checkbox__text">{{ setting.name }}</span>
+            </label>
+            <label class="slider" for="" v-if="setting.type == 'slider'">
+              <span class="slider__name"
+                >{{ setting.name }}
+                <span class="slider__value">
+                  {{ graphData.settings.values[setting.key] }}
+                </span>
+              </span>
+              <span class="slider__wrapper">
+                <span class="slider__clamp">{{ setting.min }}</span>
+                <input
+                  class="slider__input"
+                  type="range"
+                  name=""
+                  id=""
+                  :min="setting.min"
+                  :max="setting.max"
+                  v-model="graphData.settings.values[setting.key]"
+                />
+                <span class="slider__clamp">{{ setting.max }}</span>
+              </span>
+            </label>
+            <label class="input" for="" v-if="setting.type == 'number'">
+              <span class="input__name">{{ setting.name }} </span>
+              <input
+                type="number"
+                name=""
+                id=""
+                v-model="graphData.settings.values[setting.key]"
+              />
+            </label>
+          </template>
+        </div>
       </div>
     </div>
   </div>
@@ -108,10 +115,19 @@ import { GraphTypeData } from "@/graph/types";
 
 @Options({
   props: ["resizeGraph"],
+  emits: ["resize"],
 })
 export default class GraphControls extends Vue {
   width = 0;
   height = 0;
+  controls = true;
+
+  toggleControls(): void {
+    this.controls = !this.controls;
+    this.$nextTick(function () {
+      this.$emit("resize");
+    });
+  }
 
   get graphData(): GraphData {
     return store.state.graph;
@@ -150,6 +166,11 @@ export default class GraphControls extends Vue {
   justify-content: space-between;
 }
 
+.controls-min {
+  width: 100%;
+  padding: 0.1em;
+}
+
 .axis-label {
   color: #363d44;
   font-weight: bold;
@@ -157,7 +178,6 @@ export default class GraphControls extends Vue {
 }
 
 .controls__box {
-
   &--axies {
     display: grid;
     grid-auto-flow: column;
