@@ -1,5 +1,5 @@
 <template>
-  <Dialog :open="open" class="about-dialog">
+  <Dialog :open="show" class="about-dialog">
     <div class="heading">
       <img
         src="@/assets/img/logo-white.svg"
@@ -99,20 +99,20 @@ import Dialog from "@/components/Dialog.vue";
   components: { Dialog },
 })
 export default class About extends Vue {
-  _open = true;
+  open = true;
   hideNext = false;
 
-  get open(): boolean {
+  get show(): boolean {
     const showAbout: boolean = storage.bool("show-about", true);
     if (!showAbout) {
       return false;
     }
-    return this._open;
+    return this.open;
   }
 
   hideAbout(): void {
     storage.set("show-about", !this.hideNext);
-    this._open = false;
+    this.open = false;
   }
 }
 </script>

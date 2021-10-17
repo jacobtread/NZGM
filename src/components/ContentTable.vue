@@ -82,26 +82,26 @@ export default class ContentTable extends Vue {
     this.editColumnIndex = index;
     this.editRowIndex = -1;
     this.editRowColumnIndex = -1;
-    setTimeout(() => {
+    this.$nextTick(function () {
       const element: HTMLElement | null = document.querySelector(
         `.col-input[data-col="${this.editColumnIndex}"]`
       );
       if (!element) return;
       element.focus();
-    }, 15);
+    });
   }
 
   editRow(index: number, column: number): void {
     this.editRowIndex = index;
     this.editRowColumnIndex = column;
     this.editColumnIndex = -1;
-    setTimeout(() => {
+    this.$nextTick(function () {
       const element: HTMLElement | null = document.querySelector(
         `.row-input[data-col="${this.editRowColumnIndex}"][data-row="${this.editRowIndex}"]`
       );
       if (!element) return;
       element.focus();
-    }, 15);
+    });
   }
 
   get rows(): RowData[][] {
@@ -139,13 +139,13 @@ export default class ContentTable extends Vue {
       this.displayedRows = row + 5;
     }
     store.state.data.selected.row = row;
-    setTimeout(() => {
+    this.$nextTick(function () {
       const element: HTMLElement | null = document.querySelector(
         `tr[data-row="${row}"]`
       );
       if (element == null) return;
       element.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 100);
+    });
   }
 
   select(rowIndex: number, colIndex: number): void {
