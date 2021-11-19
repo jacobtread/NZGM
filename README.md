@@ -21,9 +21,7 @@ This application does not yet support smaller screen sizes and requires JavaScri
 
 ### ATTENTION
 
-This project does not currently have feature parody to NZ Grapher this repo is going to be rewritten again
-very soon an will hopefully include a 1 - 1 feature parody after optimizations are made
-
+This branch is the rewrite branch for the new codebase
 
 ## Deploying
 
