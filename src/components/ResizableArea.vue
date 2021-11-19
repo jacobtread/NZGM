@@ -91,7 +91,7 @@ export default defineComponent({
         left: calc(50% - 5px);
         width: 10px;
         height: 100%;
-        background: purple;
+        background: $background-darker;
 
         user-select: none;
 
@@ -105,14 +105,6 @@ export default defineComponent({
         top: 0;
         width: calc(50% - 5px);
         height: 100%;
-
-        &:nth-of-type(1) {
-            background: blue;
-        }
-
-        &:nth-of-type(3) {
-            background: red;
-        }
     }
 
 }

@@ -1,21 +1,20 @@
 <template>
-    <label  class="input">
-        <span class="input__wrapper">
-            <icon v-if="icon" :icon="icon" class="input__wrapper__icon"/>
-            <input v-model="value" :type="type" class="input__wrapper__value" v-bind="$attrs">
+    <label class="input-wrapper">
+        <span class="input">
+            <icon v-if="icon" :icon="icon" class="input__icon"/>
+            <input v-model="value" :type="type" class="input__value" v-bind="$attrs">
         </span>
     </label>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref, toRef } from "vue";
+import { computed, defineComponent, toRef } from "vue";
 
 export default defineComponent({
     emits: [ 'update:modelValue' ],
     props: {
         modelValue: { default: '' },
         icon: { type: String, default: undefined },
-        required: { type: Boolean, default: false },
         type: { type: String, default: 'text' },
     },
     setup(props, { emit }) {
@@ -34,10 +33,39 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-@import "../assets/scss/variables";
-
 .input {
-    display: block;
-    position: relative;
+
+    &-wrapper {
+        display: block;
+    }
+
+    display: flex;
+    align-items: center;
+    border: 2px solid $background-darker;
+    border-radius: 5px;
+
+    &__icon {
+        width: 24px;
+        height: 24px;
+        vertical-align: center;
+        margin-left: 0.5rem;
+    }
+
+    &__value {
+        border: none;
+        padding: 0.8em 0.5rem;
+        font-size: 1.1rem;
+        background: transparent;
+        outline: none;
+    }
+
+    &:focus-within {
+        border: 2px solid $primary;
+
+        .input__icon {
+            color: $primary;
+        }
+    }
+
 }
 </style>
