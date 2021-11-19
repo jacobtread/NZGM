@@ -4,7 +4,7 @@
         <transition name="menu">
             <div v-if="expanded" class="menu__items">
                 <template v-for="(item, index) in items" :key="index">
-                    <button v-if="item.length > 0" @click="item.length === 2 ? item[1] : item[2]"
+                    <button v-if="item.length > 0" @click="item.length === 2 ? item[1]() : item[2]()"
                             class="menu__items__value">
                         <icon v-if="item.length > 2" :icon="item[1]" class="menu__items__value__icon"/>
                         {{ item[0] }}
@@ -64,7 +64,8 @@ export default defineComponent({
         position: absolute;
         left: 0;
         top: 100%;
-        background: $background-dark;
+        border: 2px solid $background-dark;
+        background: $background;
         min-width: 300px;
         z-index: 50;
         padding: 0.2rem;
@@ -89,7 +90,7 @@ export default defineComponent({
             }
 
             &:hover {
-                background: $background-darker;
+                background: $background-dark;
             }
 
         }
@@ -99,7 +100,7 @@ export default defineComponent({
             width: 90%;
             height: 2px;
             margin: 0.25rem auto;
-            background: $background-darker;
+            background: $background-dark;
         }
     }
 }

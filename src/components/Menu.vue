@@ -15,7 +15,7 @@ export default defineComponent({
     setup() {
 
         const dataMenu: MenuItemValue[] = [
-            [ 'Clear Data', 'trash', () => true ],
+            [ 'Clear Data', 'trash', () => console.log('Clear Data') ],
             [ 'Open File', 'upload', () => true ],
             [ 'Import From URL', 'link', () => true ],
             [ 'Import From Clipboard', 'clipboard', () => true ],

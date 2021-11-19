@@ -10,3 +10,13 @@
   width: 100%;
   height: 100vh;
 }
+
+.select {
+  display: inline-block;
+  background: transparent;
+  border: 2px solid $background-darker;
+  border-radius: 5px;
+  padding: 0.6rem;
+  font-size: 1.1rem;
+  text-align: left;
+}
