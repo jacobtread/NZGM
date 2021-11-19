@@ -19,6 +19,12 @@ There is a live version of this application [Here](https://jacobtread.github.io/
 
 This application does not yet support smaller screen sizes and requires JavaScript enabled to run.
 
+### ATTENTION
+
+This project does not currently have feature parody to NZ Grapher this repo is going to be rewritten again
+very soon an will hopefully include a 1 - 1 feature parody after optimizations are made
+
+
 ## Deploying
 
 ### Web Server
