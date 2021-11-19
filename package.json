@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "csv-parse": "^5.0.2",
     "math.js": "^1.1.46",
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0",
