@@ -26,6 +26,11 @@ const dataModule = {
             context.commit('setColumns', cols);
             context.commit('setRows', rows);
         }
+    },
+    getters: {
+        getColumnIndex: (state: DataState) => (column: string) => {
+            return state.cols.indexOf(column);
+        }
     }
 }
 export default dataModule;
