@@ -2,7 +2,7 @@ import { ActionContext } from "vuex";
 
 export interface DataState {
     cols: string[],
-    rows: string[][],
+    rows: (string|number)[][],
 }
 
 
@@ -25,11 +25,6 @@ const dataModule = {
         setData(context: ActionContext<DataState, any>, { rows, cols }: { cols: string[], rows: string[][] }) {
             context.commit('setColumns', cols);
             context.commit('setRows', rows);
-        }
-    },
-    getters: {
-        getColumnIndex: (state: DataState) => (column: string) => {
-            return state.cols.indexOf(column);
         }
     }
 }

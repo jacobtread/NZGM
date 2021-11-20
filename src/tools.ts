@@ -1,4 +1,5 @@
 import { parse } from "csv-parse";
+import store from "@/store";
 
 export async function importFromURL(url: string) {
     try {
@@ -30,7 +31,8 @@ export async function importFromURL(url: string) {
             parser.end();
         });
 
-        console.log(cols, rows);
+        store.state.data.cols = cols;
+        store.state.data.rows = rows;
 
     } catch (e) {
         console.error(e);

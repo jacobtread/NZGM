@@ -18,6 +18,11 @@ export interface GraphState {
     variables: GraphVariables;
     size: number;
     settings: GraphSettings;
+    axis: GraphAxis;
+}
+
+export interface GraphAxis {
+    [id: string]: string | undefined;
 }
 
 const graphModule = {
@@ -27,8 +32,15 @@ const graphModule = {
             type: 'dot-plot',
             variables: {},
             size: 0,
+            axis: {
+                'numerical': 'MothersAge',
+                'category_1': 'MotherSmoke',
+            },
             settings: {
-                values: {},
+                values: {
+                    'grid-lines': true,
+                    'stacked-dots': true
+                },
                 bool(key: string): boolean {
                     return (this.values[key] ?? false) as boolean;
                 },

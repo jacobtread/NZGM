@@ -1,4 +1,4 @@
-import { GraphSettings } from "@/store/modules/graph";
+import { GraphSettings, GraphState } from "@/store/modules/graph";
 
 export interface GraphDefinition<D> {
     label: string;
@@ -27,16 +27,25 @@ export interface GraphSettingDefinition {
 }
 
 export interface AxisData {
-    data: { [key: string]: Array<Array<string|number>>, }
+    hasAxis(key: string): boolean;
 
-    getDataForColumn(key: string): Array<string>;
+    getDataForColumn(key: string): Array<ColumnData>;
+
     getNumericDataForColumn(key: string): Array<number>;
+
+    getColumnName(key: string): string;
 }
 
-export type GraphCalculationFunction<D> = (settings: GraphSettings) => D;
-export type GraphRenderingFunction<D> = (context: CanvasRenderingContext2D, settings: GraphSettings, axisData: AxisData, data: D) => void;
+export type GraphCalculationFunction<D> = (settings: GraphSettings, axisData: AxisData) => D;
+export type GraphRenderingFunction<D> = (context: CanvasRenderingContext2D, state: GraphState, axisData: AxisData, data: D) => void;
 
 export interface GraphFunctions<D> {
     calculate: GraphCalculationFunction<D>;
     render: GraphRenderingFunction<D>;
 }
+
+export interface GroupedData {
+    [key: string]: number[]
+}
+
+export type ColumnData = string | number | boolean;
