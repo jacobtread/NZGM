@@ -6,8 +6,8 @@
         @mouseup="stopResize"
         @mouseleave="stopResize"
         @mousemove="onMouseMove"
-        @touchstop="stopResize"
-        @touchmove="onMouseMove"
+        @touchend="stopResize"
+        @touchmove="onTouchMove"
     >
 
         <div class="resizable__area" :style="leftStyle">
@@ -53,7 +53,7 @@ export default defineComponent({
 
         }
 
-        function onMouseMove(event: MouseEvent) {
+        function onMouseMove(event: MouseEvent|{pageX: number}) {
             if (!resizing.value || !event || root.value == null) return;
             const x = event.pageX;
             const el = root.value! as HTMLDivElement;
@@ -77,10 +77,15 @@ export default defineComponent({
             events.emit('resizing');
         }
 
+        function onTouchMove(event: TouchEvent) {
+           const touch = event.touches[0];
+           onMouseMove({pageX: touch.pageX});
+        }
+
         return {
             startResize, stopResize, onMouseMove,
             leftStyle, rightStyle, handleStyle,
-            resizing, root
+            resizing, root, onTouchMove
         };
     }
 })
@@ -101,6 +106,7 @@ export default defineComponent({
         user-select: none;
 
         cursor: col-resize;
+        touch-action: none;
     }
 
     &__area {
