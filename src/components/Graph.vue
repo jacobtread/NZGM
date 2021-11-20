@@ -64,25 +64,28 @@ export default defineComponent({
             }
         }
 
-        watch(data, () => {
+        watch(data, calculateGraph);
+
+        function calculateGraph() {
             const graphDef: GraphDefinition<any> = graphDefRef.value;
             calcData.value = graphDef.functions.calculate(graph.settings, axisData);
             render();
-        });
+        }
 
         onMounted(() => {
             const canvas = canvasElement.value as HTMLCanvasElement;
             context.value = canvas.getContext('2d') as CanvasRenderingContext2D;
-            render();
+            calculateGraph();
         });
+
         events.on('resizing', render);
-        window.addEventListener('resize', render)
+        window.addEventListener('resize', render);
 
         function render() {
             const root = rootElement.value as HTMLDivElement;
             const canvas = canvasElement.value as HTMLCanvasElement;
             const ctx = context.value;
-            if (ctx == null || calcData.value == null) return;
+            if (root === null || ctx == null || calcData.value == null) return;
             const graphDef: GraphDefinition<any> = graphDefRef.value;
 
             const width = root.offsetWidth;

@@ -36,7 +36,7 @@ export interface AxisData {
     getColumnName(key: string): string;
 }
 
-export type GraphCalculationFunction<D> = (settings: GraphSettings, axisData: AxisData) => D;
+export type GraphCalculationFunction<D> = (settings: GraphSettings, axisData: AxisData) => D|null;
 export type GraphRenderingFunction<D> = (context: CanvasRenderingContext2D, state: GraphState, axisData: AxisData, data: D) => void;
 
 export interface GraphFunctions<D> {

@@ -1,6 +1,6 @@
 import { GraphSettings, GraphState } from "@/store/modules/graph";
 import { AxisData, GraphFunctions, GroupedData } from "@/graph/types";
-import { max, min, random } from "mathjs";
+import { max, min } from "mathjs";
 import {
     floatp,
     getAxisMinMaxStep,
@@ -20,7 +20,7 @@ export interface Data {
     graph: { min: number, max: number, step: number };
 }
 
-function calculate(settings: GraphSettings, axisData: AxisData): Data {
+function calculate(settings: GraphSettings, axisData: AxisData): Data | null {
 
     const out: Data = {
         x: { name: '', min: 0, max: 0, data: [] },
@@ -28,7 +28,7 @@ function calculate(settings: GraphSettings, axisData: AxisData): Data {
     }
 
     const xPoints: number[] = axisData.getNumericDataForColumn('numerical');
-    if (xPoints.length < 1) return out;
+    if (xPoints.length < 1) return null;
     const minX = min(xPoints);
     const maxX = max(xPoints);
     out.x = { data: xPoints, name: axisData.getColumnName('numerical'), min: minX, max: maxX }
@@ -147,34 +147,17 @@ function renderData(
     const stackDots: boolean = settings.bool("stacked-dots");
     const pointSize: number = 7;//settings.num("point-size");
     const pointLabels: boolean = settings.bool("point-labels");
-
     const pointRadius = pointSize / 2;
-
     const positions: Array<[ number, number, number, number ]> = [];
     const heights: { [key: number]: number } = {};
     for (const index of indexes) {
         const value = data[index];
         const x = getPixelValue(value, graphData.min, graphData.max, pos.x1, pos.x2);
-        const xRel = Math.floor(x / pointSize) * pointRadius;
-        if (xRel in heights) heights[xRel]++;
-        else heights[xRel] = 1;
-        positions.push([ x, xRel, index, value ])
-    }
-
-    let y = pos.y;
-    const color = '#000000';
-    let lastX = 0;
-    positions.sort((a, b) => a[1] - b[1]);
-    const highestValue = Math.max(...Object.values(heights))
-    const yHeight = maxHeight - 10 / highestValue < pointSize ?
-        maxHeight - 10 / highestValue : pointSize;
-
-    for (const [ x, xRel, index, value ] of positions) {
-        if (lastX == xRel) y -= yHeight;
-        else y = pos.y - 10;
-        lastX = xRel;
+        if (value in heights) heights[value]++;
+        else heights[value] = 1;
+        const y = pos.y - 10 - (pointSize * heights[value]);
         ctx.beginPath();
-        ctx.strokeStyle = color;
+        ctx.strokeStyle = '#000000';
         ctx.arc(x, y, pointRadius, 0, 2 * Math.PI);
         ctx.stroke();
     }
