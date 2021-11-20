@@ -6,13 +6,15 @@
         @mouseup="stopResize"
         @mouseleave="stopResize"
         @mousemove="onMouseMove"
+        @touchstop="stopResize"
+        @touchmove="onMouseMove"
     >
 
         <div class="resizable__area" :style="leftStyle">
             <slot name="first"/>
         </div>
 
-        <div class="resizable__handle" :style="handleStyle" @mousedown="startResize"/>
+        <div class="resizable__handle" :style="handleStyle" @mousedown="startResize" @touchstart="startResize"/>
 
         <div class="resizable__area" :style="rightStyle">
             <slot name="second"/>
@@ -23,6 +25,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
+import events from "@/event";
 
 export default defineComponent({
     emits: [ 'resized', 'resizing' ],
@@ -44,6 +47,7 @@ export default defineComponent({
 
         function stopResize() {
             emit('resized');
+            events.emit('resized');
             resizing.value = false;
             document.body.style.cursor = 'initial';
 
@@ -70,6 +74,7 @@ export default defineComponent({
                 rightStyle.left = `calc(${ percent * 100 }% + 5px)`;
                 rightStyle.width = `calc(${ (1 - percent) * 100 }% - 5px)`;
             }
+            events.emit('resizing');
         }
 
         return {
@@ -105,6 +110,8 @@ export default defineComponent({
         top: 0;
         width: calc(50% - 5px);
         height: 100%;
+
+        overflow: auto;
     }
 
 }
