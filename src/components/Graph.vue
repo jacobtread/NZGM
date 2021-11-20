@@ -82,7 +82,7 @@ export default defineComponent({
         window.addEventListener('resize', render);
 
         function render() {
-            const root = rootElement.value as HTMLDivElement;
+            const root = rootElement.value;
             const canvas = canvasElement.value as HTMLCanvasElement;
             const ctx = context.value;
             if (root === null || ctx == null || calcData.value == null) return;
