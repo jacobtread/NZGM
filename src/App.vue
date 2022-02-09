@@ -1,25 +1,36 @@
+<script setup lang="ts">
+import "./assets/global.scss"
+import Header from "./components/header/Header.vue";
+import HResizable from "./components/HResizable.vue";
+import { useDataStore } from "./stores/data";
+import DataTable from "./components/DataTable.vue";
+import VResizable from "./components/VResizable.vue";
+import Graph from "./components/Graph.vue";
+
+const dataStore = useDataStore()
+dataStore.loadCSV('/example.csv')
+
+</script>
+
 <template>
     <Header/>
-    <ResizableArea style="width: 100%; flex: auto;">
+    <HResizable style="width: 100%; flex: auto;">
         <template #first>
-            <DataTable/>
+            <VResizable style="width: 100%; height: 100%;">
+                <template #first>
+                    <DataTable/>
+                </template>
+                <template #second>
+                    <h2>Ho</h2>
+                </template>
+            </VResizable>
         </template>
         <template #second>
             <Graph/>
         </template>
-    </ResizableArea>
+    </HResizable>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import Header from "@/components/Header.vue";
+<style>
 
-import "@/assets/scss/global.scss";
-import ResizableArea from "@/components/ResizableArea.vue";
-import DataTable from "@/components/DataTable.vue";
-import Graph from "@/components/Graph.vue";
-
-export default defineComponent({
-    components: { Graph, DataTable, ResizableArea, Header },
-});
-</script>
+</style>

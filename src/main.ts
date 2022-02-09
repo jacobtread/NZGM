@@ -1,15 +1,5 @@
-import { createApp } from "vue";
-import App from "./App.vue";
-import "./registerServiceWorker";
-import store from "./store";
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import './icons'
-import { importFromURL } from "@/tools";
+import { createApp } from 'vue'
+import App from './App.vue'
+import { createPinia } from "pinia";
 
-
-importFromURL('https://raw.githubusercontent.com/mathsnz/NZGrapher/master/grapher/datasets/Babies.csv').then().catch()
-
-createApp(App)
-    .component('icon', FontAwesomeIcon)
-    .use(store)
-    .mount("#app");
+createApp(App).use(createPinia()).mount('#app')

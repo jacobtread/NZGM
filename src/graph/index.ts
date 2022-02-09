@@ -1,5 +1,5 @@
 import { format, hasNumericValue, round } from "mathjs";
-import { ColumnData, GroupedData } from "@/graph/types";
+import { ColumnData, GroupedData } from "./types";
 
 export function getAxisMinMaxStep(min: number, max: number): [ number, number, number ] {
     if (min == max) {

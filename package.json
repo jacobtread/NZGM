@@ -1,40 +1,25 @@
 {
   "name": "nzgm",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.0.0",
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
-    "csv-parse": "^5.0.2",
-    "math.js": "^1.1.46",
-    "mathjs": "^10.0.0",
+    "csv-parse": "^5.0.4",
+    "mathjs": "^10.1.1",
     "mitt": "^3.0.0",
-    "register-service-worker": "^1.7.1",
-    "vue": "^3.0.0",
-    "vuex": "^4.0.0-0"
+    "pinia": "^2.0.11",
+    "sass": "^1.49.7",
+    "vue": "^3.2.25"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/vue-fontawesome": "^3.0.0-5",
-    "@types/mathjs": "^9.4.2",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-pwa": "~4.5.0",
-    "@vue/cli-plugin-typescript": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/compiler-sfc": "^3.0.0",
-    "sass": "^1.26.5",
-    "sass-loader": "^8.0.2",
-    "typescript": "~4.1.5",
-    "vue-cli-plugin-svg": "~0.2.1"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+    "@vitejs/plugin-vue": "^2.0.0",
+    "@vuetter/vite-plugin-vue-svg": "^0.1.2",
+    "stream-browserify": "^3.0.0",
+    "typescript": "^4.4.4",
+    "vite": "^2.7.2",
+    "vue-tsc": "^0.29.8"
+  }
 }

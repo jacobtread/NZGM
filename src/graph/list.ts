@@ -1,5 +1,5 @@
-import { GraphDefinition } from '@/graph/types';
-import dotPlot from '@/graph/graphs/dot-plot'
+import { GraphDefinition } from './types';
+import dotPlot from './graphs/dot-plot'
 
 const types: { [key: string]: GraphDefinition<any> } = {
     'dot-plot': {

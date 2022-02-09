@@ -1,17 +1,7 @@
-import { GraphSettings, GraphState } from "@/store/modules/graph";
-import { AxisData, GraphFunctions, GroupedData } from "@/graph/types";
 import { max, min } from "mathjs";
-import {
-    floatp,
-    getAxisMinMaxStep,
-    getGroupedData,
-    getNumericMax,
-    getNumericMin,
-    getPixelValue,
-    line,
-    sortFirst,
-    text
-} from "@/graph";
+import { floatp, getAxisMinMaxStep, getGroupedData, getNumericMax, getNumericMin, getPixelValue, line, sortFirst, text } from "../index";
+import { AxisData, GraphFunctions, GroupedData } from "../types";
+import { GraphSettings, GraphState } from "../../stores/settings";
 
 export interface Data {
     x: { name: string, min: number, max: number, data: number[] };

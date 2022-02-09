@@ -1,4 +1,4 @@
-import { GraphSettings, GraphState } from "@/store/modules/graph";
+import { GraphSettings, GraphState } from "@/stores/settings";
 
 export interface GraphDefinition<D> {
     label: string;

@@ -60,11 +60,11 @@ To run a hot-reloading version of this project for development purposes you can 
 the following command
 
 ```
-npm run serve
+npm run dev
 ```
 
 or with yarn package manager
 
 ```
-yarn serve
+yarn dev
 ```
